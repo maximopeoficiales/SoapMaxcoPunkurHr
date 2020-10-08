@@ -1,0 +1,12 @@
+{
+    "name": "maxim/webservices",
+    "authors": [
+        {
+            "name": "Maximo Junior Apaza Chirhuana",
+            "email": "maximopeoficiales@gmail.com"
+        }
+    ],
+    "require": {
+        "php2wsdl/php2wsdl": "^0.6.1"
+    }
+}
