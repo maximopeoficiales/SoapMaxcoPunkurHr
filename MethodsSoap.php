@@ -23,6 +23,21 @@ class MethodsSoap
                }
           }, ["security" => "required", "material" => "required"]);
      }
+     public function updateStockMaterial($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $material = $data["material"];
+               $validateMaterial = $this->mfValidateMaterialUpdateStock($material);
+               if ($validateMaterial["validate"]) {
+                    $updated = $this->m()->UpdateMaterialStockWoo($material);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], 200, $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateMaterial["message"], 400);
+               }
+          }, ["security" => "required", "material" => "required"]);
+     }
+
 
      private function mfIsAuthorized($user, $password)
      {
@@ -100,6 +115,18 @@ class MethodsSoap
                'peso'              => 'required|max:6',
                'jprod'              => 'required|max:20',
                'cod'              => 'required|max:1',
+          ];
+          return $this->mfUtilityValidator($material, $validations);
+     }
+     private function mfValidateMaterialUpdateStock($material)
+     {
+          $validations = [
+               'id_soc'                  => 'required|max:4',
+               'id_mat'                  => 'required|max:12',
+               'cent'                  => 'required|max:4',
+               'alm'                  => 'required|max:4',
+               'und'              => 'required|max:3',
+               'stck'              => 'required|max:5',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }

@@ -9,20 +9,15 @@
     <operation name="getMethods">
       <input message="tns:getMethodsIn"/>
     </operation>
-    <operation name="getEvents">
-      <documentation>Get all the events we know about</documentation>
-      <input message="tns:getEventsIn"/>
-      <output message="tns:getEventsOut"/>
-    </operation>
-    <operation name="setCreateMaterial">
+    <operation name="POST_ACT_MAT">
       <documentation>Crea Material</documentation>
-      <input message="tns:setCreateMaterialIn"/>
-      <output message="tns:setCreateMaterialOut"/>
+      <input message="tns:POST_ACT_MATIn"/>
+      <output message="tns:POST_ACT_MATOut"/>
     </operation>
-    <operation name="getEventById">
-      <documentation>Fetch the detail for a single event</documentation>
-      <input message="tns:getEventByIdIn"/>
-      <output message="tns:getEventByIdOut"/>
+    <operation name="POST_ACT_STOCK">
+      <documentation>Crea Material</documentation>
+      <input message="tns:POST_ACT_STOCKIn"/>
+      <output message="tns:POST_ACT_STOCKOut"/>
     </operation>
   </portType>
   <binding name="WebServicesBinding" type="tns:WebServicesPort">
@@ -36,8 +31,8 @@
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </output>
     </operation>
-    <operation name="getEvents">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getEvents"/>
+    <operation name="POST_ACT_MAT">
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#POST_ACT_MAT"/>
       <input>
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </input>
@@ -45,17 +40,8 @@
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </output>
     </operation>
-    <operation name="setCreateMaterial">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#setCreateMaterial"/>
-      <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
-      </input>
-      <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
-      </output>
-    </operation>
-    <operation name="getEventById">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getEventById"/>
+    <operation name="POST_ACT_STOCK">
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#POST_ACT_STOCK"/>
       <input>
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </input>
@@ -65,11 +51,7 @@
     </operation>
   </binding>
   <message name="getMethodsIn"/>
-  <message name="getEventsIn"/>
-  <message name="getEventsOut">
-    <part name="return" type="soap-enc:Array"/>
-  </message>
-  <message name="setCreateMaterialIn">
+  <message name="POST_ACT_MATIn">
     <part name="user" type="xsd:string"/>
     <part name="pass" type="xsd:string"/>
     <part name="id_soc" type="xsd:string"/>
@@ -82,13 +64,20 @@
     <part name="peso" type="xsd:string"/>
     <part name="cod" type="xsd:string"/>
   </message>
-  <message name="setCreateMaterialOut">
+  <message name="POST_ACT_MATOut">
     <part name="return" type="soap-enc:Array"/>
   </message>
-  <message name="getEventByIdIn">
-    <part name="event_id" type="xsd:int"/>
+  <message name="POST_ACT_STOCKIn">
+    <part name="user" type="xsd:string"/>
+    <part name="pass" type="xsd:string"/>
+    <part name="id_soc" type="xsd:string"/>
+    <part name="id_mat" type="xsd:string"/>
+    <part name="cent" type="xsd:string"/>
+    <part name="alm" type="xsd:string"/>
+    <part name="und" type="xsd:string"/>
+    <part name="stck" type="xsd:string"/>
   </message>
-  <message name="getEventByIdOut">
+  <message name="POST_ACT_STOCKOut">
     <part name="return" type="soap-enc:Array"/>
   </message>
   <service name="WebServicesService">

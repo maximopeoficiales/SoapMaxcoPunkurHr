@@ -9,7 +9,47 @@ class MethodsWoo
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce();
      }
-
+     public function UpdateMaterialStockWoo($material)
+     {
+          $id_soc = $material["id_soc"];
+          if ($id_soc == "MAX") {
+               $sku = $material["id_mat"];
+               $dataUpdated = [
+                    "stock_quantity" => $material["stck"],
+               ];
+               if ($material["stck"] == 0) {
+                    $dataUpdated["manage_stock"] = false;
+               } else {
+                    $dataUpdated["manage_stock"] = true;
+               }
+               $metadata = [];
+               $newfields = ["id_soc", "cent", "alm", "jprod", "und"];
+               foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
+                    array_push($metadata, $value);
+               }
+               try {
+                    $id_cliente = $this->mfGetIdMaterialWithSku($sku);
+                    $this->mfUpdateMetadataMaterial($id_cliente, $metadata);
+                    $response = $this->mfUpdateMaterialWithSku($sku, $dataUpdated);
+                    return [
+                         "value" => 2,
+                         "message" => "Material con sku: $sku actualizado",
+                         "data" => ["stock" => $response->stock_quantity]
+                         // "data" => $response
+                    ];
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "El material con el sku: $sku no existe",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
      public function CreateMaterialWoo($material)
      {
 
@@ -47,8 +87,8 @@ class MethodsWoo
                          if ($response->id !== null) {
                               return [
                                    "value" => 1,
-                                   "data" => $response,
-                                   // "data" => ["id" => $response->id, "permalink" => $response->permalink],
+                                   // "data" => $response,
+                                   "data" => ["id_mat" => $response->sku, "permalink" => $response->permalink],
                                    "message" => "Registro de Material Exitoso",
                               ];
                          }
@@ -67,7 +107,8 @@ class MethodsWoo
                          return [
                               "value" => 2,
                               "message" => "Material con sku: $sku actualizado",
-                              "data" => $response
+                              "data" => ""
+                              // "data" => $response
                          ];
                     } catch (\Throwable $th) {
                          return [
