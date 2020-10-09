@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://maxco.punkuhr.test/webservices/initialize.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="WebServices" targetNamespace="http://maxco.punkuhr.test/webservices/initialize.php">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://maxco.punkuhr.test/webservices/init.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="WebServices" targetNamespace="http://maxco.punkuhr.test/webservices/init.php">
   <types>
-    <xsd:schema targetNamespace="http://maxco.punkuhr.test/webservices/initialize.php">
+    <xsd:schema targetNamespace="http://maxco.punkuhr.test/webservices/init.php">
       <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
     </xsd:schema>
   </types>
@@ -23,30 +23,30 @@
   <binding name="WebServicesBinding" type="tns:WebServicesPort">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="getMethods">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getMethods"/>
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/init.php#getMethods"/>
       <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </input>
       <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </output>
     </operation>
     <operation name="POST_ACT_MAT">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#POST_ACT_MAT"/>
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/init.php#POST_ACT_MAT"/>
       <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </input>
       <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </output>
     </operation>
     <operation name="POST_ACT_STOCK">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#POST_ACT_STOCK"/>
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/init.php#POST_ACT_STOCK"/>
       <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </input>
       <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/init.php"/>
       </output>
     </operation>
   </binding>
@@ -82,7 +82,7 @@
   </message>
   <service name="WebServicesService">
     <port name="WebServicesPort" binding="tns:WebServicesBinding">
-      <soap:address location="http://maxco.punkuhr.test/webservices/initialize.php"/>
+      <soap:address location="http://maxco.punkuhr.test/webservices/init.php"/>
     </port>
   </service>
 </definitions>
