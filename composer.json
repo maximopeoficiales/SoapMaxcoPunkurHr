@@ -7,6 +7,8 @@
         }
     ],
     "require": {
-        "php2wsdl/php2wsdl": "^0.6.1"
+        "php2wsdl/php2wsdl": "^0.6.1",
+        "automattic/woocommerce": "^3.0",
+        "rakit/validation": "^1.4"
     }
 }

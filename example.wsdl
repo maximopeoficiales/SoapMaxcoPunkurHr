@@ -1,15 +1,23 @@
 <?xml version="1.0"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://maxco.punkuhr.test/webservices/webservices.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="WebServices" targetNamespace="http://maxco.punkuhr.test/webservices/webservices.php">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://maxco.punkuhr.test/webservices/initialize.php" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="WebServices" targetNamespace="http://maxco.punkuhr.test/webservices/initialize.php">
   <types>
-    <xsd:schema targetNamespace="http://maxco.punkuhr.test/webservices/webservices.php">
+    <xsd:schema targetNamespace="http://maxco.punkuhr.test/webservices/initialize.php">
       <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
     </xsd:schema>
   </types>
   <portType name="WebServicesPort">
+    <operation name="getMethods">
+      <input message="tns:getMethodsIn"/>
+    </operation>
     <operation name="getEvents">
       <documentation>Get all the events we know about</documentation>
       <input message="tns:getEventsIn"/>
       <output message="tns:getEventsOut"/>
+    </operation>
+    <operation name="setCreateMaterial">
+      <documentation>Crea Material</documentation>
+      <input message="tns:setCreateMaterialIn"/>
+      <output message="tns:setCreateMaterialOut"/>
     </operation>
     <operation name="getEventById">
       <documentation>Fetch the detail for a single event</documentation>
@@ -19,27 +27,62 @@
   </portType>
   <binding name="WebServicesBinding" type="tns:WebServicesPort">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="getEvents">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/webservices.php#getEvents"/>
+    <operation name="getMethods">
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getMethods"/>
       <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/webservices.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </input>
       <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/webservices.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+      </output>
+    </operation>
+    <operation name="getEvents">
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getEvents"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+      </output>
+    </operation>
+    <operation name="setCreateMaterial">
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#setCreateMaterial"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </output>
     </operation>
     <operation name="getEventById">
-      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/webservices.php#getEventById"/>
+      <soap:operation soapAction="http://maxco.punkuhr.test/webservices/initialize.php#getEventById"/>
       <input>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/webservices.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </input>
       <output>
-        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/webservices.php"/>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://maxco.punkuhr.test/webservices/initialize.php"/>
       </output>
     </operation>
   </binding>
+  <message name="getMethodsIn"/>
   <message name="getEventsIn"/>
   <message name="getEventsOut">
+    <part name="return" type="soap-enc:Array"/>
+  </message>
+  <message name="setCreateMaterialIn">
+    <part name="user" type="xsd:string"/>
+    <part name="pass" type="xsd:string"/>
+    <part name="id_soc" type="xsd:string"/>
+    <part name="id_mat" type="xsd:string"/>
+    <part name="cent" type="xsd:string"/>
+    <part name="alm" type="xsd:string"/>
+    <part name="nomb" type="xsd:string"/>
+    <part name="und" type="xsd:string"/>
+    <part name="jprod" type="xsd:string"/>
+    <part name="peso" type="xsd:string"/>
+    <part name="cod" type="xsd:string"/>
+  </message>
+  <message name="setCreateMaterialOut">
     <part name="return" type="soap-enc:Array"/>
   </message>
   <message name="getEventByIdIn">
@@ -50,7 +93,7 @@
   </message>
   <service name="WebServicesService">
     <port name="WebServicesPort" binding="tns:WebServicesBinding">
-      <soap:address location="http://maxco.punkuhr.test/webservices/webservices.php"/>
+      <soap:address location="http://maxco.punkuhr.test/webservices/initialize.php"/>
     </port>
   </service>
 </definitions>
