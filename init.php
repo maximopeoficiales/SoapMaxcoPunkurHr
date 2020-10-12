@@ -10,4 +10,4 @@ $wsdlGenerator->save(__DIR__ . "/example.wsdl");
 $soap = new SoapServer(__DIR__ . "/example.wsdl");
 $soap->setClass('WebServices');
 $soap->handle();
-header("Location: $dominio/wp-json/webservice/wsdl");
+// header("Location: $dominio/wp-json/webservice/wsdl");
