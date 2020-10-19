@@ -1,0 +1,53 @@
+a:12:{s:7:"version";s:3:"2.4";s:7:"methods";a:2:{i:0;O:13:"PhpWsdlMethod":9:{s:5:"Param";a:0:{}s:6:"Return";O:12:"PhpWsdlParam":5:{s:4:"Type";s:5:"array";s:4:"Docs";s:24:"The collection of events";s:4:"GUID";s:13:"5f8d1d6f15955";s:4:"Name";s:6:"return";s:8:"Settings";N;}s:8:"IsGlobal";b:0;s:5:"Class";N;s:9:"Exception";s:9:"SoapFault";s:4:"GUID";s:13:"5f8d1d6f15969";s:4:"Name";s:9:"getEvents";s:4:"Docs";N;s:8:"Settings";N;}i:1;O:13:"PhpWsdlMethod":9:{s:5:"Param";a:1:{i:0;O:12:"PhpWsdlParam":5:{s:4:"Type";s:3:"int";s:4:"Docs";s:27:"The identifier of the event";s:4:"GUID";s:13:"5f8d1d6f1599c";s:4:"Name";s:8:"event_id";s:8:"Settings";N;}}s:6:"Return";O:12:"PhpWsdlParam":5:{s:4:"Type";s:5:"array";s:4:"Docs";s:14:"The event data";s:4:"GUID";s:13:"5f8d1d6f159af";s:4:"Name";s:6:"return";s:8:"Settings";N;}s:8:"IsGlobal";b:0;s:5:"Class";N;s:9:"Exception";s:9:"SoapFault";s:4:"GUID";s:13:"5f8d1d6f159be";s:4:"Name";s:12:"getEventById";s:4:"Docs";N;s:8:"Settings";N;}}s:5:"types";a:0:{}s:5:"files";a:1:{i:0;s:11:"MiClase.php";}s:4:"name";s:7:"MiClase";s:4:"docs";N;s:4:"html";s:2421:"<html>
+<head>
+<title>MiClase interface description</title>
+<style type="text/css" media="all">
+body{font-family:Calibri,Arial;background-color:#fefefe;}
+.pre{font-family:Courier;}
+.normal{font-family:Calibri,Arial;}
+.bold{font-weight:bold;}
+h1,h2,h3{font-family:Verdana,Times;}
+h1{border-bottom:1px solid gray;}
+h2{border-bottom:1px solid silver;}
+h3{border-bottom:1px dashed silver;}
+a{text-decoration:none;}
+a:hover{text-decoration:underline;}
+.blue{color:#3400FF;}
+.lightBlue{color:#5491AF;}
+</style>
+<style type="text/css" media="print">
+.noprint{display:none;}
+</style>
+</head>
+<body>
+<h1>MiClase SOAP WebService interface description</h1>
+<p>Endpoint URI: <span class="pre">http://php-wsdl-creator-master.test/demo.php</span></p>
+<p>WSDL URI: <span class="pre"><a href="http://php-wsdl-creator-master.test/demo.php?WSDL&readable">http://php-wsdl-creator-master.test/demo.php?WSDL</a></span></p>
+<p>PHP SOAP client download URI: <span class="pre"><a href="http://php-wsdl-creator-master.test/demo.php?PHPSOAPCLIENT">http://php-wsdl-creator-master.test/demo.php?PHPSOAPCLIENT</a></span></p>
+<div class="noprint">
+<h2>Index</h2>
+<p>Public methods:</p>
+<ul>
+<li><a href="#getEventById"><span class="pre">getEventById</span></a></li>
+<li><a href="#getEvents"><span class="pre">getEvents</span></a></li>
+</ul>
+</div>
+<h2>Public methods</h2>
+<h3>getEventById</h3>
+<a name="getEventById"></a>
+<p class="pre"><a href="#array"><span class="lightBlue">array</span></a> <span class="bold">getEventById</span> (
+<span class="blue">int</span> <span class="bold">event_id</span>
+)</p>
+<ul>
+<li class="pre"><span class="blue">int</span> <span class="bold">event_id</span><br><span class="normal">The identifier of the event</span></li>
+</ul>
+<p>Return value <span class="pre"><a href="#array"><span class="lightBlue">array</span></a></span>: The event data</p>
+<h3>getEvents</h3>
+<a name="getEvents"></a>
+<p class="pre"><a href="#array"><span class="lightBlue">array</span></a> <span class="bold">getEvents</span> (
+)</p>
+<p>Return value <span class="pre"><a href="#array"><span class="lightBlue">array</span></a></span>: The collection of events</p>
+<hr>
+<p><small>Powered by <a href="http://code.google.com/p/php-wsdl-creator/">PhpWsdl</a><span class="noprint"> - PDF download: <a href="http://online.htmltopdf.de/?plain=1&filename=MiClase-webservices.pdf&print=1">Download this page as PDF</a></span></small></p>
+</body>
+</html>";s:3:"php";N;s:7:"wsdluri";N;s:6:"phpuri";N;s:6:"docuri";N;s:7:"handler";N;}

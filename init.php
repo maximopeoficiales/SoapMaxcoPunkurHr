@@ -1,13 +1,12 @@
 <?php
-define('WP_USE_THEMES', false);
-require('../wp-blog-header.php');
-require "vendor/autoload.php";
-require __DIR__ . "/WebServices.php";
-$dominio = get_site_url();
-$wsdlGenerator =  new \PHP2WSDL\PHPClass2WSDL("WebServices", "$dominio/webservices/init.php");
-$wsdlGenerator->generateWSDL();
-$wsdlGenerator->save(__DIR__ . "/example.wsdl");
-$soap = new SoapServer(__DIR__ . "/example.wsdl");
-$soap->setClass('WebServices');
-$soap->handle();
-// header("Location: $dominio/wp-json/webservice/wsdl");
+
+error_reporting(0);
+
+require_once(__DIR__ . '/WebServices.php');
+require_once(__DIR__ . '/wsdl-creator/class.phpwsdl.php');
+
+$soap = PhpWsdl::RunQuickMode(
+     array(                                        // All files with WSDL definitions in comments
+          'WebServices.php',
+     )
+);
