@@ -1,9 +1,25 @@
 <?php
-define('WP_USE_THEMES', false);
-require('../wp-blog-header.php');
 header("Content-Type: text/xml");
-$urld = get_site_url() . "/webservices/";
-$urlsoap = get_site_url() . "/webservices/init.php";
+function url_completa($forwarded_host = false)
+{
+     $ssl   = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on';
+     $proto = strtolower($_SERVER['SERVER_PROTOCOL']);
+     $proto = substr($proto, 0, strpos($proto, '/')) . ($ssl ? 's' : '');
+     if ($forwarded_host && isset($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+          $host = $_SERVER['HTTP_X_FORWARDED_HOST'];
+     } else {
+          if (isset($_SERVER['HTTP_HOST'])) {
+               $host = $_SERVER['HTTP_HOST'];
+          } else {
+               $port = $_SERVER['SERVER_PORT'];
+               $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
+               $host = $_SERVER['SERVER_NAME'] . $port;
+          }
+     }
+     return $proto . '://' . $host;
+}
+$urld = url_completa() . "/webservices/";
+$urlsoap = url_completa() . "/webservices/init.php";
 ?>
 <wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="<?= $urld ?>" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="<?= $urld ?>">
      <wsdl:types>
