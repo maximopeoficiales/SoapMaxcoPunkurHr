@@ -22,27 +22,28 @@ class WebServices
       * @param string $cod peso del producto
       * @return array Respuesta del Servidor
       */
-     public function POST_ACT_MAT($user, $pass, $id_soc, $id_mat, $cent, $alm, $nomb, $und, $jprod, $peso, $cod)
+     public function POST_ACT_MAT($request)
      {
           $m = $this->getMethods();
           $data = [
                "security" => [
-                    "user" => $user,
-                    "pass" => $pass,
+                    "user" => $request->user,
+                    "pass" => $request->pass,
                ],
                "material" => [
-                    "id_soc" => $id_soc,
-                    "id_mat" => $id_mat,
-                    "cent" => $cent,
-                    "alm" => $alm,
-                    "nomb" => $nomb,
-                    "und" => $und,
-                    "jprod" => $jprod,
-                    "peso" => $peso,
-                    "cod" => $cod,
+                    "id_soc" => $request->id_soc,
+                    "id_mat" => $request->id_mat,
+                    "cent" => $request->cent,
+                    "alm" => $request->alm,
+                    "nomb" => $request->nomb,
+                    "und" => $request->und,
+                    "jprod" => $request->jprod,
+                    "peso" => $request->peso,
+                    "cod" => $request->cod,
                ],
           ];
           return $m->createMaterial($data);
+          // return $data;
      }
      /**
       * Crea Material 
@@ -57,21 +58,21 @@ class WebServices
       * @param string $stck Stock del material
       * @return array Respuesta del Servidor
       */
-     public function POST_ACT_STOCK($user, $pass, $id_soc, $id_mat, $cent, $alm, $und, $stck)
+     public function POST_ACT_STOCK($request)
      {
           $m = $this->getMethods();
           $data = [
                "security" => [
-                    "user" => $user,
-                    "pass" => $pass,
+                    "user" => $request->user,
+                    "pass" => $request->pass,
                ],
                "material" => [
-                    "id_soc" => $id_soc,
-                    "id_mat" => $id_mat,
-                    "cent" => $cent,
-                    "alm" => $alm,
-                    "und" => $und,
-                    "stck" => $stck,
+                    "id_soc" => $request->id_soc,
+                    "id_mat" => $request->id_mat,
+                    "cent" => $request->cent,
+                    "alm" => $request->alm,
+                    "und" => $request->und,
+                    "stck" => $request->stck,
                ],
           ];
           return $m->updateStockMaterial($data);
