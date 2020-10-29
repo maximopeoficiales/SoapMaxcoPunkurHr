@@ -51,6 +51,45 @@ $urlsoap = get_site_url() . "/webservices/init.php";
                     </s:sequence>
                </s:complexType>
                <!-- fin de estructura de respuesta -->
+               <!-- POST_ACT_STOCK -->
+               <s:element name="POST_ACT_STOCK">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:POST_ACT_STOCKRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_STOCKRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cent" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="alm" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="stck" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <s:element name="POST_ACT_STOCKResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_STOCKResult" type="tns:POST_ACT_STOCKResponse" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_STOCKResponse">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="Body" type="tns:POST_ACT_STOCKResponseBody" />
+                    </s:sequence>
+               </s:complexType>
+               <s:complexType name="POST_ACT_STOCKResponseBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_STOCKResult" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- fin de POST_ACT_STOCK -->
+
           </s:schema>
      </wsdl:types>
      <!-- aqui se selecciona la estructura de entrada y salida -->
@@ -61,14 +100,36 @@ $urlsoap = get_site_url() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_MATResponse" />
      </wsdl:message>
      <!-- fin de seleccion de estructura -->
+     <!-- POST_ACT_STOCK -->
+     <wsdl:message name="POST_ACT_STOCKSoapIn">
+          <wsdl:part name="parameters" element="tns:POST_ACT_STOCK" />
+     </wsdl:message>
+     <wsdl:message name="POST_ACT_STOCKSoapOut">
+          <wsdl:part name="parameters" element="tns:POST_ACT_STOCKResponse" />
+     </wsdl:message>
+     <!-- fin POST_ACT_STOCK -->
 
+     <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
           <wsdl:operation name="POST_ACT_MAT">
                <wsdl:input message="tns:POST_ACT_MATSoapIn" />
                <wsdl:output message="tns:POST_ACT_MATSoapOut" />
           </wsdl:operation>
      </wsdl:portType>
-     <wsdl:binding name="CustomerPOST_ACT_MATSoap" type="tns:POST_ACT_MATSoap">
+     <!-- POST_ACT_STOCK -->
+     <wsdl:portType name="POST_ACT_STOCKSoap">
+          <wsdl:operation name="POST_ACT_STOCK">
+               <wsdl:input message="tns:POST_ACT_STOCKSoapIn" />
+               <wsdl:output message="tns:POST_ACT_STOCKSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin POST_ACT_STOCK -->
+
+     <!-- fin de registro -->
+
+
+     <!-- aqui se indica que estructura de entrada y salida  usara una funcion especifica -->
+     <wsdl:binding name="POST_ACT_MATSoap" type="tns:POST_ACT_MATSoap">
           <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
           <wsdl:operation name="POST_ACT_MAT">
                <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
@@ -80,24 +141,35 @@ $urlsoap = get_site_url() . "/webservices/init.php";
                </wsdl:output>
           </wsdl:operation>
      </wsdl:binding>
-     <!-- <wsdl:binding name="CustomerETDLoadSoap12" type="tns:CustomerETDLoadSoap">
-          <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
-          <wsdl:operation name="POST_ACT_MAT">
-               <soap12:operation soapAction="<?= $urlsoap ?>" style="document" />
+     <!-- POST_ACT_STOCK -->
+     <wsdl:binding name="POST_ACT_STOCKSoap" type="tns:POST_ACT_STOCKSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="POST_ACT_STOCK">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
                <wsdl:input>
-                    <soap12:body use="literal" />
+                    <soap:body use="literal" />
                </wsdl:input>
                <wsdl:output>
-                    <soap12:body use="literal" />
+                    <soap:body use="literal" />
                </wsdl:output>
           </wsdl:operation>
-     </wsdl:binding> -->
-     <wsdl:service name="CustomerPOST_ACT_MAT">
-          <wsdl:port name="CustomerPOST_ACT_MATSoap" binding="tns:CustomerPOST_ACT_MATSoap">
+     </wsdl:binding>
+     <!-- fin POST_ACT_STOCK -->
+     <!-- fin de estructura -->
+
+     <!-- nombres de los servicios a exponer -->
+     <wsdl:service name="POST_ACT_MAT">
+          <wsdl:port name="POST_ACT_MATSoap" binding="tns:POST_ACT_MATSoap">
                <soap:address location="<?= $urlsoap ?>" />
           </wsdl:port>
-          <!-- <wsdl:port name="CustomerETDLoadSoap12" binding="tns:CustomerETDLoadSoap12">
-               <soap12:address location="http://des-maq-leg.azurewebsites.net/CustomerETDLoad.asmx" />
-          </wsdl:port> -->
      </wsdl:service>
+     <!-- POST_ACT_STOCK -->
+     <wsdl:service name="POST_ACT_STOCK">
+          <wsdl:port name="POST_ACT_STOCKSoap" binding="tns:POST_ACT_STOCKSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+
+     <!-- fin POST_ACT_STOCK -->
+     <!-- fin de servicios -->
 </wsdl:definitions>
