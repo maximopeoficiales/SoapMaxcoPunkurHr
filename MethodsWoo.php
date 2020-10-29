@@ -23,7 +23,7 @@ class MethodsWoo
                     $dataUpdated["manage_stock"] = true;
                }
                $metadata = [];
-               $newfields = ["id_soc", "cent", "alm", "jprod", "und"];
+               $newfields = ["id_soc", "cent", "jprod", "undpaq", "und"];
                foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                     array_push($metadata, $value);
                }
@@ -75,7 +75,7 @@ class MethodsWoo
                ];
           }
           $id_soc = $material["id_soc"];
-          $newfields = ["id_soc", "cent", "alm", "jprod"];
+          $newfields = ["id_soc", "cent", "paq", "undpaq", "jprod"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }

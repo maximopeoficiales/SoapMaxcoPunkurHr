@@ -39,8 +39,9 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="cent" type="s:string" />
-                         <s:element minOccurs="0" maxOccurs="1" name="alm" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="nomb" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="paq" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="undpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="jprod" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="peso" type="s:string" />
@@ -82,7 +83,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="cent" type="s:string" />
-                         <s:element minOccurs="0" maxOccurs="1" name="alm" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="undpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="stck" type="s:string" />
                     </s:sequence>
