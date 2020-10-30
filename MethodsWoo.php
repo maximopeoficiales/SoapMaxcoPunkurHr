@@ -54,7 +54,7 @@ class MethodsWoo
      {
 
           $woo = $this->getWoocommerce();
-          $weight = number_format($material["peso"], 2, ".", "");
+          $weight = number_format($material["peso"], 3, ".", "");
           $sku = $material["id_mat"];
           $dataSend = [
                'name' => $material["nomb"],
@@ -79,6 +79,15 @@ class MethodsWoo
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
+          /* validacion de paquetizado */
+          if ($material["paq"] !== "X") {
+               foreach ($material["meta_data"] as $d) {
+                    if ($d["key"] == "undpaq") {
+                         $d["value"] = "";
+                    }
+               }
+          }
+          /* fin de validacion */
           if ($id_soc == "MAX") {
                /* creacion */
                if ($material["cod"] == 0) {
@@ -137,13 +146,13 @@ class MethodsWoo
           $response = $woo->put("products/" . $findMaterial[0]->id, $dataUpdated);
           return $response;
      }
-     private function mfUpdateMetadataMaterial($id_cliente, $data)
+     private function mfUpdateMetadataMaterial($id, $data)
      {
           for ($i = 0; $i < count($data); $i++) {
                $dato = $data[$i];
                global $wpdb;
                $table = $wpdb->base_prefix . 'postmeta';
-               $sql = "UPDATE $table SET  meta_value = %s where post_id=$id_cliente AND meta_key=%s";
+               $sql = "UPDATE $table SET  meta_value = %s where post_id=$id AND meta_key=%s";
                $result = $wpdb->query($wpdb->prepare($sql, $dato["value"], $dato["key"]));
                $wpdb->flush();
                if (!$result) new Error("Error en la actualizacion de  datos");
