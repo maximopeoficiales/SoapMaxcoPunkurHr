@@ -106,7 +106,7 @@ class MethodsSoap
      private function mfValidateMaterialFields($material)
      {
           $validations = [
-               'id_soc'                  => 'required|max:4',
+               'id_soc'                  => 'required|max:1|numeric|in:0,1',
                'id_mat'                  => 'required|max:12',
                'cent'                  => 'required|max:4',
                'nomb'              => 'required|max:40',
@@ -122,7 +122,7 @@ class MethodsSoap
      private function mfValidateMaterialUpdateStock($material)
      {
           $validations = [
-               'id_soc'                  => 'required|max:4',
+               'id_soc'                  =>  'required|max:1|numeric|in:0,1',
                'id_mat'                  => 'required|max:12',
                'cent'                  => 'required|max:4',
                'und'              => 'required|max:3',

@@ -1,43 +1,33 @@
 <?php
-define('WP_USE_THEMES', false);
-require('../wp-blog-header.php');
 require __DIR__ . '/vendor/autoload.php';
 
 use Automattic\WooCommerce\Client;
 
 class WoocommerceClient
 {
-     public function getDataConfig()
-     {
-          $args = array(
-               'post_type' => 'max_functions_config',
-               'posts_per_page' => 1,
-               'orderby' => 'ID',
-               'order' => 'ASC'
-          );
 
-          $datos = new WP_Query($args);
-          $data = array();
-          while ($datos->have_posts()) : $datos->the_post();
-               $data["api_key_google_maps"] = get_field("api_key_google_maps");
-               $data["consumer_key"] = get_field("consumer_key");
-               $data["consumer_secret"] = get_field("consumer_secret");
-               $data["latitud_tienda"] = get_field("latitud_tienda");
-               $data["longitud_tienda"] = get_field("longitud_tienda");
-          endwhile;
-          return $data;
-     }
-     public function getWoocommerce()
+     public function getWoocommerce($id_soc)
      {
-          $credenciales = $this->getDataConfig();
-          $woocommerce = new Client(
-               get_site_url(),
-               $credenciales["consumer_key"],
-               $credenciales["consumer_secret"],
-               [
-                    'version' => 'wc/v3',
-               ]
-          );
-          return $woocommerce;
+          if (intval($id_soc) == 1) {
+               /* maxco */
+               return new Client(
+                    "https://maxco.punkuhr.com/",
+                    "ck_0157c4f5fbc72b4a71161b929dea276a81006fd9",
+                    "cs_b575ce513cbaf2478ca0d06c2d0dd64699ec642d",
+                    [
+                         'version' => 'wc/v3',
+                    ]
+               );
+          } else {
+               /* precor */
+               return new Client(
+                    "https://precor.punkuhr.com/",
+                    "ck_c005d91e27f8bc9b2b5df1328651092f23fd813c",
+                    "cs_9af7943cc0d48db3f4cee10d9ba4dd6dee5395f2",
+                    [
+                         'version' => 'wc/v3',
+                    ]
+               );
+          }
      }
 }

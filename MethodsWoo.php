@@ -4,10 +4,21 @@ define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
 class MethodsWoo
 {
-     private function getWoocommerce()
+     private function getWPDB($id_soc)
+     {
+
+          if (intval($id_soc) == 1) {
+               /* maxco */
+               return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
+          } else {
+               /* precor */
+               return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
+          }
+     }
+     private function getWoocommerce($id_soc)
      {
           $woo = new WoocommerceClient();
-          return $woo->getWoocommerce();
+          return $woo->getWoocommerce($id_soc);
      }
      public function UpdateMaterialStockWoo($material)
      {
@@ -28,9 +39,9 @@ class MethodsWoo
                     array_push($metadata, $value);
                }
                try {
-                    $id_cliente = $this->mfGetIdMaterialWithSku($sku);
-                    $this->mfUpdateMetadataMaterial($id_cliente, $metadata);
-                    $response = $this->mfUpdateMaterialWithSku($sku, $dataUpdated);
+                    $id_cliente = $this->mfGetIdMaterialWithSku($sku, $id_soc);
+                    $this->mfUpdateMetadataMaterial($id_cliente, $metadata, $id_soc);
+                    $response = $this->mfUpdateMaterialWithSku($sku, $dataUpdated, $id_soc);
                     return [
                          "value" => 2,
                          "message" => "Material con sku: $sku actualizado",
@@ -53,7 +64,6 @@ class MethodsWoo
      public function CreateMaterialWoo($material)
      {
 
-          $woo = $this->getWoocommerce();
           $weight = number_format($material["peso"], 3, ".", "");
           $sku = $material["id_mat"];
           $dataSend = [
@@ -75,19 +85,12 @@ class MethodsWoo
                ];
           }
           $id_soc = $material["id_soc"];
+          $woo = $this->getWoocommerce($id_soc);
           $newfields = ["id_soc", "cent", "paq", "undpaq", "jprod"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
-          /* validacion de paquetizado */
-          if ($material["paq"] !== "X") {
-               foreach ($material["meta_data"] as $d) {
-                    if ($d["key"] == "undpaq") {
-                         $d["value"] = "";
-                    }
-               }
-          }
-          /* fin de validacion */
+
           if ($id_soc == "MAX") {
                /* creacion */
                if ($material["cod"] == 0) {
@@ -110,9 +113,9 @@ class MethodsWoo
                } else {
                     /* actualizacion */
                     try {
-                         $id_cliente = $this->mfGetIdMaterialWithSku($sku);
-                         $this->mfUpdateMetadataMaterial($id_cliente, $dataSend["meta_data"]);
-                         $response = $this->mfUpdateMaterialWithSku($sku, $dataSend);
+                         $id_cliente = $this->mfGetIdMaterialWithSku($sku, $id_soc);
+                         $this->mfUpdateMetadataMaterial($id_cliente, $dataSend["meta_data"], $id_soc);
+                         $response = $this->mfUpdateMaterialWithSku($sku, $dataSend, $id_soc);
                          return [
                               "value" => 2,
                               "message" => "Material con sku: $sku actualizado",
@@ -133,25 +136,25 @@ class MethodsWoo
                ];
           }
      }
-     private function mfGetIdMaterialWithSku($sku)
+     private function mfGetIdMaterialWithSku($sku, $id_soc)
      {
-          $woo = $this->getWoocommerce();
+          $woo = $this->getWoocommerce($id_soc);
           $findMaterial = $woo->get("products", ["sku" => $sku]);
           return $findMaterial[0]->id;
      }
-     private function mfUpdateMaterialWithSku($sku, $dataUpdated)
+     private function mfUpdateMaterialWithSku($sku, $dataUpdated, $id_soc)
      {
-          $woo = $woo = $this->getWoocommerce();
+          $woo = $woo = $this->getWoocommerce($id_soc);
           $findMaterial = $woo->get("products", ["sku" => $sku]);
           $response = $woo->put("products/" . $findMaterial[0]->id, $dataUpdated);
           return $response;
      }
-     private function mfUpdateMetadataMaterial($id, $data)
+     private function mfUpdateMetadataMaterial($id, $data, $id_soc)
      {
           for ($i = 0; $i < count($data); $i++) {
                $dato = $data[$i];
-               global $wpdb;
-               $table = $wpdb->base_prefix . 'postmeta';
+               $wpdb = $this->getWPDB($id_soc);
+               $table = 'wp_postmeta';
                $sql = "UPDATE $table SET  meta_value = %s where post_id=$id AND meta_key=%s";
                $result = $wpdb->query($wpdb->prepare($sql, $dato["value"], $dato["key"]));
                $wpdb->flush();
