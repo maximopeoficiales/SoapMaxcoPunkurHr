@@ -23,7 +23,7 @@ class MethodsWoo
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
-          if ($id_soc == "MAX") {
+          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
                $sku = $material["id_mat"];
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
@@ -91,7 +91,7 @@ class MethodsWoo
                array_push($dataSend["meta_data"], $value);
           }
 
-          if ($id_soc == "MAX") {
+          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
