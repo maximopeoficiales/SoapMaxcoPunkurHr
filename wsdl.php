@@ -43,6 +43,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="paq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="undpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="paqxund" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="unxpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="jprod" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="peso" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="cod" type="s:string" />

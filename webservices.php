@@ -18,6 +18,8 @@ class WebServices
       * @param string $paq Paquetizado
       * @param string $undpaq Unidad del Paquete
       * @param string $und unidad del material
+      * @param string $paqun Paquete por unidad
+      * @param string $unxpaq Unidad por Paquete
       * @param string $jprod jerarquia del producto
       * @param string $peso peso del producto
       * @param string $cod peso del producto
@@ -39,6 +41,8 @@ class WebServices
                     "paq" => $request->paq,
                     "undpaq" => $request->undpaq,
                     "und" => $request->und,
+                    "paqxun" => $request->paqxun,
+                    "unxpaq" => $request->unxpaq,
                     "jprod" => $request->jprod,
                     "peso" => $request->peso,
                     "cod" => $request->cod,
@@ -72,8 +76,8 @@ class WebServices
                     "id_soc" => $request->id_soc,
                     "id_mat" => $request->id_mat,
                     "cent" => $request->cent,
-                    "und" => $request->und,
                     "undpaq" => $request->undpaq,
+                    "und" => $request->und,
                     "stck" => $request->stck,
                ],
           ];

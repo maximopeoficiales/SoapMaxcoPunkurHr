@@ -86,7 +86,7 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           $woo = $this->getWoocommerce($id_soc);
-          $newfields = ["id_soc", "cent", "paq", "undpaq", "jprod"];
+          $newfields = ["id_soc", "cent", "paq", "undpaq", "paqxun", "unxpaq", "jprod"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
