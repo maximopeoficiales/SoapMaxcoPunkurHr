@@ -18,7 +18,7 @@ class WebServices
       * @param string $paq Paquetizado
       * @param string $undpaq Unidad del Paquete
       * @param string $und unidad del material
-      * @param string $paqun Paquete por unidad
+      * @param string $paqxun Paquete por unidad
       * @param string $unxpaq Unidad por Paquete
       * @param string $jprod jerarquia del producto
       * @param string $peso peso del producto
@@ -59,7 +59,6 @@ class WebServices
       * @param string $id_soc Id de sociedad
       * @param string $id_mat SKU de material
       * @param string $cent Centro del material
-      * @param string $undpaq Unidad de Paquete
       * @param string $und Unidad del material
       * @param string $stck Stock del material
       * @return array Respuesta del Servidor
