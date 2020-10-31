@@ -117,7 +117,7 @@ class MethodsSoap
                'unxpaq'              => 'max:3',
                'peso'              => 'required|max:6',
                'jprod'              => 'required|max:20',
-               'cod'              => 'required|max:1',
+               'cod'              => 'required|max:1|numeric|in:0,1',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }

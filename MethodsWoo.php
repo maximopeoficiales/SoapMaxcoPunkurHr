@@ -110,7 +110,7 @@ class MethodsWoo
                               "message" => "EL SKU: $sku ya existe",
                          ];
                     }
-               } else {
+               } else if ($material["cod"] == 1) {
                     /* actualizacion */
                     try {
                          $id_cliente = $this->mfGetIdMaterialWithSku($sku, $id_soc);
@@ -128,6 +128,12 @@ class MethodsWoo
                               "message" => "El material con el sku: $sku no existe",
                          ];
                     }
+               } else {
+                    $cod = $material["cod"];
+                    return [
+                         "value" => 0,
+                         "message" => "El cod : $cod enviado no es valido",
+                    ];
                }
           } else {
                return [
