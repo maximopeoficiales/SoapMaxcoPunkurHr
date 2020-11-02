@@ -182,8 +182,8 @@ class MethodsWoo
           $mntdisp = $credito["mntdisp"];
           if (intval($id_soc) == 1 || intval($id_soc) == 0) {
                try {
-                    // $field_data = ["mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
-                    $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
+                    $field_data = ["id_cli" => $id_client, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
+                    // $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
                     $this->mfUpdateFieldsCredito($id_soc, $id_client, $field_data, $mntdisp) ? true : new Error();
                     return [
                          "value" => 2,
@@ -209,7 +209,8 @@ class MethodsWoo
      {
           try {
                $data = $this->mfGetDataPFCredito($id_soc, $fields_data);
-               $wpdb = $this->getWPDB(999);
+               // $wpdb = $this->getWPDB(999);
+               $wpdb = $this->getWPDB($id_soc);
                //     UPDATE wp_prflxtrflds_user_field_data SET user_value = "1111111" WHERE user_id = 8 AND field_id=2;
                /* update profile fields */
                for ($i = 0; $i < count($data); $i++) {
@@ -235,7 +236,8 @@ class MethodsWoo
      private function mfGetDataPFCredito($id_soc, $fields_data)
      {
           $fields_filtered = [];
-          $wpdb = $this->getWPDB(999);
+          // $wpdb = $this->getWPDB(999);
+          $wpdb = $this->getWPDB($id_soc);
           $results = $wpdb->get_results("select field_id,field_name from wp_prflxtrflds_fields_id");
           foreach ($results as $value) {
                foreach ($fields_data as $key => $valueUpdated) {
