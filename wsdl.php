@@ -108,6 +108,45 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     </s:sequence>
                </s:complexType>
                <!-- fin de POST_ACT_STOCK -->
+               <!-- POST_ACT_CRED -->
+               <s:element name="POST_ACT_CRED">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:POST_ACT_CREDRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_CREDRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cd_cli" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_cli" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="mntcred" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="mntutil" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="mntdisp" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="fvenc" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <s:element name="POST_ACT_CREDResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_CREDResult" type="tns:POST_ACT_CREDResponse" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_CREDResponse">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="Body" type="tns:POST_ACT_CREDResponseBody" />
+                    </s:sequence>
+               </s:complexType>
+               <s:complexType name="POST_ACT_CREDResponseBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_CREDResult" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- FIN POST_ACT_CRED -->
 
           </s:schema>
      </wsdl:types>
@@ -128,6 +167,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:message>
      <!-- fin POST_ACT_STOCK -->
 
+     <!-- POST_ACT_CRED -->
+     <wsdl:message name="POST_ACT_CREDSoapIn">
+          <wsdl:part name="parameters" element="tns:POST_ACT_CRED" />
+     </wsdl:message>
+     <wsdl:message name="POST_ACT_CREDSoapOut">
+          <wsdl:part name="parameters" element="tns:POST_ACT_CREDResponse" />
+     </wsdl:message>
+     <!-- fin POST_ACT_CRED -->
+
      <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
           <wsdl:operation name="POST_ACT_MAT">
@@ -143,6 +191,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin POST_ACT_STOCK -->
+     <!-- POST_ACT_CRED -->
+     <wsdl:portType name="POST_ACT_CREDSoap">
+          <wsdl:operation name="POST_ACT_CRED">
+               <wsdl:input message="tns:POST_ACT_CREDSoapIn" />
+               <wsdl:output message="tns:POST_ACT_CREDSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin POST_ACT_CRED -->
 
      <!-- fin de registro -->
 
@@ -174,6 +230,20 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:binding>
      <!-- fin POST_ACT_STOCK -->
+     <!-- POST_ACT_CRED -->
+     <wsdl:binding name="POST_ACT_CREDSoap" type="tns:POST_ACT_CREDSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="POST_ACT_CRED">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin POST_ACT_CRED -->
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
@@ -190,5 +260,13 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:service>
 
      <!-- fin POST_ACT_STOCK -->
+     <!-- POST_ACT_CRED -->
+     <wsdl:service name="POST_ACT_CRED">
+          <wsdl:port name="POST_ACT_CREDSoap" binding="tns:POST_ACT_CREDSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+
+     <!-- fin POST_ACT_CRED -->
      <!-- fin de servicios -->
 </wsdl:definitions>

@@ -6,6 +6,7 @@ class WebServices
      {
           return  new MethodsSoap();
      }
+     /* Materiales */
      /**
       * Crea Y Actualiza Material 
       *
@@ -82,4 +83,42 @@ class WebServices
           ];
           return $m->updateStockMaterial($data);
      }
+     /* fin de Materiales */
+
+     /* Creditos  */
+     /**
+      * Actualiza Creditos de un Cliente Especifico
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $cd_cli Correlativo Cliente
+      * @param string $id_cli Codigo del Cliente
+      * @param string $mnt_cred Monto Credito
+      * @param string $mntutil Monto Utilizado
+      * @param string $mntdisp Monto Disponible
+      * @param string $fvenc Fecha Vencimiento Ejem: 2020-12-30
+      * @return array Respuesta del Servidor
+      */
+     public function POST_ACT_CRED($request)
+     {
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "credito" => [
+                    "id_soc" => $request->id_soc,
+                    "cd_cli" => $request->cd_cli,
+                    "id_cli" => $request->id_cli,
+                    "mntcred" => $request->mntcred,
+                    "mntutil" => $request->mntutil,
+                    "mntdisp" => $request->mntdisp,
+                    "fvenc" => $request->fvenc,
+               ],
+          ];
+          return $m->updateCreditos($data);
+     }
+     /* Fin de Creditos */
 }

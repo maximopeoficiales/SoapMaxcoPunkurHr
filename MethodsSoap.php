@@ -37,8 +37,22 @@ class MethodsSoap
                }
           }, ["security" => "required", "material" => "required"]);
      }
-
-
+     public function updateCreditos($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $credito = $data["credito"];
+               $validateCredito = $this->mfValidateUpdateCredito($credito);
+               if ($validateCredito["validate"]) {
+                    $updated = $this->m()->UpdateCreditoWoo($credito);
+                    // $updated["data"] = $data;
+                    return $this->mfSendResponse($updated["value"], $updated["message"], 200, $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateCredito["message"], 400);
+               }
+          }, ["security" => "required", "credito" => "required"]);
+     }
+     /* retornadores de respuestas */
      private function mfIsAuthorized($user, $password)
      {
           if (true) {
@@ -103,6 +117,19 @@ class MethodsSoap
      }
 
      /* validations */
+     private function mfValidateUpdateCredito($credito)
+     {
+          $validations = [
+               'id_soc'                  => 'required|max:1|numeric|in:0,1',
+               'cd_cli'                  => 'required|max:10',
+               'id_cli'                  => 'required|digits_between:1,10|numeric',
+               'mntcred'              => 'required|digits_between:1,10|numeric',
+               'mntutil'              => 'required|digits_between:1,10|numeric',
+               'mntdisp'              => 'required|digits_between:1,10|numeric',
+               'fvenc'              => 'required|max:10|date:Y-m-d',
+          ];
+          return $this->mfUtilityValidator($credito, $validations);
+     }
      private function mfValidateMaterialFields($material)
      {
           $validations = [

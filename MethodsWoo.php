@@ -7,12 +7,15 @@ class MethodsWoo
      private function getWPDB($id_soc)
      {
 
-          if (intval($id_soc) == 1) {
+          if (intval($id_soc) === 1) {
                /* maxco */
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
-          } else {
+          } else if (intval($id_soc) === 0) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
+          } else if (intval($id_soc) == 999) {
+               /* mi localhost */
+               return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           }
      }
      private function getWoocommerce($id_soc)
@@ -20,6 +23,7 @@ class MethodsWoo
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
      }
+     /* Materiales */
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
@@ -142,6 +146,7 @@ class MethodsWoo
                ];
           }
      }
+
      private function mfGetIdMaterialWithSku($sku, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
@@ -157,16 +162,91 @@ class MethodsWoo
      }
      private function mfUpdateMetadataMaterial($id, $data, $id_soc)
      {
+          $wpdb = $this->getWPDB($id_soc);
           for ($i = 0; $i < count($data); $i++) {
                $dato = $data[$i];
-               $wpdb = $this->getWPDB($id_soc);
-               $table = 'wp_postmeta';
-               $sql = "UPDATE $table SET  meta_value = %s where post_id=$id AND meta_key=%s";
+               $sql = "UPDATE wp_postmeta SET  meta_value = %s where post_id=$id AND meta_key=%s";
                $result = $wpdb->query($wpdb->prepare($sql, $dato["value"], $dato["key"]));
                $wpdb->flush();
                if (!$result) new Error("Error en la actualizacion de  datos");
           }
      }
+     /* fin de materiales */
+
+     /* Creditos */
+     public function UpdateCreditoWoo($credito)
+     {
+          $id_soc = $credito["id_soc"];
+          $cd_cli = $credito["cd_cli"];
+          $id_client = $credito["id_cli"];
+          $mntdisp = $credito["mntdisp"];
+          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
+               try {
+                    // $field_data = ["mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
+                    $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
+                    $this->mfUpdateFieldsCredito($id_soc, $id_client, $field_data, $mntdisp) ? true : new Error();
+                    return [
+                         "value" => 2,
+                         "message" => "Credito con el id_cli: $id_client actualizado",
+                         "data" => ["Monto Disponible" => $mntdisp]
+                         // "data" => 
+                    ];
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "El Credito  con el id_cli: $id_client no existe",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
+
+     private function mfUpdateFieldsCredito($id_soc, $id_client, $fields_data, $mntdisp)
+     {
+          try {
+               $data = $this->mfGetDataPFCredito($id_soc, $fields_data);
+               $wpdb = $this->getWPDB(999);
+               //     UPDATE wp_prflxtrflds_user_field_data SET user_value = "1111111" WHERE user_id = 8 AND field_id=2;
+               /* update profile fields */
+               for ($i = 0; $i < count($data); $i++) {
+                    $dato = $data[$i];
+                    $id = $dato["id"];
+                    $update = $dato["update"];
+                    $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id = $id_client AND field_id=$id";
+                    $result = $wpdb->query($wpdb->prepare($sql, $update));
+                    $wpdb->flush();
+                    if (!$result) new Error("Error en la actualizacion de  datos");
+               }
+               /* update wallet balancec */
+               //UPDATE wp_fswcwallet SET balance = "80" WHERE user_id = 3
+               $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $id_client";
+               $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
+               $wpdb->flush();
+               if (!$resultw) new Error("Error en la actualizacion de  datos");
+               return true;
+          } catch (\Throwable $th) {
+               return false;
+          }
+     }
+     private function mfGetDataPFCredito($id_soc, $fields_data)
+     {
+          $fields_filtered = [];
+          $wpdb = $this->getWPDB(999);
+          $results = $wpdb->get_results("select field_id,field_name from wp_prflxtrflds_fields_id");
+          foreach ($results as $value) {
+               foreach ($fields_data as $key => $valueUpdated) {
+                    if ($value->field_name == strval($key)) {
+                         array_push($fields_filtered, ["id" => $value->field_id, "field_name" => $value->field_name, "update" => $valueUpdated]);
+                    }
+               }
+          }
+          return $fields_filtered;
+     }
+     /* fin de creditos */
      private function mfAddNewFieldsMetadata($dataCurrent, $fields)
      {
           $metadata = [];
