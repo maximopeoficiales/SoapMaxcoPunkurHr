@@ -15,7 +15,6 @@ class WebServices
       * @param string $pass Contraseña
       * @param string $id_soc Id de sociedad
       * @param string $id_mat SKU de material
-      * @param string $cent Codigo de Centro
       * @param string $nomb Nombre del material
       * @param string $paq Paquetizado
       * @param string $undpaq Unidad del Paquete
@@ -60,7 +59,6 @@ class WebServices
       * @param string $pass Contraseña
       * @param string $id_soc Id de sociedad
       * @param string $id_mat SKU de material
-      * @param string $cent Centro del material
       * @param string $und Unidad del material
       * @param string $stck Stock del material
       * @return array Respuesta del Servidor
