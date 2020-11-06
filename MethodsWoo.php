@@ -4,16 +4,19 @@ define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
 class MethodsWoo
 {
+     /* constantes */
+     private $PRECOR = "PR01";
+     private $MAXCO = "EM01";
      private function getWPDB($id_soc)
      {
 
-          if (intval($id_soc) === 1) {
+          if (($id_soc) === $this->MAXCO) {
                /* maxco */
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
-          } else if (intval($id_soc) === 0) {
+          } else if (($id_soc) === $this->PRECOR) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
-          } else if (intval($id_soc) == 999) {
+          } else if (($id_soc) == 999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           }
@@ -27,7 +30,7 @@ class MethodsWoo
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
-          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
+          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                $sku = $material["id_mat"];
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
@@ -38,7 +41,7 @@ class MethodsWoo
                     $dataUpdated["manage_stock"] = true;
                }
                $metadata = [];
-               $newfields = ["id_soc", "cent", "jprod", "undpaq", "und"];
+               $newfields = ["id_soc", "jprod", "undpaq", "und"];
                foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                     array_push($metadata, $value);
                }
@@ -49,8 +52,7 @@ class MethodsWoo
                     return [
                          "value" => 2,
                          "message" => "Material con sku: $sku actualizado",
-                         "data" => ["stock" => $response->stock_quantity]
-                         // "data" => $response
+                         "data" => "El stock restante es: " .  $response->stock_quantity,
                     ];
                } catch (\Throwable $th) {
                     return [
@@ -90,12 +92,12 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           $woo = $this->getWoocommerce($id_soc);
-          $newfields = ["id_soc", "cent", "paq", "undpaq", "paqxun", "unxpaq", "jprod"];
+          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
 
-          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
+          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
@@ -103,8 +105,7 @@ class MethodsWoo
                          if ($response->id !== null) {
                               return [
                                    "value" => 1,
-                                   // "data" => $response,
-                                   "data" => ["id_mat" => $response->sku, "permalink" => $response->permalink],
+                                   "data" => "id_mat: " .  $response->sku, " permalink: " . $response->permalink,
                                    "message" => "Registro de Material Exitoso",
                               ];
                          }
@@ -123,8 +124,6 @@ class MethodsWoo
                          return [
                               "value" => 2,
                               "message" => "Material con sku: $sku actualizado",
-                              "data" => ""
-                              // "data" => $response
                          ];
                     } catch (\Throwable $th) {
                          return [
@@ -180,7 +179,7 @@ class MethodsWoo
           $cd_cli = $credito["cd_cli"];
           $id_client = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
-          if (intval($id_soc) == 1 || intval($id_soc) == 0) {
+          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                try {
                     $field_data = ["id_cli" => $id_client, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
                     // $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
@@ -188,8 +187,7 @@ class MethodsWoo
                     return [
                          "value" => 2,
                          "message" => "Credito con el id_cli: $id_client actualizado",
-                         "data" => ["Monto Disponible" => $mntdisp]
-                         // "data" => 
+                         "data" => "Monto Disponible: " . $mntdisp
                     ];
                } catch (\Throwable $th) {
                     return [

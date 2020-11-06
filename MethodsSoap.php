@@ -3,11 +3,17 @@
 use Rakit\Validation\Validator;
 
 require "./MethodsWoo.php";
+require "./ResponseObject.php";
+
 class MethodsSoap
 {
      private function m()
      {
           return new MethodsWoo();
+     }
+     private function mfSendResponse($response, $message, $status = 200, $data = null)
+     {
+          return new ResponseObject($response, $message, $status, $data);
      }
      public function createMaterial($data)
      {
@@ -65,15 +71,8 @@ class MethodsSoap
      {
           return $this->mfSendResponse(0, "Error en la autenticacion", 400);
      }
-     private function mfSendResponse($response, $message, $status = 200, $data = null)
-     {
-          return array(
-               'RESPONSE' => $response,
-               'DETAILS' => $message,
-               'STATUS' => $status,
-               'DATA' => $data,
-          );
-     }
+
+
      /* functions validations */
      private function mfValidationGeneralAuth($data, $function, $validations = [])
      {
@@ -120,7 +119,7 @@ class MethodsSoap
      private function mfValidateUpdateCredito($credito)
      {
           $validations = [
-               'id_soc'                  => 'required|max:1|numeric|in:0,1',
+               'id_soc'                  => 'required|max:4',
                'cd_cli'                  => 'required|max:10',
                'id_cli'                  => 'required|digits_between:1,10|numeric',
                'mntcred'              => 'required|digits_between:1,10|numeric',
@@ -133,15 +132,14 @@ class MethodsSoap
      private function mfValidateMaterialFields($material)
      {
           $validations = [
-               'id_soc'                  => 'required|max:1|numeric|in:0,1',
-               'id_mat'                  => 'required|max:12',
-               'cent'                  => 'required|max:4',
+               'id_soc'                  => 'required|max:4',
+               'id_mat'                  => 'required|digits_between:1,12|numeric',
                'nomb'              => 'required|max:40',
                'paq'              => 'max:1',
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
-               'paqxun'              => 'max:1',
-               'unxpaq'              => 'max:3',
+               'paqxun'              => 'digits_between:1,3|numeric',
+               'unxpaq'              => 'max:1|numeric',
                'peso'              => 'required|max:6',
                'jprod'              => 'required|max:20',
                'cod'              => 'required|max:1|numeric|in:0,1',
@@ -151,9 +149,8 @@ class MethodsSoap
      private function mfValidateMaterialUpdateStock($material)
      {
           $validations = [
-               'id_soc'                  =>  'required|max:1|numeric|in:0,1',
-               'id_mat'                  => 'required|max:12',
-               'cent'                  => 'required|max:4',
+               'id_soc'                  =>  'required|max:4',
+               'id_mat'                  => 'required|digits_between:1,12|numeric',
                'und'              => 'required|max:3',
                'undpaq'              => 'required|max:3',
                'stck'              => 'required|max:5',
@@ -167,7 +164,11 @@ class MethodsSoap
           $validation->validate();
           if ($validation->fails()) {
                $errors = $validation->errors();
-               return ["validate" => false, "message" => $errors->firstOfAll()];
+               $text = "";
+               foreach ($errors->firstOfAll() as $value) {
+                    $text .= strval($value) . ". \n";
+               }
+               return ["validate" => false, "message" => $text];
           } else {
                return ["validate" => true];
           }

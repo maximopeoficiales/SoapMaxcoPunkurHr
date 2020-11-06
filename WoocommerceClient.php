@@ -5,10 +5,11 @@ use Automattic\WooCommerce\Client;
 
 class WoocommerceClient
 {
-
+     private $PRECOR = "PR01";
+     private $MAXCO = "EM01";
      public function getWoocommerce($id_soc)
      {
-          if (intval($id_soc) == 1) {
+          if ($id_soc == $this->MAXCO) {
                /* maxco */
                return new Client(
                     "https://maxco.punkuhr.com/",
@@ -18,7 +19,7 @@ class WoocommerceClient
                          'version' => 'wc/v3',
                     ]
                );
-          } else {
+          } else if ($id_soc == $this->PRECOR) {
                /* precor */
                return new Client(
                     "https://precor.punkuhr.com/",

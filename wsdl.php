@@ -38,12 +38,11 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
-                         <s:element minOccurs="0" maxOccurs="1" name="cent" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="nomb" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="paq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="undpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
-                         <s:element minOccurs="0" maxOccurs="1" name="paqxund" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="paqxun" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="unxpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="jprod" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="peso" type="s:string" />
@@ -55,20 +54,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
                <s:element name="POST_ACT_MATResponse">
                     <s:complexType>
                          <s:sequence>
-                              <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_MATResult" type="tns:POST_ACT_MATResponse" />
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
                          </s:sequence>
                     </s:complexType>
                </s:element>
-               <s:complexType name="POST_ACT_MATResponse">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="Body" type="tns:POST_ACT_MATResponseBody" />
-                    </s:sequence>
-               </s:complexType>
-               <s:complexType name="POST_ACT_MATResponseBody">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_MATResult" type="s:string" />
-                    </s:sequence>
-               </s:complexType>
+
                <!-- fin de estructura de respuesta -->
                <!-- POST_ACT_STOCK -->
                <s:element name="POST_ACT_STOCK">
@@ -84,7 +77,6 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
-                         <s:element minOccurs="0" maxOccurs="1" name="cent" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="undpaq" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="und" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="stck" type="s:string" />
@@ -93,20 +85,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
                <s:element name="POST_ACT_STOCKResponse">
                     <s:complexType>
                          <s:sequence>
-                              <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_STOCKResult" type="tns:POST_ACT_STOCKResponse" />
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
                          </s:sequence>
                     </s:complexType>
                </s:element>
-               <s:complexType name="POST_ACT_STOCKResponse">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="Body" type="tns:POST_ACT_STOCKResponseBody" />
-                    </s:sequence>
-               </s:complexType>
-               <s:complexType name="POST_ACT_STOCKResponseBody">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_STOCKResult" type="s:string" />
-                    </s:sequence>
-               </s:complexType>
+
                <!-- fin de POST_ACT_STOCK -->
                <!-- POST_ACT_CRED -->
                <s:element name="POST_ACT_CRED">
@@ -132,20 +118,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
                <s:element name="POST_ACT_CREDResponse">
                     <s:complexType>
                          <s:sequence>
-                              <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_CREDResult" type="tns:POST_ACT_CREDResponse" />
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
                          </s:sequence>
                     </s:complexType>
                </s:element>
-               <s:complexType name="POST_ACT_CREDResponse">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="Body" type="tns:POST_ACT_CREDResponseBody" />
-                    </s:sequence>
-               </s:complexType>
-               <s:complexType name="POST_ACT_CREDResponseBody">
-                    <s:sequence>
-                         <s:element minOccurs="0" maxOccurs="1" name="POST_ACT_CREDResult" type="s:string" />
-                    </s:sequence>
-               </s:complexType>
+
                <!-- FIN POST_ACT_CRED -->
 
           </s:schema>
@@ -212,7 +192,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     <soap:body use="literal" />
                </wsdl:input>
                <wsdl:output>
-                    <soap:body use="literal" />
+                    <soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
                </wsdl:output>
           </wsdl:operation>
      </wsdl:binding>

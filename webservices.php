@@ -1,5 +1,6 @@
 <?php
 require "./MethodsSoap.php";
+
 class WebServices
 {
      private function getMethods()
@@ -28,6 +29,7 @@ class WebServices
       */
      public function POST_ACT_MAT($request)
      {
+          $request = $request->request;
           $m = $this->getMethods();
           $data = [
                "security" => [
@@ -37,7 +39,6 @@ class WebServices
                "material" => [
                     "id_soc" => $request->id_soc,
                     "id_mat" => $request->id_mat,
-                    "cent" => $request->cent,
                     "nomb" => $request->nomb,
                     "paq" => $request->paq,
                     "undpaq" => $request->undpaq,
@@ -50,7 +51,7 @@ class WebServices
                ],
           ];
           return $m->createMaterial($data);
-          // return $data;
+          // return $request;
      }
      /**
       * Actualiza Stock y campos extras
@@ -66,6 +67,7 @@ class WebServices
       */
      public function POST_ACT_STOCK($request)
      {
+          $request = $request->request;
           $m = $this->getMethods();
           $data = [
                "security" => [
@@ -75,7 +77,6 @@ class WebServices
                "material" => [
                     "id_soc" => $request->id_soc,
                     "id_mat" => $request->id_mat,
-                    "cent" => $request->cent,
                     "undpaq" => $request->undpaq,
                     "und" => $request->und,
                     "stck" => $request->stck,
@@ -102,6 +103,7 @@ class WebServices
       */
      public function POST_ACT_CRED($request)
      {
+          $request = $request->request;
           $m = $this->getMethods();
           $data = [
                "security" => [
