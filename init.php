@@ -2,7 +2,7 @@
 
 error_reporting(0);
 
-require_once(__DIR__ . '/WebServices.php');
+require_once(__DIR__ . '/webservices.php');
 function url_completa($forwarded_host = false)
 {
      $ssl   = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on';
