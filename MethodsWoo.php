@@ -171,7 +171,25 @@ class MethodsWoo
           }
      }
      /* fin de materiales */
-
+     /*  Clientes */
+     public function UpdateClientWoo($cliente)
+     {
+          $id_soc = $cliente["id_soc"];
+          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+                         
+               
+               return [
+                    "value" => 1,
+                    "message" => "Todo Correcto",
+               ];
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
+     /*  Fin Clientes */
      /* Creditos */
      public function UpdateCreditoWoo($credito)
      {

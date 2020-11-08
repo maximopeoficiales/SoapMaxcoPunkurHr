@@ -29,6 +29,15 @@ class WoocommerceClient
                          'version' => 'wc/v3',
                     ]
                );
+          } else if ($id_soc == 999) {
+               return new Client(
+                    "http://maxco.punkuhr.test/",
+                    "ck_0157c4f5fbc72b4a71161b929dea276a81006fd9",
+                    "cs_b575ce513cbaf2478ca0d06c2d0dd64699ec642d",
+                    [
+                         'version' => 'wc/v3',
+                    ]
+               );
           }
      }
 }

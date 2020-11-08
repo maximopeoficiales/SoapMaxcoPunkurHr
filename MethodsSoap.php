@@ -11,9 +11,9 @@ class MethodsSoap
      {
           return new MethodsWoo();
      }
-     private function mfSendResponse($response, $message, $status = 200, $data = null)
+     private function mfSendResponse($response, $message, $data = null)
      {
-          return new ResponseObject($response, $message, $status, $data);
+          return new ResponseObject($response, $message, ($response == 0) ? 400 : 200, $data);
      }
      public function createMaterial($data)
      {
@@ -22,10 +22,10 @@ class MethodsSoap
                $validateMaterial = $this->mfValidateMaterialFields($material); //validacion de security
                if ($validateMaterial["validate"]) {
                     $created = $this->m()->CreateMaterialWoo($material);
-                    return $this->mfSendResponse($created["value"], $created["message"], 200, $created["data"]);
+                    return $this->mfSendResponse($created["value"], $created["message"], $created["data"]);
                     // return $this->mfSendResponse(1, "Todo Correcto");
                } else {
-                    return $this->mfSendResponse(0, $validateMaterial["message"], 400);
+                    return $this->mfSendResponse(0, $validateMaterial["message"]);
                }
           }, ["security" => "required", "material" => "required"]);
      }
@@ -36,14 +36,29 @@ class MethodsSoap
                $validateMaterial = $this->mfValidateMaterialUpdateStock($material);
                if ($validateMaterial["validate"]) {
                     $updated = $this->m()->UpdateMaterialStockWoo($material);
-                    return $this->mfSendResponse($updated["value"], $updated["message"], 200, $updated["data"]);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
                     // return $this->mfSendResponse(1, "Todo Correcto");
                } else {
-                    return $this->mfSendResponse(0, $validateMaterial["message"], 400);
+                    return $this->mfSendResponse(0, $validateMaterial["message"]);
                }
           }, ["security" => "required", "material" => "required"]);
      }
-     public function updateCreditos($data)
+     public function createClients($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $cliente = $data["cliente"];
+               $validateClient = $this->mfValidateClientsFields($cliente);
+               if ($validateClient["validate"]) {
+                    $updated = $this->m()->UpdateClientWoo($cliente);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateClient["message"]);
+               }
+          }, ["security" => "required", "cliente" => "required"]);
+     }
+
+     public function updateCredits($data)
      {
           return  $this->mfValidationGeneralAuth($data, function ($data) {
                $credito = $data["credito"];
@@ -51,10 +66,10 @@ class MethodsSoap
                if ($validateCredito["validate"]) {
                     $updated = $this->m()->UpdateCreditoWoo($credito);
                     // $updated["data"] = $data;
-                    return $this->mfSendResponse($updated["value"], $updated["message"], 200, $updated["data"]);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
                     // return $this->mfSendResponse(1, "Todo Correcto");
                } else {
-                    return $this->mfSendResponse(0, $validateCredito["message"], 400);
+                    return $this->mfSendResponse(0, $validateCredito["message"]);
                }
           }, ["security" => "required", "credito" => "required"]);
      }
@@ -69,7 +84,7 @@ class MethodsSoap
      }
      private function mfNotAuthorized()
      {
-          return $this->mfSendResponse(0, "Error en la autenticacion", 400);
+          return $this->mfSendResponse(0, "Error en la autenticacion");
      }
 
 
@@ -87,10 +102,10 @@ class MethodsSoap
                          return $this->mfNotAuthorized();
                     }
                } else {
-                    return $this->mfSendResponse(0, $validateSecurity["message"], 400, null);
+                    return $this->mfSendResponse(0, $validateSecurity["message"], null);
                }
           } else {
-               return $this->mfSendResponse(0, $validateBody["message"],  400, null);
+               return $this->mfSendResponse(0, $validateBody["message"], null);
           }
      }
 
@@ -156,6 +171,28 @@ class MethodsSoap
                'stck'              => 'required|numeric',
           ];
           return $this->mfUtilityValidator($material, $validations);
+     }
+
+     private function mfValidateClientsFields($client)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'id_cli'                  => 'required|numeric|digits_between:1,10',
+               'categ'                  => 'max:10',
+               'nomb'                  => 'required|max:40',
+               'nrdoc'                  => 'required|max:11',
+               'telf'                  => 'max:9',
+               'email'                  => 'max:30',
+               'drcfisc'                  => 'max:70',
+               'id_eje'                  => 'numeric|digits_between:1,10',
+               'nombeje'                  => 'max:40',
+               'telf_eje'                  => 'max:9',
+               'email_eje'                  => 'max:30',
+               'id_dest'              => 'numeric|digits_between:1,10',
+               'drcdest'              => 'required|max:70',
+               'cod'              => 'required|max:1|numeric|in:0,1',
+          ];
+          return $this->mfUtilityValidator($client, $validations);
      }
      private function mfUtilityValidator($params, $validations)
      {

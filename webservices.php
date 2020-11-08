@@ -83,6 +83,61 @@ class WebServices
           return $m->updateStockMaterial($data);
      }
      /* fin de Materiales */
+     /* Clientes */
+
+     /**
+      * Crea Y Actualiza CLientes 
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param int $id_cli Codigo de Cliente
+      * @param string $categ Codigo de Categoria
+      * @param string $nomb Nombre del material
+      * @param string $nrdoc Nro Doc Cliente
+      * @param string $telf Telefono Cliente
+      * @param string $email Email Cliente
+      * @param string $drcfisc Direccion Fiscal
+      * @param int $id_eje Codigo Ejecutivo Vendedor
+      * @param string $nombreje Nombre de Ejecutivo
+      * @param string $telf_eje Telefono de Ejecutivo
+      * @param string $email_eje Email de Ejecutivo
+      * @param string $email_eje Email de Ejecutivo
+      * @param string $id_dest Codigo de Destinatario
+      * @param string $drcdest Direccion de Destino
+      * @param string $cod Codigo de Actualizacion
+      * @return array Respuesta del Servidor
+      */
+     public function POST_ACT_CLI($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "cliente" => [
+                    "id_soc" => $request->id_soc,
+                    "id_cli" => $request->id_cli,
+                    "categ" => $request->categ,
+                    "nomb" => $request->nomb,
+                    "nrdoc" => $request->nrdoc,
+                    "telf" => $request->telf,
+                    "email" => $request->email,
+                    "drcfisc" => $request->drcfisc,
+                    "id_eje" => $request->id_eje,
+                    "nombeje" => $request->nombeje,
+                    "telf_eje" => $request->telf_eje,
+                    "email_eje" => $request->email_eje,
+                    "id_dest" => $request->id_dest,
+                    "drcdest" => $request->drcdest,
+                    "cod" => $request->cod,
+               ],
+          ];
+          return $m->createClients($data);
+     }
+     /* Fin de Clientes */
 
      /* Creditos  */
      /**
@@ -92,7 +147,7 @@ class WebServices
       * @param string $pass Contraseña
       * @param string $id_soc Id de sociedad
       * @param string $cd_cli Correlativo Cliente
-      * @param string $id_cli Codigo del Cliente
+      * @param int $id_cli Codigo del Cliente
       * @param string $mnt_cred Monto Credito
       * @param string $mntutil Monto Utilizado
       * @param string $mntdisp Monto Disponible
@@ -118,7 +173,7 @@ class WebServices
                     "fvenc" => $request->fvenc,
                ],
           ];
-          return $m->updateCreditos($data);
+          return $m->updateCredits($data);
      }
      /* Fin de Creditos */
 }
