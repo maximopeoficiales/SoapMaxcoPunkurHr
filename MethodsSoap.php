@@ -133,14 +133,14 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  => 'required|max:4',
-               'id_mat'                  => 'required|digits_between:1,12|numeric',
+               'id_mat'                  => 'required|max:12',
                'nomb'              => 'required|max:40',
                'paq'              => 'max:1',
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
                'paqxun'              => 'digits_between:1,3|numeric',
                'unxpaq'              => 'numeric',
-               'peso'              => 'required|max:6',
+               'peso'              => 'required|max:7',
                'jprod'              => 'required|max:20',
                'cod'              => 'required|max:1|numeric|in:0,1',
           ];
@@ -150,10 +150,10 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  =>  'required|max:4',
-               'id_mat'                  => 'required|digits_between:1,12|numeric',
+               'id_mat'                  => 'required|max:12',
                'und'              => 'required|max:3',
                'undpaq'              => 'required|max:3',
-               'stck'              => 'required|max:5',
+               'stck'              => 'required|numeric',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }
