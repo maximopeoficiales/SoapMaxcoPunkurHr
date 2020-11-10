@@ -167,7 +167,7 @@ class MethodsSoap
                'id_soc'                  =>  'required|max:4',
                'id_mat'                  => 'required|max:12',
                'und'              => 'required|max:3',
-               'undpaq'              => 'required|max:3',
+               'undpaq'              => 'max:3',
                'stck'              => 'required|numeric',
           ];
           return $this->mfUtilityValidator($material, $validations);
@@ -182,7 +182,7 @@ class MethodsSoap
                'nomb'                  => 'required|max:40',
                'nrdoc'                  => 'required|max:11',
                'telf'                  => 'max:9',
-               'email'                  => 'max:30',
+               'email'                  => 'max:30|email',
                'drcfisc'                  => 'max:70',
                'id_eje'                  => 'numeric|digits_between:1,10',
                'nombeje'                  => 'max:40',

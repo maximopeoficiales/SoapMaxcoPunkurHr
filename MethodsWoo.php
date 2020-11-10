@@ -2,6 +2,8 @@
 require "./WoocommerceClient.php";
 define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
+date_default_timezone_set('America/Lima');
+
 class MethodsWoo
 {
      /* constantes */
@@ -45,9 +47,10 @@ class MethodsWoo
                foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                     array_push($metadata, $value);
                }
+               $metadata["undpaq"] = null ? "" : $metadata["undpaq"];
                try {
-                    $id_cliente = $this->mfGetIdMaterialWithSku($sku, $id_soc);
-                    $this->mfUpdateMetadataMaterial($id_cliente, $metadata, $id_soc);
+                    $user_ide = $this->mfGetIdMaterialWithSku($sku, $id_soc);
+                    $this->mfUpdateMetadataMaterial($user_ide, $metadata, $id_soc);
                     $response = $this->mfUpdateMaterialWithSku($sku, $dataUpdated, $id_soc);
                     return [
                          "value" => 2,
@@ -71,6 +74,7 @@ class MethodsWoo
      {
 
           $weight = number_format($material["peso"], 3, ".", "");
+          $material["peso"] = $weight;
           $sku = $material["id_mat"];
           $dataSend = [
                'name' => $material["nomb"],
@@ -92,6 +96,7 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           $woo = $this->getWoocommerce($id_soc);
+          // $dataSend["meta_data"]["peso"] = $weight;
           $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
@@ -118,8 +123,8 @@ class MethodsWoo
                } else if ($material["cod"] == 1) {
                     /* actualizacion */
                     try {
-                         $id_cliente = $this->mfGetIdMaterialWithSku($sku, $id_soc);
-                         $this->mfUpdateMetadataMaterial($id_cliente, $dataSend["meta_data"], $id_soc);
+                         $user_ide = $this->mfGetIdMaterialWithSku($sku, $id_soc);
+                         $this->mfUpdateMetadataMaterial($user_ide, $dataSend["meta_data"], $id_soc);
                          $response = $this->mfUpdateMaterialWithSku($sku, $dataSend, $id_soc);
                          return [
                               "value" => 2,
@@ -175,13 +180,69 @@ class MethodsWoo
      public function UpdateClientWoo($cliente)
      {
           $id_soc = $cliente["id_soc"];
+          $id_cli = $cliente["id_cli"];
+          $cod = $cliente["cod"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
-                         
-               
-               return [
-                    "value" => 1,
-                    "message" => "Todo Correcto",
+               $dataSend = [
+                    'email' => $cliente["email"],
+                    'first_name' => $cliente["nomb"],
+                    'billing' => [
+                         'email' => $cliente["email"],
+                         'phone' => $cliente["telf"],
+                         'address_1' => $cliente["drcdest"],
+                    ],
+                    "meta_data" => [],
                ];
+               /* agrego campos en el metadata */
+               $newfields = ["id_dest", "drcdest"];
+               foreach ($this->mfAddNewFieldsMetadata($cliente, $newfields) as  $value) {
+                    array_push($dataSend["meta_data"], $value);
+               }
+
+               /* creacion */
+               if ($cliente["cod"] == 0) {
+                    try {
+                         // $response = $this->getWoocommerce($id_soc)->post('products', $dataSend); //devuelve un objeto
+                         $response = $this->getWoocommerce(999)->post('customers', $dataSend); //devuelve un objeto
+                         if ($response->id !== null) {
+
+                              $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created]);
+                              $this->createPFXFieldsClient($response->id,  [], $id_soc);
+                              return [
+                                   "value" => 1,
+                                   "data" => "cd_cli: " .  $cd_cli,
+                                   "message" => "Registro de Cliente Exitoso",
+                              ];
+                         }
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "EL id_cli: $id_cli ya existe",
+                         ];
+                    }
+               } else if ($cliente["cod"] == 1) {
+                    /* actualizacion */
+                    try {
+                         $user_id = 17;
+                         $response = $this->getWoocommerce(999)->put("customers/$user_id", $dataSend); //devuelve un objeto
+                         $this->updatePFXFieldsClient($user_id,  []);
+                         $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
+                         return [
+                              "value" => 2,
+                              "message" => "Cliente con id_cli: $id_cli actualizado",
+                         ];
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "El Cliente con el id_cli: $id_cli no existe",
+                         ];
+                    }
+               } else {
+                    return [
+                         "value" => 0,
+                         "message" => "El cod : $cod enviado no es valido",
+                    ];
+               }
           } else {
                return [
                     "value" => 0,
@@ -189,28 +250,62 @@ class MethodsWoo
                ];
           }
      }
+     private function getCd_CliSap($user_id, $data = [])
+     {
+          // $wpdb = $this->getWPDB($data["id_soc"]);
+          $wpdb = $this->getWPDB(999);
+          $fecha_actual = $data["date_created"];
+          /* creacion */
+          $sql = "INSERT INTO wp_userssap (user_id , cod , date_created) VALUES ($user_id,0,%s)";
+          $wpdb->query($wpdb->prepare($sql, $fecha_actual));
+          $wpdb->flush();
+          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
+          return $results[0]->cd_cli;
+     }
+     private function updatePFXFieldsClient($user_id, $data = [])
+     {
+          $wpdb = $this->getWPDB(999);
+          $sql = "UPDATE wp_userssap SET cod = 1 WHERE user_id = $user_id";
+          $wpdb->query($wpdb->prepare($sql));
+          $wpdb->flush();
+     }
+     private function updateMetadataClients($user_id, $data, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          for ($i = 0; $i < count($data); $i++) {
+               $dato = $data[$i];
+               $sql = "UPDATE wp_usermeta SET meta_value = %s where user_id=$user_id AND meta_key=%s";
+               $result = $wpdb->query($wpdb->prepare($sql, $dato["value"], $dato["key"]));
+               $wpdb->flush();
+               if (!$result) new Error("Error en la actualizacion de  datos");
+          }
+     }
+     private function createPFXFieldsClient($user_id, $data, $id_soc)
+     {
+     }
      /*  Fin Clientes */
+
      /* Creditos */
-     public function UpdateCreditoWoo($credito)
+     public function updateCreditoWoo($credito)
      {
           $id_soc = $credito["id_soc"];
           $cd_cli = $credito["cd_cli"];
-          $id_client = $credito["id_cli"];
+          $user_id = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                try {
-                    $field_data = ["id_cli" => $id_client, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
+                    $field_data = ["id_cli" => $user_id, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
                     // $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
-                    $this->mfUpdateFieldsCredito($id_soc, $id_client, $field_data, $mntdisp) ? true : new Error();
+                    $this->mfUpdateFieldsCredito($id_soc, $user_id, $field_data, $mntdisp) ? true : new Error();
                     return [
                          "value" => 2,
-                         "message" => "Credito con el id_cli: $id_client actualizado",
+                         "message" => "Credito con el id_cli: $user_id actualizado",
                          "data" => "Monto Disponible: " . $mntdisp
                     ];
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "El Credito  con el id_cli: $id_client no existe",
+                         "message" => "El Credito  con el id_cli: $user_id no existe",
                     ];
                }
           } else {
@@ -221,7 +316,7 @@ class MethodsWoo
           }
      }
 
-     private function mfUpdateFieldsCredito($id_soc, $id_client, $fields_data, $mntdisp)
+     private function mfUpdateFieldsCredito($id_soc, $user_id, $fields_data, $mntdisp)
      {
           try {
                $data = $this->mfGetDataPFCredito($id_soc, $fields_data);
@@ -233,14 +328,14 @@ class MethodsWoo
                     $dato = $data[$i];
                     $id = $dato["id"];
                     $update = $dato["update"];
-                    $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id = $id_client AND field_id=$id";
+                    $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id = $user_id AND field_id=$id";
                     $result = $wpdb->query($wpdb->prepare($sql, $update));
                     $wpdb->flush();
                     if (!$result) new Error("Error en la actualizacion de  datos");
                }
                /* update wallet balancec */
                //UPDATE wp_fswcwallet SET balance = "80" WHERE user_id = 3
-               $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $id_client";
+               $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $user_id";
                $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
                $wpdb->flush();
                if (!$resultw) new Error("Error en la actualizacion de  datos");
