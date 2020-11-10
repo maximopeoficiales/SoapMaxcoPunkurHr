@@ -18,7 +18,7 @@ class MethodsWoo
           } else if (($id_soc) === $this->PRECOR) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
-          } else if (($id_soc) == 999) {
+          } else if (($id_soc) == $id_soc) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           }
@@ -92,7 +92,7 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           $woo = $this->getWoocommerce($id_soc);
-          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod","und"];
+          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod", "und"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
@@ -199,11 +199,11 @@ class MethodsWoo
                if ($cliente["cod"] == 0) {
                     try {
                          // $response = $this->getWoocommerce($id_soc)->post('products', $dataSend); //devuelve un objeto
-                         $response = $this->getWoocommerce(999)->post('customers', $dataSend); //devuelve un objeto
+                         $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                          if ($response->id !== null) {
 
-                              $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created]);
-                              $this->createPFXFieldsClient($response->id,  [], $id_soc);
+                              $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
+                              $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
                               return [
                                    "value" => 1,
                                    "data" => "cd_cli: " .  $cd_cli,
@@ -218,10 +218,12 @@ class MethodsWoo
                     }
                } else if ($cliente["cod"] == 1) {
                     /* actualizacion */
+                    $id_soc = 999;
+
                     try {
-                         $user_id = 17;
-                         $response = $this->getWoocommerce(999)->put("customers/$user_id", $dataSend); //devuelve un objeto
-                         $this->updatePFXFieldsClient($user_id,  []);
+                         $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+                         $response = $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+                         $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                          $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
                          return [
                               "value" => 2,
@@ -246,10 +248,10 @@ class MethodsWoo
                ];
           }
      }
-     private function getCd_CliSap($user_id, $data = [])
+     private function getCd_CliSap($user_id, $data = [], $id_soc)
      {
           // $wpdb = $this->getWPDB($data["id_soc"]);
-          $wpdb = $this->getWPDB(999);
+          $wpdb = $this->getWPDB($id_soc);
           $fecha_actual = $data["date_created"];
           /* creacion */
           $sql = "INSERT INTO wp_userssap (user_id , cod , date_created) VALUES ($user_id,0,%s)";
@@ -258,26 +260,68 @@ class MethodsWoo
           $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
           return $results[0]->cd_cli;
      }
-     private function updatePFXFieldsClient($user_id, $data = [])
+     private function updatePFXFieldsClient($user_id, $data, $id_soc)
      {
-          $wpdb = $this->getWPDB(999);
+          $wpdb = $this->getWPDB($id_soc);
           $sql = "UPDATE wp_userssap SET cod = 1 WHERE user_id = $user_id";
           $wpdb->query($wpdb->prepare($sql));
           $wpdb->flush();
+          $IdsAndDataUpdated = $this->mfGetDataPFXFields($id_soc, $data);
+          /* verificacion  e insersacion si hay datos de este cliente */
+          $dataVerify = $wpdb->get_results("SELECT * FROM wp_prflxtrflds_user_field_data WHERE user_id=$user_id");
+          $wpdb->flush();
+          if (count($dataVerify) !== 0) {
+               /* si hay datos */
+               foreach ($dataVerify as $key => $value) {
+                    foreach ($IdsAndDataUpdated as $keyf => $field) {
+                         if ($value->field_id == $field["id"]) {
+                              $id_field = $field["id"];
+                              $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id =$user_id AND field_id=$id_field";
+                              $result = $wpdb->query($wpdb->prepare($sql, $field["update"]));
+                              if (!$result) new Error("Error en la actualizacion de  datos");
+                         } else {
+                              //si no es igual a lo ya creado
+                              $id_field = $field["id"];
+                              $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                              $wpdb->query($wpdb->prepare($sql, $field["update"]));
+                         }
+                    }
+               }
+          } else {
+               //crea los campos
+               $this->createPFXFieldsClient($user_id, $data, $id_soc);
+          }
      }
      private function updateMetadataClients($user_id, $data, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          for ($i = 0; $i < count($data); $i++) {
-               $dato = $data[$i];
+          foreach ($data as $key => $value) {
                $sql = "UPDATE wp_usermeta SET meta_value = %s where user_id=$user_id AND meta_key=%s";
-               $result = $wpdb->query($wpdb->prepare($sql, $dato["value"], $dato["key"]));
+               $result = $wpdb->query($wpdb->prepare($sql, $value["value"], $value["key"]));
                $wpdb->flush();
                if (!$result) new Error("Error en la actualizacion de  datos");
           }
      }
      private function createPFXFieldsClient($user_id, $data, $id_soc)
      {
+          $IdsAndDataUpdated = $this->mfGetDataPFXFields($id_soc, $data);
+          $wpdb = $this->getWPDB($id_soc);
+
+          foreach ($IdsAndDataUpdated as $keyfield => $field) {
+               $id_field = $field["id"];
+               $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+               $wpdb->query($wpdb->prepare($sql, $field["update"]));
+          }
+     }
+
+     private function getUserIDForId_cli($id_cli, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $datafields = $this->mfGetDataPFXFields($id_soc, ["id_cli" => "1"]);
+          $id_field = $datafields[0]["id"];
+          $sql = "SELECT * FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
+          $data = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
+          return $data[0]->user_id;
      }
      /*  Fin Clientes */
 
@@ -315,8 +359,8 @@ class MethodsWoo
      private function mfUpdateFieldsCredito($id_soc, $user_id, $fields_data, $mntdisp)
      {
           try {
-               $data = $this->mfGetDataPFCredito($id_soc, $fields_data);
-               // $wpdb = $this->getWPDB(999);
+               $data = $this->mfGetDataPFXFields($id_soc, $fields_data);
+               // $wpdb = $this->getWPDB($id_soc);
                $wpdb = $this->getWPDB($id_soc);
                //     UPDATE wp_prflxtrflds_user_field_data SET user_value = "1111111" WHERE user_id = 8 AND field_id=2;
                /* update profile fields */
@@ -340,10 +384,10 @@ class MethodsWoo
                return false;
           }
      }
-     private function mfGetDataPFCredito($id_soc, $fields_data)
+     private function mfGetDataPFXFields($id_soc, $fields_data)
      {
           $fields_filtered = [];
-          // $wpdb = $this->getWPDB(999);
+          // $wpdb = $this->getWPDB($id_soc);
           $wpdb = $this->getWPDB($id_soc);
           $results = $wpdb->get_results("select field_id,field_name from wp_prflxtrflds_fields_id");
           foreach ($results as $value) {
