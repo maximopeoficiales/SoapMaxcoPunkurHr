@@ -18,7 +18,7 @@ class MethodsWoo
           } else if (($id_soc) === $this->PRECOR) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
-          } else if (($id_soc) == $id_soc) {
+          } else if (($id_soc) == 999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           }
@@ -197,6 +197,20 @@ class MethodsWoo
 
                /* creacion */
                if ($cliente["cod"] == 0) {
+                    $id_soc = 999;
+                    $email = $cliente["email"];
+                    if (!$this->verifyEmail($email, $id_soc)) {
+                         return [
+                              "value" => 0,
+                              "message" => "El email: $email ya existe",
+                         ];
+                    }
+                    if (!$this->verifyId_cli($id_cli, $id_soc)) {
+                         return [
+                              "value" => 0,
+                              "message" => "El id_cli: $id_cli ya existe",
+                         ];
+                    }
                     try {
                          // $response = $this->getWoocommerce($id_soc)->post('products', $dataSend); //devuelve un objeto
                          $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
@@ -316,12 +330,29 @@ class MethodsWoo
 
      private function getUserIDForId_cli($id_cli, $id_soc)
      {
-          $wpdb = $this->getWPDB($id_soc);
           $datafields = $this->mfGetDataPFXFields($id_soc, ["id_cli" => "1"]);
           $id_field = $datafields[0]["id"];
-          $sql = "SELECT * FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT user_id FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
           $data = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
           return $data[0]->user_id;
+     }
+
+     private function verifyEmail($email, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM wp_users WHERE user_email= %s LIMIT 1", $email));
+          return count($results) == 0 ? true : false;
+     }
+
+     private function verifyId_cli($id_cli, $id_soc)
+     {
+          $datafields = $this->mfGetDataPFXFields($id_soc, ["id_cli" => "1"]);
+          $id_field = $datafields[0]["id"];
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
+          $results = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
+          return count($results) == 0 ? true : false;
      }
      /*  Fin Clientes */
 
