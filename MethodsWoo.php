@@ -85,10 +85,6 @@ class MethodsWoo
           if ($material["und"] !== "kg") {
                $dataSend["meta_data"] = [
                     [
-                         "key" => "und",
-                         "value" => $material['und'],
-                    ],
-                    [
                          "key" => "und_value",
                          "value" =>  $weight,
                     ]
@@ -96,11 +92,11 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           $woo = $this->getWoocommerce($id_soc);
-          // $dataSend["meta_data"]["peso"] = $weight;
-          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod"];
+          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod","und"];
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
+          array_push($dataSend["meta_data"], ["key" => "peso", "value" => $weight]); //funcion con acf
 
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                /* creacion */
