@@ -185,15 +185,15 @@ class MethodsWoo
                     'billing' => [
                          'email' => $cliente["email"],
                          'phone' => $cliente["telf"],
-                         'address_1' => $cliente["drcdest"],
+                         // 'address_1' => $cliente["drcdest"],
                     ],
                     "meta_data" => [],
                ];
                /* agrego campos en el metadata */
-               $newfields = ["id_dest", "drcdest"];
-               foreach ($this->mfAddNewFieldsMetadata($cliente, $newfields) as  $value) {
-                    array_push($dataSend["meta_data"], $value);
-               }
+               // $newfields = ["id_dest", "drcdest"];
+               // foreach ($this->mfAddNewFieldsMetadata($cliente, $newfields) as  $value) {
+               //      array_push($dataSend["meta_data"], $value);
+               // }
 
                /* creacion */
                if ($cliente["cod"] == 0) {
@@ -235,7 +235,7 @@ class MethodsWoo
                     try {
                          $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                          $response = $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
-                         $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
+                         // $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
                          $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                          return [
                               "value" => 2,
