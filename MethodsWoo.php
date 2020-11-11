@@ -237,11 +237,11 @@ class MethodsWoo
                     try {
                          $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                          $response = $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
-                         $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                          $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
+                         $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                          return [
                               "value" => 2,
-                              "message" => "Cliente con id_cli: $id_cli actualizado",
+                              "message" => "Cliente con id_cli: $user_id actualizado",
                          ];
                     } catch (\Throwable $th) {
                          return [
@@ -295,13 +295,17 @@ class MethodsWoo
                               $result = $wpdb->query($wpdb->prepare($sql1, $fieldcurrent["update"]));
                               if (!$result) new Error("Error en la actualizacion de  datos");
                               $wpdb->flush();
-                         } else {
-                              //si no es igual a lo ya creado
-                              $id_field = intval($fieldcurrent["id"]);
-                              $sql2 = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
-                              $wpdb->query($wpdb->prepare($sql2, $fieldcurrent["update"]));
-                              $wpdb->flush();
                          }
+                    }
+               }
+               foreach ($IdsAndDataUpdated as $key => $fieldUpdated) {
+                    if (!$this->isCreated($fieldUpdated["id"], $dataVerify)) {
+                         // print_r(["msg" => "voy a crear datos"]);
+                         //si no esta creado lo voy crear
+                         $id_field = intval($fieldUpdated["id"]);
+                         $sql2 = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                         $wpdb->query($wpdb->prepare($sql2, $fieldUpdated["update"]));
+                         $wpdb->flush();
                     }
                }
           } else {
@@ -412,18 +416,19 @@ class MethodsWoo
                                    $result = $wpdb->query($wpdb->prepare($sql, $update));
                                    $wpdb->flush();
                                    if (!$result) new Error("Error en la actualizacion de  datos");
-                              } else {
-                                   $id_field = $value["id"];
-                                   $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
-                                   $wpdb->query($wpdb->prepare($sql, $value["update"]));
-                                   $wpdb->flush();
+                                   // } else {
+                                   //      $id_field = $value["id"];
+                                   //      $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                                   //      $wpdb->query($wpdb->prepare($sql, $value["update"]));
+                                   //      $wpdb->flush();
+                                   // }
                               }
                          }
                     }
                }
 
 
-               /* update wallet balancec */
+               /* update wallet balancec aqui es necesario crear estos campos*/
                //UPDATE wp_fswcwallet SET balance = "80" WHERE user_id = 3
                // $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $user_id";
                // $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
@@ -448,6 +453,15 @@ class MethodsWoo
                }
           }
           return $fields_filtered;
+     }
+     public function isCreated($id_field, $dataCreated = [])
+     {
+          foreach ($dataCreated as $key => $value) {
+               if ($value->field_id == intval($id_field)) {
+                    return true;
+               }
+               return false;
+          }
      }
      /* fin de creditos */
      private function mfAddNewFieldsMetadata($dataCurrent, $fields)
