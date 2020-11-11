@@ -474,7 +474,7 @@ class MethodsWoo
           $fecha_actual = date("Y-m-d h:i:s");
           if (intval($cod) == 0) {
                //crear credito
-               $sqlwallet = "INSERT INTO wp_fswcwallet VALUES($user_id,%s,%s,%s,%s)";
+               $sqlwallet = "INSERT INTO wp_fswcwallet (user_id,balance,last_deposit,total_spent,status,lock_message) VALUES($user_id,%s,%s,%s,%s,%s)";
                $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp, $fecha_actual, 0, "unlocked", "1"));
                $wpdb->flush();
                if (!$resultw) new Error("Error en la creacion de  creditos");
