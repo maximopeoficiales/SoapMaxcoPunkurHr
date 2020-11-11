@@ -374,12 +374,10 @@ class MethodsWoo
                try {
                     $id_soc = 999;
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
-                    // $field_data = ["id_cli" => $id_cli, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
-                    // $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
                     $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
                     return [
                          "value" => 2,
-                         "message" => "Credito con el id_cli: $user_id actualizado",
+                         "message" => "Credito con el id_cli: $id_cli actualizado",
                          "data" => "Monto Disponible: " . $mntdisp
                     ];
                } catch (\Throwable $th) {
@@ -416,24 +414,25 @@ class MethodsWoo
                                    $result = $wpdb->query($wpdb->prepare($sql, $update));
                                    $wpdb->flush();
                                    if (!$result) new Error("Error en la actualizacion de  datos");
-                                   // } else {
-                                   //      $id_field = $value["id"];
-                                   //      $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
-                                   //      $wpdb->query($wpdb->prepare($sql, $value["update"]));
-                                   //      $wpdb->flush();
-                                   // }
                               }
                          }
                     }
                }
-
+               foreach ($data as $key => $fieldUpdated) {
+                    if (!$this->isCreated($fieldUpdated["id"], $dataVerify)) {
+                         $id_field = $fieldUpdated["id"];
+                         $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                         $wpdb->query($wpdb->prepare($sql, $fieldUpdated["update"]));
+                         $wpdb->flush();
+                    }
+               }
 
                /* update wallet balancec aqui es necesario crear estos campos*/
-               //UPDATE wp_fswcwallet SET balance = "80" WHERE user_id = 3
-               // $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $user_id";
-               // $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
-               // $wpdb->flush();
-               // if (!$resultw) new Error("Error en la actualizacion de  datos");
+               if (!$this->haveCredits($user_id, $id_soc)) {
+                    $this->createAndUpdateCredits($user_id, $mntdisp, 0, $id_soc);
+               } else {
+                    $this->createAndUpdateCredits($user_id, $mntdisp, 1, $id_soc);
+               }
                return true;
           } catch (\Throwable $th) {
                return false;
@@ -454,13 +453,40 @@ class MethodsWoo
           }
           return $fields_filtered;
      }
-     public function isCreated($id_field, $dataCreated = [])
+     /* funcion que verifica si los fields existen en determinada data */
+     private function isCreated($id_field, $dataCreated = [])
      {
           foreach ($dataCreated as $key => $value) {
                if ($value->field_id == intval($id_field)) {
                     return true;
                }
                return false;
+          }
+     }
+
+     private function haveCredits($user_id, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results("SELECT * FROM wp_fswcwallet WHERE user_id=$user_id");
+          return count($results) > 0 ? true : false;
+     }
+     private function createAndUpdateCredits($user_id, $mntdisp, $cod, $id_soc)
+     {
+          date_default_timezone_set('America/Lima');
+          $wpdb = $this->getWPDB($id_soc);
+          $fecha_actual = date("Y-m-d h:i:s");
+          if (intval($cod) == 0) {
+               //crear credito
+               $sqlwallet = "INSERT INTO wp_fswcwallet VALUES($user_id,%s,%s,%s,%s)";
+               $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp, $fecha_actual, 0, "unlocked", "1"));
+               $wpdb->flush();
+               if (!$resultw) new Error("Error en la creacion de  creditos");
+          } else if (intval($cod) == 1) {
+               /* actualizacion */
+               $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s,last_deposit=%s,total_spent=%s,status=%s,lock_message=%s WHERE user_id = $user_id";
+               $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp, $fecha_actual, 0, "unlocked", "1"));
+               $wpdb->flush();
+               if (!$resultw) new Error("Error en la actualizacion de  datos");
           }
      }
      /* fin de creditos */
