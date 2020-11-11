@@ -150,7 +150,7 @@ class MethodsSoap
                'id_soc'                  => 'required|max:4',
                'id_mat'                  => 'required|max:12',
                'nomb'              => 'required|max:40',
-               'paq'              => 'max:1',
+               'paq'              => 'numeric|digits_between:1,2',
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
                'paqxun'              => 'digits_between:1,3|numeric',
