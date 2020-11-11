@@ -280,6 +280,7 @@ class MethodsWoo
           $sql = "UPDATE wp_userssap SET cod = 1 WHERE user_id = $user_id";
           $wpdb->query($wpdb->prepare($sql));
           $wpdb->flush();
+          /*  */
           $IdsAndDataUpdated = $this->mfGetDataPFXFields($id_soc, $data);
           /* verificacion  e insersacion si hay datos de este cliente */
           $dataVerify = $wpdb->get_results("SELECT * FROM wp_prflxtrflds_user_field_data WHERE user_id=$user_id");
@@ -287,17 +288,19 @@ class MethodsWoo
           if (count($dataVerify) !== 0) {
                /* si hay datos */
                foreach ($dataVerify as $key => $value) {
-                    foreach ($IdsAndDataUpdated as $keyf => $field) {
-                         if ($value->field_id == $field["id"]) {
-                              $id_field = $field["id"];
-                              $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id =$user_id AND field_id=$id_field";
-                              $result = $wpdb->query($wpdb->prepare($sql, $field["update"]));
+                    foreach ($IdsAndDataUpdated as $keyf => $fieldcurrent) {
+                         if ($value->field_id == intval($fieldcurrent["id"])) {
+                              $id_field = intval($fieldcurrent["id"]);
+                              $sql1 = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id =$user_id AND field_id=$id_field";
+                              $result = $wpdb->query($wpdb->prepare($sql1, $fieldcurrent["update"]));
                               if (!$result) new Error("Error en la actualizacion de  datos");
+                              $wpdb->flush();
                          } else {
                               //si no es igual a lo ya creado
-                              $id_field = $field["id"];
-                              $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
-                              $wpdb->query($wpdb->prepare($sql, $field["update"]));
+                              $id_field = intval($fieldcurrent["id"]);
+                              $sql2 = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                              $wpdb->query($wpdb->prepare($sql2, $fieldcurrent["update"]));
+                              $wpdb->flush();
                          }
                     }
                }
@@ -360,14 +363,16 @@ class MethodsWoo
      public function updateCreditoWoo($credito)
      {
           $id_soc = $credito["id_soc"];
-          $cd_cli = $credito["cd_cli"];
-          $user_id = $credito["id_cli"];
+          // $cd_cli = $credito["cd_cli"];
+          $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                try {
-                    $field_data = ["id_cli" => $user_id, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
+                    $id_soc = 999;
+                    $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+                    // $field_data = ["id_cli" => $id_cli, "mntcred" => $credito["mntcred"], "mntutil" => $credito["mntutil"], "fvenc" => $credito["fvenc"]];
                     // $field_data = ["Ejecutivo_ventas" => $cd_cli, "Telefono_asesor" => $cd_cli];
-                    $this->mfUpdateFieldsCredito($id_soc, $user_id, $field_data, $mntdisp) ? true : new Error();
+                    $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
                     return [
                          "value" => 2,
                          "message" => "Credito con el id_cli: $user_id actualizado",
@@ -376,7 +381,7 @@ class MethodsWoo
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "El Credito  con el id_cli: $user_id no existe",
+                         "message" => "El Credito  con el id_cli: $id_cli no existe",
                     ];
                }
           } else {
@@ -393,23 +398,37 @@ class MethodsWoo
                $data = $this->mfGetDataPFXFields($id_soc, $fields_data);
                // $wpdb = $this->getWPDB($id_soc);
                $wpdb = $this->getWPDB($id_soc);
-               //     UPDATE wp_prflxtrflds_user_field_data SET user_value = "1111111" WHERE user_id = 8 AND field_id=2;
+               //UPDATE wp_prflxtrflds_user_field_data SET user_value = "1111111" WHERE user_id = 8 AND field_id=2;
                /* update profile fields */
-               for ($i = 0; $i < count($data); $i++) {
-                    $dato = $data[$i];
-                    $id = $dato["id"];
-                    $update = $dato["update"];
-                    $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id = $user_id AND field_id=$id";
-                    $result = $wpdb->query($wpdb->prepare($sql, $update));
-                    $wpdb->flush();
-                    if (!$result) new Error("Error en la actualizacion de  datos");
+               $dataVerify = $wpdb->get_results("SELECT * FROM wp_prflxtrflds_user_field_data WHERE user_id=$user_id");
+               $wpdb->flush();
+               if (count($dataVerify) !== 0) {
+                    foreach ($dataVerify as $key2 => $valued) {
+                         foreach ($data as $key => $value) {
+                              if ($valued->field_id == $value["id"]) {
+                                   $id = $value["id"];
+                                   $update = $value["update"];
+                                   $sql = "UPDATE wp_prflxtrflds_user_field_data SET user_value = %s WHERE user_id = $user_id AND field_id=$id";
+                                   $result = $wpdb->query($wpdb->prepare($sql, $update));
+                                   $wpdb->flush();
+                                   if (!$result) new Error("Error en la actualizacion de  datos");
+                              } else {
+                                   $id_field = $value["id"];
+                                   $sql = "INSERT INTO wp_prflxtrflds_user_field_data (field_id,user_id,user_value) VALUES ($id_field,$user_id,%s) ";
+                                   $wpdb->query($wpdb->prepare($sql, $value["update"]));
+                                   $wpdb->flush();
+                              }
+                         }
+                    }
                }
+
+
                /* update wallet balancec */
                //UPDATE wp_fswcwallet SET balance = "80" WHERE user_id = 3
-               $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $user_id";
-               $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
-               $wpdb->flush();
-               if (!$resultw) new Error("Error en la actualizacion de  datos");
+               // $sqlwallet = "UPDATE wp_fswcwallet SET balance = %s WHERE user_id = $user_id";
+               // $resultw = $wpdb->query($wpdb->prepare($sqlwallet, $mntdisp));
+               // $wpdb->flush();
+               // if (!$resultw) new Error("Error en la actualizacion de  datos");
                return true;
           } catch (\Throwable $th) {
                return false;
