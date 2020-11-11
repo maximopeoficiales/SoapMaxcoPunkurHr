@@ -197,7 +197,6 @@ class MethodsWoo
 
                /* creacion */
                if ($cliente["cod"] == 0) {
-                    $id_soc = 999;
                     $email = $cliente["email"];
                     if (!$this->verifyEmail($email, $id_soc)) {
                          return [
@@ -232,7 +231,6 @@ class MethodsWoo
                     }
                } else if ($cliente["cod"] == 1) {
                     /* actualizacion */
-                    $id_soc = 999;
 
                     try {
                          $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
@@ -372,7 +370,6 @@ class MethodsWoo
           $mntdisp = $credito["mntdisp"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
                try {
-                    $id_soc = 999;
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                     $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
                     return [
