@@ -179,7 +179,7 @@ class MethodsWoo
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
-               $cliente["id_soc"] = 999;
+               // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
                     return $this->createCliente($cliente);
