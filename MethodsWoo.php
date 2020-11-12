@@ -255,7 +255,7 @@ class MethodsWoo
                     $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
                     $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
                     if ($activeDest) {
-                         $this->createRecipientAddress($response->id, 0);
+                         $this->createRecipientAddress($cliente, 0);
                          return [
                               "value" => 1,
                               "data" => "cd_cli: " .  $cd_cli,
@@ -293,11 +293,8 @@ class MethodsWoo
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                if ($activeDest) {
-                    $this->createRecipientAddress($user_id, 1);
-               }
-               if ($activeDest) {
                     $id_dest = $cliente["id_dest"];
-                    $this->createRecipientAddress($user_id, 1);
+                    $this->createRecipientAddress($cliente, 1);
                     return [
                          "value" => 2,
                          "message" => "Cliente con id_cli: $user_id y id_dest: $id_dest actualizado",
