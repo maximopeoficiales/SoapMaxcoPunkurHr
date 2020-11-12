@@ -191,7 +191,7 @@ class MethodsSoap
                'email_eje'                  => 'max:30|email',
                'id_dest'              => 'numeric|digits_between:1,10',
                'drcdest'              => '',
-               'cod'              => 'required|max:3|numeric',
+               'cod'              => 'required|max:5|numeric',
                'id_dest'                  => 'numeric|digits_between:1,10',
                'drcdest'                  => 'max:70',
           ];
