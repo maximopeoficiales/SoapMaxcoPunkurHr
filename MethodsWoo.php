@@ -182,9 +182,9 @@ class MethodsWoo
                // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
-                    return $this->createCliente($cliente);
+                    return $this->createCliente($cliente, false);
                } else if ($cod == 1) {
-                    return $this->UpdateCliente($cliente);
+                    return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
                     //crea destinatarios
                     $validation = $this->createRecipientAddress($cliente, 0);
@@ -205,6 +205,12 @@ class MethodsWoo
                          "value" => 2,
                          "message" => "El id_dest : $id_dest ha sido actualizado ",
                     ];
+               } else if ($cod == 4) {
+                    /*crea cliente y crea direccion  */
+                    return $this->createCliente($cliente, true);
+               } else if ($cod == 5) {
+                    /*actualizar cliente y actualizar direccion  */
+                    return $this->UpdateCliente($cliente, true);
                } else {
                     return [
                          "value" => 0,
@@ -218,7 +224,7 @@ class MethodsWoo
                ];
           }
      }
-     private function createCliente($cliente)
+     private function createCliente($cliente, $activeDest = false)
      {
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
@@ -248,6 +254,14 @@ class MethodsWoo
                if ($response->id !== null) {
                     $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
                     $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
+                    if ($activeDest) {
+                         $this->createRecipientAddress($response->id, 0);
+                         return [
+                              "value" => 1,
+                              "data" => "cd_cli: " .  $cd_cli,
+                              "message" => "Registro de Cliente y direccion Exitosa",
+                         ];
+                    }
                     return [
                          "value" => 1,
                          "data" => "cd_cli: " .  $cd_cli,
@@ -261,7 +275,7 @@ class MethodsWoo
                ];
           }
      }
-     private function UpdateCliente($cliente)
+     private function UpdateCliente($cliente, $activeDest = false)
      {
           /* actualizacion */
           $id_soc = $cliente["id_soc"];
@@ -278,7 +292,17 @@ class MethodsWoo
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-
+               if ($activeDest) {
+                    $this->createRecipientAddress($user_id, 1);
+               }
+               if ($activeDest) {
+                    $id_dest = $cliente["id_dest"];
+                    $this->createRecipientAddress($user_id, 1);
+                    return [
+                         "value" => 2,
+                         "message" => "Cliente con id_cli: $user_id y id_dest: $id_dest actualizado",
+                    ];
+               }
                return [
                     "value" => 2,
                     "message" => "Cliente con id_cli: $user_id actualizado",
