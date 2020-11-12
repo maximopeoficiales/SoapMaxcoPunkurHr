@@ -56,6 +56,7 @@ class MethodsSoap
                     return $this->mfSendResponse(0, $validateClient["message"]);
                }
           }, ["security" => "required", "cliente" => "required"]);
+          // return $this->mfSendResponse(0, $data["cliente_detalle"]["id_dest"]);
      }
 
      public function updateCredits($data)
@@ -189,11 +190,14 @@ class MethodsSoap
                'telf_eje'                  => 'max:9',
                'email_eje'                  => 'max:30|email',
                'id_dest'              => 'numeric|digits_between:1,10',
-               'drcdest'              => 'max:70',
-               'cod'              => 'required|max:1|numeric|in:0,1',
+               'drcdest'              => '',
+               'cod'              => 'required|max:3|numeric',
+               'id_dest'                  => 'numeric|digits_between:1,10',
+               'drcdest'                  => 'max:70',
           ];
           return $this->mfUtilityValidator($client, $validations);
      }
+
      private function mfUtilityValidator($params, $validations)
      {
           $validator = new Validator;

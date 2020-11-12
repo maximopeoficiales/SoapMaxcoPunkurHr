@@ -102,14 +102,13 @@ class WebServices
       * @param string $nombreje Nombre de Ejecutivo
       * @param string $telf_eje Telefono de Ejecutivo
       * @param string $email_eje Email de Ejecutivo
-      * @param string $email_eje Email de Ejecutivo
-      * @param string $id_dest Codigo de Destinatario
-      * @param string $drcdest Direccion de Destino
+      * @param array $cliente_detalle Codigo de Destinatario
       * @param string $cod Codigo de Actualizacion
       * @return array Respuesta del Servidor
       */
      public function POST_ACT_CLI($request)
      {
+          $cliente_detalle = $request->cliente_detalle;
           $request = $request->request;
           $m = $this->getMethods();
           $data = [
@@ -130,9 +129,9 @@ class WebServices
                     "nombeje" => $request->nombeje,
                     "telf_eje" => $request->telf_eje,
                     "email_eje" => $request->email_eje,
-                    "id_dest" => $request->id_dest,
-                    "drcdest" => $request->drcdest,
                     "cod" => $request->cod,
+                    "id_dest" => $cliente_detalle->id_dest,
+                    "drcdest" => $cliente_detalle->drcdest,
                ],
           ];
           return $m->createClients($data);

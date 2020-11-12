@@ -176,77 +176,35 @@ class MethodsWoo
      public function UpdateClientWoo($cliente)
      {
           $id_soc = $cliente["id_soc"];
-          $id_cli = $cliente["id_cli"];
           $cod = $cliente["cod"];
+          $id_dest = $cliente["id_dest"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
-               $dataSend = [
-                    'email' => $cliente["email"],
-                    'first_name' => $cliente["nomb"],
-                    'billing' => [
-                         'email' => $cliente["email"],
-                         'phone' => $cliente["telf"],
-                         // 'address_1' => $cliente["drcdest"],
-                    ],
-                    "meta_data" => [],
-               ];
-               /* agrego campos en el metadata */
-               // $newfields = ["id_dest", "drcdest"];
-               // foreach ($this->mfAddNewFieldsMetadata($cliente, $newfields) as  $value) {
-               //      array_push($dataSend["meta_data"], $value);
-               // }
-
+               $cliente["id_soc"] = 999;
                /* creacion */
-               if ($cliente["cod"] == 0) {
-                    $email = $cliente["email"];
-                    if (!$this->verifyEmail($email, $id_soc)) {
+               if ($cod == 0) {
+                    return $this->createCliente($cliente);
+               } else if ($cod == 1) {
+                    return $this->UpdateCliente($cliente);
+               } else if ($cod == 2) {
+                    //crea destinatarios
+                    $validation = $this->createRecipientAddress($cliente, 0);
+                    if (!$validation) {
                          return [
                               "value" => 0,
-                              "message" => "El email: $email ya existe",
+                              "message" => "El id_dest : $id_dest ya esta creado",
                          ];
-                    }
-                    if (!$this->verifyId_cli($id_cli, $id_soc)) {
-                         return [
-                              "value" => 0,
-                              "message" => "El id_cli: $id_cli ya existe",
-                         ];
-                    }
-                    try {
-                         // $response = $this->getWoocommerce($id_soc)->post('products', $dataSend); //devuelve un objeto
-                         $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
-                         if ($response->id !== null) {
-
-                              $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
-                              $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                              return [
-                                   "value" => 1,
-                                   "data" => "cd_cli: " .  $cd_cli,
-                                   "message" => "Registro de Cliente Exitoso",
-                              ];
-                         }
-                    } catch (\Throwable $th) {
-                         return [
-                              "value" => 0,
-                              "message" => "EL id_cli: $id_cli ya existe",
-                         ];
-                    }
-               } else if ($cliente["cod"] == 1) {
-                    /* actualizacion */
-
-                    try {
-                         $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
-                         $response = $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
-                         // $this->updateMetadataClients($user_id, $dataSend["meta_data"], $id_soc);
-                         $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-                         return [
-                              "value" => 2,
-                              "message" => "Cliente con id_cli: $user_id actualizado",
-                         ];
-                    } catch (\Throwable $th) {
-                         return [
-                              "value" => 0,
-                              "message" => "El Cliente con el id_cli: $id_cli no existe",
-                         ];
-                    }
+                    };
+                    return [
+                         "value" => 1,
+                         "message" => "El id_dest : $id_dest se ha registrado exitosamente",
+                    ];
+               } else if ($cod == 3) {
+                    /* actualiza destinatarios */
+                    $this->createRecipientAddress($cliente, 1);
+                    return [
+                         "value" => 2,
+                         "message" => "El id_dest : $id_dest ha sido actualizado ",
+                    ];
                } else {
                     return [
                          "value" => 0,
@@ -257,6 +215,78 @@ class MethodsWoo
                return [
                     "value" => 0,
                     "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
+     private function createCliente($cliente)
+     {
+          $id_soc = $cliente["id_soc"];
+          $id_cli = $cliente["id_cli"];
+          $dataSend = [
+               'email' => $cliente["email"],
+               'first_name' => $cliente["nomb"],
+               'billing' => [
+                    'email' => $cliente["email"],
+                    'phone' => $cliente["telf"],
+               ],
+          ];
+          $email = $cliente["email"];
+          if (!$this->verifyEmail($email, $id_soc)) {
+               return [
+                    "value" => 0,
+                    "message" => "El email: $email ya existe",
+               ];
+          }
+          if (!$this->verifyId_cli($id_cli, $id_soc)) {
+               return [
+                    "value" => 0,
+                    "message" => "El id_cli: $id_cli ya existe",
+               ];
+          }
+          try {
+               $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
+               if ($response->id !== null) {
+                    $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
+                    $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
+                    return [
+                         "value" => 1,
+                         "data" => "cd_cli: " .  $cd_cli,
+                         "message" => "Registro de Cliente Exitoso",
+                    ];
+               }
+          } catch (\Throwable $th) {
+               return [
+                    "value" => 0,
+                    "message" => "EL id_cli: $id_cli ya existe",
+               ];
+          }
+     }
+     private function UpdateCliente($cliente)
+     {
+          /* actualizacion */
+          $id_soc = $cliente["id_soc"];
+          $id_cli = $cliente["id_cli"];
+          $dataSend = [
+               'email' => $cliente["email"],
+               'first_name' => $cliente["nomb"],
+               'billing' => [
+                    'email' => $cliente["email"],
+                    'phone' => $cliente["telf"],
+               ],
+          ];
+          try {
+               $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+               $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+               $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
+
+               return [
+                    "value" => 2,
+                    "message" => "Cliente con id_cli: $user_id actualizado",
+               ];
+          } catch (\Throwable $th) {
+               return [
+                    "value" => 0,
+                    "message" => "El Cliente con el id_cli: $id_cli no existe",
                ];
           }
      }
@@ -357,6 +387,42 @@ class MethodsWoo
           $wpdb = $this->getWPDB($id_soc);
           $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
           $results = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
+          return count($results) == 0 ? true : false;
+     }
+     //crea direccion de destinatarios
+     private function createRecipientAddress($cliente, $cod)
+     {
+          $id_soc = $cliente["id_soc"];
+          $id_cli = $cliente["id_cli"];
+          $id_dest = $cliente["id_dest"];
+          $drcdest = $cliente["drcdest"];
+          $fecha_actual = date("Y-m-d h:i:s");
+          $wpdb = $this->getWPDB($id_soc);
+          $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+          $notIDDEST = $this->verifyIdDest($user_id, $id_dest, $id_soc);
+          if (intval($cod) == 0 && !$notIDDEST) {
+               return false;
+          } else if (intval($cod) == 0) {
+               //crear credito
+               $sql = "INSERT INTO wp_clientdirections (user_id,id_dest,drcdest,date_created) VALUES($user_id,$id_dest,%s,%s)";
+               $resultw = $wpdb->query($wpdb->prepare($sql, $drcdest, $fecha_actual));
+               $wpdb->flush();
+               if (!$resultw) new Error("Error en la creacion de  direcciones");
+               return  true;
+          } else if (intval($cod) == 1) {
+               /* actualizacion */
+               $sqlu = "UPDATE wp_clientdirections SET drcdest = %s  WHERE user_id = $user_id AND id_dest = $id_dest";
+               $resultw = $wpdb->query($wpdb->prepare($sqlu, $drcdest));
+               $wpdb->flush();
+               if (!$resultw) new Error("Error en la actualizacion de  datos");
+               return true;
+          }
+     }
+     private function verifyIdDest($user_id, $id_dest, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT id_dest FROM wp_clientdirections WHERE user_id= $user_id AND id_dest=$id_dest";
+          $results = $wpdb->get_results($wpdb->prepare($sql));
           return count($results) == 0 ? true : false;
      }
      /*  Fin Clientes */
@@ -469,7 +535,7 @@ class MethodsWoo
      }
      private function createAndUpdateCredits($user_id, $mntdisp, $cod, $id_soc)
      {
-          date_default_timezone_set('America/Lima');
+          // date_default_timezone_set('America/Lima');
           $wpdb = $this->getWPDB($id_soc);
           $fecha_actual = date("Y-m-d h:i:s");
           if (intval($cod) == 0) {
