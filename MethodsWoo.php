@@ -200,11 +200,26 @@ class MethodsWoo
                     ];
                } else if ($cod == 3) {
                     /* actualiza destinatarios */
-                    $this->createRecipientAddress($cliente, 1);
-                    return [
-                         "value" => 2,
-                         "message" => "El id_dest : $id_dest ha sido actualizado ",
-                    ];
+                    // $this->createRecipientAddress($cliente, 1);
+                    $params = array(
+                         "id_dest" => $cliente["id_dest"],
+                         "first_name" => $cliente["nomb"],
+                         "last_name" => "",
+                         "company" => $cliente["nrdoc"],
+                         "country" => "PE",
+                         "address_1" => $cliente["drcdest"],
+                         "address_2" => "",
+                         "postcode" => "07001",
+                         "phone" => $cliente["telf"],
+                         "email" => $cliente["email"]
+                    );
+                    $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    if ($this->createAddressSoap($user_id, $params, true)) {
+                         return [
+                              "value" => 2,
+                              "message" => "El id_dest : $id_dest ha sido actualizado ",
+                         ];
+                    }
                } else if ($cod == 4) {
                     /*crea cliente y crea direccion  */
                     return $this->createCliente($cliente, true);
@@ -254,13 +269,27 @@ class MethodsWoo
                if ($response->id !== null) {
                     $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
                     $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                    if ($activeDest) {
-                         $this->createRecipientAddress($cliente, 0);
-                         return [
-                              "value" => 1,
-                              "data" => "cd_cli: " .  $cd_cli,
-                              "message" => "Registro de Cliente y direccion Exitosa",
-                         ];
+                    if ($activeDest  && $id_soc == $this->PRECOR) {
+                         $params = array(
+                              "id_dest" => $cliente["id_dest"],
+                              "first_name" => $cliente["nomb"],
+                              "last_name" => "",
+                              "company" => $cliente["nrdoc"],
+                              "country" => "PE",
+                              "address_1" => $cliente["drcdest"],
+                              "address_2" => "",
+                              "postcode" => "07001",
+                              "phone" => $cliente["telf"],
+                              "email" => $cliente["email"]
+                         );
+                         // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                         if ($this->createAddressSoap($response->id, $params)) {
+                              return [
+                                   "value" => 1,
+                                   "data" => "cd_cli: " .  $cd_cli,
+                                   "message" => "Registro de Cliente y direccion Exitosa",
+                              ];
+                         }
                     }
                     return [
                          "value" => 1,
@@ -292,9 +321,22 @@ class MethodsWoo
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-               if ($activeDest) {
+               if ($activeDest && $id_soc == $this->PRECOR) {
                     $id_dest = $cliente["id_dest"];
-                    $this->createRecipientAddress($cliente, 1);
+                    $params = array(
+                         "id_dest" => $cliente["id_dest"],
+                         "first_name" => $cliente["nomb"],
+                         "last_name" => "",
+                         "company" => $cliente["nrdoc"],
+                         "country" => "PE",
+                         "address_1" => $cliente["drcdest"],
+                         "address_2" => "",
+                         "postcode" => "07001",
+                         "phone" => $cliente["telf"],
+                         "email" => $cliente["email"]
+                    );
+                    // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    $this->createAddressSoap($user_id, $params, true);
                     return [
                          "value" => 2,
                          "message" => "Cliente con id_cli: $user_id y id_dest: $id_dest actualizado",
@@ -445,6 +487,42 @@ class MethodsWoo
           $sql = "SELECT id_dest FROM wp_clientdirections WHERE user_id= $user_id AND id_dest=$id_dest";
           $results = $wpdb->get_results($wpdb->prepare($sql));
           return count($results) == 0 ? true : false;
+     }
+
+     private function createAddressSoap($user_id, $params, $update = false)
+     {
+          $id_dest = $params["id_dest"];
+          $first_name = $params["first_name"];
+          $last_name = $params["last_name"];
+          $company = $params["company"];
+          $country = $params["country"];
+          $address_1 = $params["address_1"];
+          $address_2 = $params["address_2"];
+          $postcode = $params["postcode"];
+          $phone = $params["phone"];
+          $email = $params["email "];
+          $curl = curl_init();
+
+          curl_setopt_array($curl, array(
+               CURLOPT_URL => "https://precor.punkurhr.com/wp-json/max_functions/v1/address",
+               CURLOPT_RETURNTRANSFER => true,
+               CURLOPT_ENCODING => "",
+               CURLOPT_MAXREDIRS => 10,
+               CURLOPT_TIMEOUT => 0,
+               CURLOPT_FOLLOWLOCATION => true,
+               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+               CURLOPT_CUSTOMREQUEST => $update == true ? "PUT" : "POST",
+               CURLOPT_POSTFIELDS => "{\r\n    \"user_id\": \"$user_id\",\r\n    \"security\": {\r\n        \"user\": \"admin\",\r\n        \"pass\": \"admin999\"\r\n    },\r\n    \"data\": {\r\n        \"id_dest\": \"$id_dest\",\r\n        \"first_name\": \"$first_name\",\r\n        \"last_name\": \"$last_name\",\r\n        \"company\": \"$company\",\r\n        \"country\": \"$country\",\r\n        \"address_1\": \"$address_1\",\r\n        \"address_2\":$address_2\"\",\r\n        \"postcode\": \"$postcode\",\r\n        \"phone\": \"$phone\",\r\n        \"email\": \"$email\"\r\n    }\r\n}",
+               CURLOPT_HTTPHEADER => array(
+                    "Content-Type: application/json"
+               ),
+          ));
+
+          $response = curl_exec($curl);
+
+          curl_close($curl);
+          $response = json_decode($response, true);
+          return $response["status"] == 200 ? true : false;
      }
      /*  Fin Clientes */
 
