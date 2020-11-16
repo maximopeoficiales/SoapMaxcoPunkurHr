@@ -38,6 +38,15 @@ class WoocommerceClient
                          'version' => 'wc/v3',
                     ]
                );
+          } else if ($id_soc == 1000) {
+               return new Client(
+                    "http://precor.punkurhr.test/",
+                    "ck_c005d91e27f8bc9b2b5df1328651092f23fd813c",
+                    "cs_9af7943cc0d48db3f4cee10d9ba4dd6dee5395f2",
+                    [
+                         'version' => 'wc/v3',
+                    ]
+               );
           }
      }
 }

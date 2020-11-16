@@ -21,6 +21,8 @@ class MethodsWoo
           } else if (($id_soc) == 999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
+          } else if ($id_soc == 1000) {
+               return new wpdb('root', '', 'precorpunkuhr', 'localhost:3307');
           }
      }
      private function getWoocommerce($id_soc)
@@ -175,11 +177,23 @@ class MethodsWoo
      /*  Clientes */
      public function UpdateClientWoo($cliente)
      {
+          $params = array(
+               "id_dest" => $cliente["id_dest"],
+               "first_name" => $cliente["nomb"],
+               "last_name" => "",
+               "company" => $cliente["nrdoc"],
+               "country" => "PE",
+               "address_1" => $cliente["drcdest"],
+               "address_2" => "",
+               "postcode" => "07001",
+               "phone" => $cliente["telf"],
+               "email" => $cliente["email"]
+          );
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
           if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
-               // $cliente["id_soc"] = 999;
+               // $cliente["id_soc"] = 1000;
                /* creacion */
                if ($cod == 0) {
                     return $this->createCliente($cliente, false);
@@ -187,32 +201,21 @@ class MethodsWoo
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
                     //crea destinatarios
-                    $validation = $this->createRecipientAddress($cliente, 0);
-                    if (!$validation) {
+                    $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    if ($this->createAddressSoap($user_id, $params)) {
+                         return [
+                              "value" => 1,
+                              "message" => "El id_dest : $id_dest ha sido creado ",
+                         ];
+                    } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest : $id_dest ya esta creado",
+                              "message" => "El id_dest : $id_dest ya existe sido creado ",
                          ];
-                    };
-                    return [
-                         "value" => 1,
-                         "message" => "El id_dest : $id_dest se ha registrado exitosamente",
-                    ];
+                    }
                } else if ($cod == 3) {
                     /* actualiza destinatarios */
                     // $this->createRecipientAddress($cliente, 1);
-                    $params = array(
-                         "id_dest" => $cliente["id_dest"],
-                         "first_name" => $cliente["nomb"],
-                         "last_name" => "",
-                         "company" => $cliente["nrdoc"],
-                         "country" => "PE",
-                         "address_1" => $cliente["drcdest"],
-                         "address_2" => "",
-                         "postcode" => "07001",
-                         "phone" => $cliente["telf"],
-                         "email" => $cliente["email"]
-                    );
                     $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
                     if ($this->createAddressSoap($user_id, $params, true)) {
                          return [
@@ -246,7 +249,10 @@ class MethodsWoo
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
+               'username' => $cliente["email"],
+               'password' => "123456789",
                'billing' => [
+                    "address_1" => $cliente["drcfisc"],
                     'email' => $cliente["email"],
                     'phone' => $cliente["telf"],
                ],
@@ -289,18 +295,24 @@ class MethodsWoo
                                    "data" => "cd_cli: " .  $cd_cli,
                                    "message" => "Registro de Cliente y direccion Exitosa",
                               ];
+                         } else {
+                              return [
+                                   "value" => 0,
+                                   "data" => "cd_cli: " .  $cd_cli,
+                                   "message" => "Error en creacion de direccion",
+                              ];
                          }
                     }
                     return [
                          "value" => 1,
-                         "data" => "cd_cli: " .  $cd_cli,
+                         "data" => "id_cli: " .  $id_cli,
                          "message" => "Registro de Cliente Exitoso",
                     ];
                }
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "EL id_cli: $id_cli ya existe",
+                    "message" => "El id_cli: $id_cli ya existe",
                ];
           }
      }
@@ -502,9 +514,9 @@ class MethodsWoo
           $phone = $params["phone"];
           $email = $params["email "];
           $curl = curl_init();
-
           curl_setopt_array($curl, array(
-               CURLOPT_URL => "https://precor.punkurhr.com/wp-json/max_functions/v1/address",
+               CURLOPT_URL => "https://precor.punkuhr.com/wp-json/max_functions/v1/address",
+               // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
                CURLOPT_RETURNTRANSFER => true,
                CURLOPT_ENCODING => "",
                CURLOPT_MAXREDIRS => 10,
