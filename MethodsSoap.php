@@ -138,9 +138,9 @@ class MethodsSoap
                'id_soc'                  => 'required|max:4',
                'cd_cli'                  => 'required|max:10',
                'id_cli'                  => 'required|digits_between:1,10|numeric',
-               'mntcred'              => 'required|digits_between:1,10|numeric',
-               'mntutil'              => 'required|digits_between:1,10|numeric',
-               'mntdisp'              => 'required|digits_between:1,10|numeric',
+               'mntcred'              => 'required',
+               'mntutil'              => 'required',
+               'mntdisp'              => 'required',
                'fvenc'              => 'required|max:10|date:Y-m-d',
           ];
           return $this->mfUtilityValidator($credito, $validations);
