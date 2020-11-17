@@ -236,7 +236,7 @@ class MethodsWoo
           $sql = "INSERT INTO wp_postmeta (post_id,meta_key,meta_value)  VALUES ($id_material,%s,%s) ";
           $wpdb->query($wpdb->prepare($sql, $key, $value));
           $wpdb->flush();
-          // return true;
+          return true;
      }
      /* fin de materiales */
      /*  Clientes */
