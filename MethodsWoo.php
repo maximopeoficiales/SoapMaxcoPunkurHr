@@ -168,7 +168,8 @@ class MethodsWoo
                     foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                          array_push($metadata, $value);
                     }
-                    // $fieldsCreate = ["canal" => $material ["canal"], "categ" => $material["categ"]];
+                    // $fieldsCreate = ["canal" => $material["canal"], "categ" => $material["categ"]];
+                     
                     if ($this->ExistsFieldMaterialMetadata("canal", $id_material, $id_soc)) {
                          $this->mfUpdateMetadataMaterial($id_material, $metadata, $id_soc);
                     } else {
@@ -224,7 +225,7 @@ class MethodsWoo
      private function ExistsFieldMaterialMetadata($field, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT * FROM wp_postmeta WHERE post_id=$id_material AND meta_key=%s";
+          $sql = "SELECT * FROM wp_postmeta WHERE post_id=$id_material AND meta_key=%s LIMIT 1";
           $result = $wpdb->get_results($wpdb->prepare($sql, $field));
           // $wpdb->flush();
           return (count($result) !== 0) ? true : false;
@@ -232,10 +233,10 @@ class MethodsWoo
      private function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "INSERT wp_postmeta (post_id,meta_key,meta_value)  VALUES ($id_material,%s,%s) ";
+          $sql = "INSERT INTO wp_postmeta (post_id,meta_key,meta_value)  VALUES ($id_material,%s,%s) ";
           $wpdb->query($wpdb->prepare($sql, $key, $value));
           $wpdb->flush();
-          return true;
+          // return true;
      }
      /* fin de materiales */
      /*  Clientes */
