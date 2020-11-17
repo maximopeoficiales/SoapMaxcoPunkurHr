@@ -148,7 +148,52 @@ class MethodsWoo
                ];
           }
      }
+     public function updateMaterialPrice($material)
+     {
+          $id_soc = $material["id_soc"];
+          $id_mat = $material["id_mat"];
+          $price = $material["prec"];
+          $dataSend = [
+               "price" => $price,
+               "regular_price" => $price,
+          ];
+          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+               /* creacion y actualizacion */
+               // $id_soc = 999;
+               $metadata = [];
+               $id_material = $this->mfGetIdMaterialWithSku($id_mat, $id_soc);
+               try {
+                    $this->getWoocommerce($id_soc)->put("products/$id_material", $dataSend);
+                    $newfields = ["canal", "categ"];
+                    foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
+                         array_push($metadata, $value);
+                    }
+                    // $fieldsCreate = ["canal" => $material ["canal"], "categ" => $material["categ"]];
+                    if ($this->ExistsFieldMaterialMetadata("canal", $id_material, $id_soc)) {
+                         $this->mfUpdateMetadataMaterial($id_material, $metadata, $id_soc);
+                    } else {
+                         $this->createFieldMaterialMetadata("canal", $material["canal"], $id_material, $id_soc);
+                         $this->createFieldMaterialMetadata("categ", $material["categ"], $id_material, $id_soc);
+                    }
 
+
+                    return [
+                         "value" => 2,
+                         "message" => "Precio de Material $id_mat Actualizado",
+                    ];
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "Error: $th",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
      private function mfGetIdMaterialWithSku($sku, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
@@ -172,6 +217,22 @@ class MethodsWoo
                $wpdb->flush();
                if (!$result) new Error("Error en la actualizacion de  datos");
           }
+     }
+     private function ExistsFieldMaterialMetadata($field, $id_material, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT meta_value FROM wp_postmeta where post_id=$id_material AND meta_key=%s";
+          $result = $wpdb->get_results($wpdb->prepare($sql, $field));
+          $wpdb->flush();
+          return count($result) > 0 ? true : false;
+     }
+     public function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "INSERT wp_postmeta (post_id,meta_key,meta_value)  values ($id_material,%s,%s) ";
+          $result = $wpdb->query($wpdb->prepare($sql, $key, $value));
+          $wpdb->flush();
+          return true;
      }
      /* fin de materiales */
      /*  Clientes */

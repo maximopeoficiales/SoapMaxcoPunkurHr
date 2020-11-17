@@ -175,4 +175,39 @@ class WebServices
           return $m->updateCredits($data);
      }
      /* Fin de Creditos */
+
+     /* Precios  */
+     /**
+      * Actualiza Precios de un Material Especifico
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $id_mat Codigo Material Sap
+      * @param string $id_mat Codigo Material Sap
+      * @param string $canal Canal de Destribucion
+      * @param string $categ Categoria
+      * @param string $prec Precio
+      * @return array Respuesta del Servidor
+      */
+     public function POST_ACT_PREC($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "material" => [
+                    "id_soc" => $request->id_soc,
+                    "id_mat" => $request->id_mat,
+                    "canal" => $request->canal,
+                    "categ" => $request->categ,
+                    "prec" => $request->prec,
+               ],
+          ];
+          return $m->updatePrice($data);
+     }
+     /* fin precios */
 }

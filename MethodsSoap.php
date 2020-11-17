@@ -43,6 +43,20 @@ class MethodsSoap
                }
           }, ["security" => "required", "material" => "required"]);
      }
+     public function updatePrice($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $material = $data["material"];
+               $validateMaterial = $this->mfValidateMaterialPrice($material);
+               if ($validateMaterial["validate"]) {
+                    $updated = $this->m()->updateMaterialPrice($material);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateMaterial["message"]);
+               }
+          }, ["security" => "required", "material" => "required"]);
+     }
      public function createClients($data)
      {
           return  $this->mfValidationGeneralAuth($data, function ($data) {
@@ -170,6 +184,17 @@ class MethodsSoap
                'und'              => 'required|max:3',
                'undpaq'              => 'max:3',
                'stck'              => 'required|numeric',
+          ];
+          return $this->mfUtilityValidator($material, $validations);
+     }
+     private function mfValidateMaterialPrice($material)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'id_mat'                  => 'required|max:12',
+               'canal'              => 'required|max:6',
+               'categ'              => 'max:20',
+               'prec'              => 'required|max:6',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }

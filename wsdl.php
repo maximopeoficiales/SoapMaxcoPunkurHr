@@ -173,6 +173,36 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     </s:complexType>
                </s:element>
                <!-- fin POST_ACT_CLI -->
+               <!-- POST_ACT_PREC -->
+               <s:element name="POST_ACT_PREC">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:POST_ACT_PRECRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_PRECRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="canal" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="categ" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="prec" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <s:element name="POST_ACT_PRECResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <!-- FIN POST_ACT_PREC -->
           </s:schema>
      </wsdl:types>
      <!-- aqui se selecciona la estructura de entrada y salida -->
@@ -209,6 +239,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_CLIResponse" />
      </wsdl:message>
      <!-- fin POST_ACT_CLI -->
+     <!-- POST_ACT_PREC -->
+     <wsdl:message name="POST_ACT_PRECSoapIn">
+          <wsdl:part name="parameters" element="tns:POST_ACT_PREC" />
+     </wsdl:message>
+     <wsdl:message name="POST_ACT_PRECSoapOut">
+          <wsdl:part name="parameters" element="tns:POST_ACT_PRECResponse" />
+     </wsdl:message>
+     <!-- fin POST_ACT_PREC -->
+
 
      <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
@@ -242,6 +281,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin POST_ACT_CLI -->
+
+     <!-- POST_ACT_PREC -->
+     <wsdl:portType name="POST_ACT_PRECSoap">
+          <wsdl:operation name="POST_ACT_PREC">
+               <wsdl:input message="tns:POST_ACT_PRECSoapIn" />
+               <wsdl:output message="tns:POST_ACT_PRECSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin POST_ACT_PREC -->
      <!-- fin de registro -->
 
 
@@ -300,6 +348,20 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:binding>
      <!-- fin POST_ACT_CLI -->
+     <!-- POST_ACT_PREC -->
+     <wsdl:binding name="POST_ACT_PRECSoap" type="tns:POST_ACT_PRECSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="POST_ACT_PREC">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin POST_ACT_PREC -->
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
@@ -331,5 +393,12 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:port>
      </wsdl:service>
      <!-- fin POST_ACT_CLI -->
+     <!-- POST_ACT_PREC -->
+     <wsdl:service name="POST_ACT_PREC">
+          <wsdl:port name="POST_ACT_PRECSoap" binding="tns:POST_ACT_PRECSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+     <!-- fin POST_ACT_PREC -->
      <!-- fin de servicios -->
 </wsdl:definitions>
