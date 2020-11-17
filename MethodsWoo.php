@@ -227,7 +227,7 @@ class MethodsWoo
           $sql = "SELECT * FROM wp_postmeta WHERE post_id=$id_material AND meta_key=%s";
           $result = $wpdb->get_results($wpdb->prepare($sql, $field));
           // $wpdb->flush();
-          return (count($result) == 0) ? false : true;
+          return (count($result) !== 0) ? true : false;
      }
      private function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
      {
