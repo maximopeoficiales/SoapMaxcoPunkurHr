@@ -221,16 +221,16 @@ class MethodsWoo
      private function ExistsFieldMaterialMetadata($field, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT meta_value FROM wp_postmeta where post_id=$id_material AND meta_key=%s";
+          $sql = "SELECT * FROM wp_postmeta where post_id=$id_material AND meta_key=%s";
           $result = $wpdb->get_results($wpdb->prepare($sql, $field));
-          $wpdb->flush();
-          return count($result) > 0 ? true : false;
+          // $wpdb->flush();
+          return (count($result) == 0) ? false : true;
      }
-     public function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
+     private function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
           $sql = "INSERT wp_postmeta (post_id,meta_key,meta_value)  values ($id_material,%s,%s) ";
-          $result = $wpdb->query($wpdb->prepare($sql, $key, $value));
+          $wpdb->query($wpdb->prepare($sql, $key, $value));
           $wpdb->flush();
           return true;
      }
