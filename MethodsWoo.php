@@ -172,6 +172,9 @@ class MethodsWoo
                     if ($this->ExistsFieldMaterialMetadata("canal", $id_material, $id_soc)) {
                          $this->mfUpdateMetadataMaterial($id_material, $metadata, $id_soc);
                     } else {
+                         if ($material["categ"] == "") {
+                              $material["categ"] = "VACIO";
+                         }
                          $this->createFieldMaterialMetadata("canal", $material["canal"], $id_material, $id_soc);
                          $this->createFieldMaterialMetadata("categ", $material["categ"], $id_material, $id_soc);
                     }
@@ -221,7 +224,7 @@ class MethodsWoo
      private function ExistsFieldMaterialMetadata($field, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT * FROM wp_postmeta where post_id=$id_material AND meta_key=%s";
+          $sql = "SELECT * FROM wp_postmeta WHERE post_id=$id_material AND meta_key=%s";
           $result = $wpdb->get_results($wpdb->prepare($sql, $field));
           // $wpdb->flush();
           return (count($result) == 0) ? false : true;
@@ -229,7 +232,7 @@ class MethodsWoo
      private function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "INSERT wp_postmeta (post_id,meta_key,meta_value)  values ($id_material,%s,%s) ";
+          $sql = "INSERT wp_postmeta (post_id,meta_key,meta_value)  VALUES ($id_material,%s,%s) ";
           $wpdb->query($wpdb->prepare($sql, $key, $value));
           $wpdb->flush();
           return true;
