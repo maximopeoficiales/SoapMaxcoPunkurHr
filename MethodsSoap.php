@@ -73,6 +73,22 @@ class MethodsSoap
           // return $this->mfSendResponse(0, $data["cliente_detalle"]["id_dest"]);
      }
 
+     public function getClients($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $params = $data["params"];
+               $validateParams = $this->mfValidateClientsParams($params);
+               if ($validateParams["validate"]) {
+                    $updated = $this->m()->GetClientsWoo($params);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto", [new Client(["id_soc" => 1]), new Client(["cd_cli" => 4])]);
+               } else {
+                    return $this->mfSendResponse(0, $validateParams["message"]);
+               }
+          }, ["security" => "required", "params" => "required"]);
+          // return $this->mfSendResponse(0, $data["cliente_detalle"]["id_dest"]);
+     }
+
      public function updateCredits($data)
      {
           return  $this->mfValidationGeneralAuth($data, function ($data) {
@@ -222,7 +238,15 @@ class MethodsSoap
           ];
           return $this->mfUtilityValidator($client, $validations);
      }
-
+     private function mfValidateClientsParams($params)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'fecini'                  => 'required|max:10|date:Y-m-d',
+               'fecfin'                  => 'required|max:10|date:Y-m-d',
+          ];
+          return $this->mfUtilityValidator($params, $validations);
+     }
      private function mfUtilityValidator($params, $validations)
      {
           $validator = new Validator;

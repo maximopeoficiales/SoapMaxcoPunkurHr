@@ -173,6 +173,67 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     </s:complexType>
                </s:element>
                <!-- fin POST_ACT_CLI -->
+               <!-- GET_ACT_CLI -->
+               <s:element name="GET_ACT_CLI">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:GET_ACT_CLIRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="GET_ACT_CLIRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="fecini" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="fecfin" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+
+
+               <s:element name="GET_ACT_CLIResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="tns:resultArray" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+
+               <s:complexType name="resultArray">
+                    <s:complexContent>
+                         <s:restriction base="soapenc:Array">
+                              <s:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Cliente[]" />
+                         </s:restriction>
+                    </s:complexContent>
+               </s:complexType>
+
+               <s:element name="Cliente">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="id_soc" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="nr_doc" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="nomb" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="telf" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="email" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="drcfisc" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="city" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="distr" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="codubig" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="drcdest" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="city2" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="distr2" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="codubig2" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="obs" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="cod" type="s:string" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <!-- fin GET_ACT_CLI -->
                <!-- POST_ACT_PREC -->
                <s:element name="POST_ACT_PREC">
                     <s:complexType>
@@ -239,6 +300,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_CLIResponse" />
      </wsdl:message>
      <!-- fin POST_ACT_CLI -->
+     <!-- GET_ACT_CLI -->
+     <wsdl:message name="GET_ACT_CLISoapIn">
+          <wsdl:part name="parameters" element="tns:GET_ACT_CLI" />
+     </wsdl:message>
+     <wsdl:message name="GET_ACT_CLISoapOut">
+          <wsdl:part name="parameters" element="tns:GET_ACT_CLIResponse" />
+     </wsdl:message>
+     <!-- fin GET_ACT_CLI -->
      <!-- POST_ACT_PREC -->
      <wsdl:message name="POST_ACT_PRECSoapIn">
           <wsdl:part name="parameters" element="tns:POST_ACT_PREC" />
@@ -281,6 +350,14 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin POST_ACT_CLI -->
+     <!-- GET_ACT_CLI -->
+     <wsdl:portType name="GET_ACT_CLISoap">
+          <wsdl:operation name="GET_ACT_CLI">
+               <wsdl:input message="tns:GET_ACT_CLISoapIn" />
+               <wsdl:output message="tns:GET_ACT_CLISoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin GET_ACT_CLI -->
 
      <!-- POST_ACT_PREC -->
      <wsdl:portType name="POST_ACT_PRECSoap">
@@ -348,6 +425,20 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:binding>
      <!-- fin POST_ACT_CLI -->
+     <!-- GET_ACT_CLI -->
+     <wsdl:binding name="GET_ACT_CLISoap" type="tns:GET_ACT_CLISoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="GET_ACT_CLI">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin GET_ACT_CLI -->
      <!-- POST_ACT_PREC -->
      <wsdl:binding name="POST_ACT_PRECSoap" type="tns:POST_ACT_PRECSoap">
           <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -393,6 +484,13 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:port>
      </wsdl:service>
      <!-- fin POST_ACT_CLI -->
+     <!-- GET_ACT_CLI -->
+     <wsdl:service name="GET_ACT_CLI">
+          <wsdl:port name="GET_ACT_CLISoap" binding="tns:GET_ACT_CLISoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+     <!-- fin GET_ACT_CLI -->
      <!-- POST_ACT_PREC -->
      <wsdl:service name="POST_ACT_PREC">
           <wsdl:port name="POST_ACT_PRECSoap" binding="tns:POST_ACT_PRECSoap">

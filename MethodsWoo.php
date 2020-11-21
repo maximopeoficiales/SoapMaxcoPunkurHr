@@ -3,6 +3,7 @@ require "./WoocommerceClient.php";
 define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
 date_default_timezone_set('America/Lima');
+require "./Client.php";
 
 class MethodsWoo
 {
@@ -169,7 +170,7 @@ class MethodsWoo
                          array_push($metadata, $value);
                     }
                     // $fieldsCreate = ["canal" => $material["canal"], "categ" => $material["categ"]];
-                     
+
                     if ($this->ExistsFieldMaterialMetadata("canal", $id_material, $id_soc)) {
                          $this->mfUpdateMetadataMaterial($id_material, $metadata, $id_soc);
                     } else {
@@ -240,6 +241,37 @@ class MethodsWoo
      }
      /* fin de materiales */
      /*  Clientes */
+     public function GetClientsWoo($params)
+     {
+
+
+          $id_soc = $params["id_soc"];
+          $fecini = $params["fecini"];
+          $fecfin = $params["fecfin"];
+
+          //get clients solo esta habilitado para maxco
+          if (($id_soc) == $this->MAXCO) {
+               // $id_soc = 999;
+               $response = $this->getClientsByDate($id_soc, $fecini, $fecfin);
+               if ($response == null) {
+                    return [
+                         "value" => 0,
+                         "message" => "No hay Clientes entre : $fecini - $fecfin",
+                    ];
+               } else {
+                    return [
+                         "value" => 1,
+                         "message" => "Clientes entre : $fecini - $fecfin",
+                         "data" => $response
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
      public function UpdateClientWoo($cliente)
      {
           $params = array(
@@ -392,6 +424,10 @@ class MethodsWoo
                'billing' => [
                     'email' => $cliente["email"],
                     'phone' => $cliente["telf"],
+                    'address_1' => $cliente["drcfisc"],
+                    // 'company' => $cliente["nrdoc"],
+                    'postcode' => "15000",
+                    'country' => "PE",
                ],
           ];
           try {
@@ -434,7 +470,7 @@ class MethodsWoo
      {
           // $wpdb = $this->getWPDB($data["id_soc"]);
           $wpdb = $this->getWPDB($id_soc);
-          $fecha_actual = $data["date_created"];
+          $fecha_actual = date("Y-m-d H:i:s");;
           /* creacion */
           $sql = "INSERT INTO wp_userssap (user_id , cod , date_created) VALUES ($user_id,0,%s)";
           $wpdb->query($wpdb->prepare($sql, $fecha_actual));
@@ -536,7 +572,7 @@ class MethodsWoo
           $id_cli = $cliente["id_cli"];
           $id_dest = $cliente["id_dest"];
           $drcdest = $cliente["drcdest"];
-          $fecha_actual = date("Y-m-d h:i:s");
+          $fecha_actual = date("Y-m-d H:i:s");
           $wpdb = $this->getWPDB($id_soc);
           $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
           $notIDDEST = $this->verifyIdDest($user_id, $id_dest, $id_soc);
@@ -600,6 +636,96 @@ class MethodsWoo
           curl_close($curl);
           $response = json_decode($response, true);
           return $response["status"] == 200 ? true : false;
+     }
+
+
+     private function getClientsByDate($id_soc, $fecini, $fecfin)
+     {
+          //example : 2020-11-20 - 2020-11-21
+          $response = [];
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
+          $dataSap = $wpdb->get_results($wpdb->prepare($sql, $fecini, $fecfin));
+          $primerClient = "";
+          $ORS = "";
+          foreach ($dataSap as $key => $clientSap) {
+               if ($key == 0) {
+                    $primerClient = $clientSap;
+               } else {
+                    $ORS .= " OR fields LIKE '%$clientSap->user_email%' ";
+               }
+          }
+          $sql2 = "SELECT fields FROM wp_wpforms_entries WHERE fields LIKE %s $ORS ORDER BY date ASC";
+          $dataWPFORM = $wpdb->get_results($wpdb->prepare($sql2, "%$primerClient->user_email%"));
+          $clientsData = [];
+          foreach ($dataWPFORM as $key2 => $form) {
+               $datos = [];
+               $observaciones = "";
+               $arraytemp = maybe_serialize($form->fields);
+               $arraytemp = json_decode($arraytemp, true);
+               for ($i = 0; $i < 30; $i++) {
+                    $temp = $arraytemp[$i];
+                    if ($temp["name"] == "Correo electrónico") {
+                         $datos["email"] = $temp["value"];
+                    }
+                    /* nro documento */
+                    if ($temp["name"] == "RUC") {
+                         $datos["nrdoc"] = $temp["value"];
+                    }
+                    if ($temp["name"] == "Teléfono de contacto") {
+                         $datos["telf"] = $temp["value"];
+                    }
+                    /* city - dstr - codubig */
+                    if ($temp["name"] == "Tu ciudad") {
+                         $city = explode("-", $temp["value"]);
+                         $datos["city"] = $city[0] . " - " . $city[1];
+                         $datos["distr"] = $city[2];
+                         $datos["codubig"] = $city[3];
+                    }
+                    // /* drcdest */
+                    if ($temp["name"] == "Tu dirección") {
+                         $datos["drcdest"] = $temp["value"];
+                    }
+
+                    /* observaciones */
+                    if ($temp["name"] == "Giro de negocio" || $temp["name"] == "Dinos si eres" || $temp["name"] == "Tu moneda de facturación") {
+                         $observaciones .= $temp["name"] . ": " . $temp["value"] . "|";
+                    }
+               }
+               $datos["obs"] = substr($observaciones, 0, -1);
+               array_push($clientsData, $datos);
+          }
+          foreach ($dataSap as $key => $dSap) {
+               foreach ($clientsData as $keyo => $client) {
+                    if ($dSap->email == $client["email"]) {
+                         $dSap->nrdoc = $client["nrdoc"];
+                         $dSap->telf = $client["telf"];
+                         $dSap->city = $client["city"];
+                         $dSap->distr = $client["distr"];
+                         $dSap->codubig = $client["codubig"];
+                         $dSap->drcfisc = $client["drcdest"];
+                         $dSap->obs = $client["obs"];
+                    }
+               }
+          };
+
+          foreach ($dataSap as $key => $obj) {
+               $array = [];
+               $array["id_soc"] = $id_soc;
+               $array["cd_cli"] = $obj->cd_cli;
+               $array["nrdoc"] = $obj->nrdoc;
+               $array["nomb"] = $obj->nomb;
+               $array["telf"] = $obj->telf;
+               $array["email"] = $obj->email;
+               $array["drcdest"] = $obj->drcfisc;
+               $array["city"] = $obj->city;
+               $array["distr"] = $obj->distr;
+               $array["codubig"] = $obj->codubig;
+               $array["obs"] = $obj->obs;
+               $array["cod"] = $obj->cod;
+               array_push($response, new Client($array));
+          }
+          return $response;
      }
      /*  Fin Clientes */
 
@@ -713,7 +839,7 @@ class MethodsWoo
      {
           // date_default_timezone_set('America/Lima');
           $wpdb = $this->getWPDB($id_soc);
-          $fecha_actual = date("Y-m-d h:i:s");
+          $fecha_actual = date("Y-m-d H:i:s");
           if (intval($cod) == 0) {
                //crear credito
                $sqlwallet = "INSERT INTO wp_fswcwallet (user_id,balance,last_deposit,total_spent,status,lock_message) VALUES($user_id,%s,%s,%s,%s,%s)";

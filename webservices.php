@@ -136,6 +136,35 @@ class WebServices
           ];
           return $m->createClients($data);
      }
+     
+     /**
+      * Consulta de Clientes Registrados
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $fecini Fecha de Creacion INICIO
+      * @param string $fecfen Fecha de Creacion FIN
+      * @return array Respuesta del Servidor
+      */
+
+     public function GET_ACT_CLI($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "params" => [
+                    "id_soc" => $request->id_soc,
+                    "fecini" => $request->fecini,
+                    "fecfin" => $request->fecfin,
+               ],
+          ];
+          return $m->getClients($data);
+     }
      /* Fin de Clientes */
 
      /* Creditos  */
