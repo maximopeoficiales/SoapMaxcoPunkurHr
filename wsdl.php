@@ -204,35 +204,31 @@ $urlsoap = url_completa() . "/webservices/init.php";
                </s:element>
 
                <s:complexType name="resultArray">
-                    <s:complexContent>
-                         <s:restriction base="soapenc:Array">
-                              <s:attribute ref="soapenc:arrayType" wsdl:arrayType="tns:Cliente[]" />
-                         </s:restriction>
-                    </s:complexContent>
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="unbounded" name="Cliente" type="tns:Cliente" />
+                    </s:sequence>
                </s:complexType>
 
-               <s:element name="Cliente">
-                    <s:complexType>
-                         <s:sequence>
-                              <s:element minOccurs="1" maxOccurs="1" name="id_soc" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="nr_doc" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="nomb" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="telf" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="email" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="drcfisc" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="city" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="distr" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="codubig" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="drcdest" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="city2" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="distr2" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="codubig2" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="obs" type="s:string" />
-                              <s:element minOccurs="1" maxOccurs="1" name="cod" type="s:string" />
-                         </s:sequence>
-                    </s:complexType>
-               </s:element>
+               <s:complexType name="Cliente">
+                    <s:sequence>
+                         <s:element minOccurs="1" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="nrdoc" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="nomb" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="telf" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="email" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="drcfisc" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="city" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="distr" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="codubig" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="drcdest" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="city2" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="distr2" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="codubig2" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="obs" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cod" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
                <!-- fin GET_ACT_CLI -->
                <!-- POST_ACT_PREC -->
                <s:element name="POST_ACT_PREC">

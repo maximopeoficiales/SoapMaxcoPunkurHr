@@ -7,7 +7,7 @@ class Client
      public $nomb;
      public $telf;
      public $email;
-     public $drcfic;
+     public $drcfisc;
      public $city;
      public $distr;
      public $codubig;
@@ -25,7 +25,7 @@ class Client
           $this->nomb = $data["nomb"];
           $this->telf = $data["telf"];
           $this->email = $data["email"];
-          $this->drcfic = $data["drcdest"];
+          $this->drcfisc = $data["drcdest"];
           $this->city = $data["city"];
           $this->city2 = $data["city"];
           $this->distr = $data["distr"];
