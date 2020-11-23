@@ -4,6 +4,9 @@ define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
 date_default_timezone_set('America/Lima');
 require "./Client.php";
+//respuesta de cotizacion
+require "./responses/cotizacion/Cotizacion.php";
+require "./responses/cotizacion/Material.php";
 
 class MethodsWoo
 {
@@ -862,5 +865,84 @@ class MethodsWoo
                array_push($metadata, ["key" => $value, "value" => $dataCurrent[$value]]);
           }
           return $metadata;
+     }
+
+     private function getUserIDbyCdCli($cd_cli, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results("SELECT user_id FROM wp_userssap WHERE cd_cli = $cd_cli LIMIT 1");
+          return $results[0]->user_id;
+     }
+     /* cotizaciones */
+     public function GetQuoteWoo($params)
+     {
+          $id_soc = $params["id_soc"];
+          $cd_cli = $params["cd_cli"];
+          $id_cli = $params["id_cli"];
+          $fcre = $params["fcre"];
+          $cod = $params["cod"];
+
+          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+               $id_soc = 999;
+               $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
+               $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
+               if (!$idOrders == null) {
+                    $quotes = $this->GetFormattedQuotes($idOrders, $user_id, $id_soc);
+                    return [
+                         "value" => 1,
+                         "message" => "Cotizaciones del $id_cli en la fecha: $fcre",
+                         "data" => $quotes
+                    ];
+               } else if ($idOrders == null && $cod == 0) {
+                    return [
+                         "value" => 0,
+                         "message" => "No hay cotizaciones del ID_CLI: $id_cli en la fecha: $fcre",
+                    ];
+               } else if ($idOrders == null && $cod == 1) {
+                    return [
+                         "value" => 0,
+                         "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
+
+     private function existingUserQuotes($user_id, $fcre, $cod, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT * FROM wp_cotizaciones WHERE customer_id = $user_id AND DATE_FORMAT(date_created,'%Y-%m-%d') = '$fcre' AND cod=$cod";
+          $results = $wpdb->get_results($sql);
+          return count($results) == 0 ? null : $results;
+     }
+     private function GetMetaValuePostByMetaKey($meta_key, $post_id, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT meta_value FROM wp_postmeta WHERE meta_key=%s AND post_id=$post_id LIMIT 1";
+          $result = $wpdb->get_results($wpdb->prepare($sql, $meta_key));
+          return strval($result[0]->meta_value);
+     }
+     private function GetFormattedQuotes($orders, $cd_cli, $id_soc)
+     {
+          $arrayQuotes = [];
+          $woo = $this->getWoocommerce($id_soc);
+          foreach ($orders as  $order) {
+               $quote = $woo->get("orders/$order->id_order");
+               $arraymaterials = [];
+               foreach ($quote->line_items as  $m) {
+                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
+                    $und = ($unidad == null) ? "kg" : $unidad;
+                    array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+               }
+               array_push(
+                    $arrayQuotes,
+                    new Cotizacion($order->id_order, $cd_cli, number_format($quote->total, 2, ".", ""), $arraymaterials)
+               );
+          }
+          return $arrayQuotes;
      }
 }

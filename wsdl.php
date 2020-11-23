@@ -230,6 +230,71 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     </s:sequence>
                </s:complexType>
                <!-- fin GET_ACT_CLI -->
+
+               <!-- GET_CTZ_RECEP_COTZ -->
+               <s:element name="GET_CTZ_RECEP_COTZ">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:GET_CTZ_RECEP_COTZRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="GET_CTZ_RECEP_COTZRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cd_cli" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_cli" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="fcre" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cod" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+
+
+               <s:element name="GET_CTZ_RECEP_COTZResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="tns:ArrayCotizacion" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+
+               <s:complexType name="ArrayCotizacion">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="unbounded" name="Cotizacion" type="tns:Cotizacion" />
+                    </s:sequence>
+               </s:complexType>
+
+               <s:complexType name="Cotizacion">
+                    <s:sequence>
+                         <s:element minOccurs="1" maxOccurs="1" name="id_ctwb" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="prctotal" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="materials" type="tns:ArrayMaterials" />
+                    </s:sequence>
+               </s:complexType>
+               <s:complexType name="ArrayMaterials">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="unbounded" name="material" type="tns:Material" />
+                    </s:sequence>
+               </s:complexType>
+               <s:complexType name="Material">
+                    <s:sequence>
+                         <s:element minOccurs="1" maxOccurs="1" name="pos" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="id_mat" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="nomb" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cant" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="und" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="prec" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="prectot" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- fin GET_CTZ_RECEP_COTZ -->
+
                <!-- POST_ACT_PREC -->
                <s:element name="POST_ACT_PREC">
                     <s:complexType>
@@ -313,6 +378,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:message>
      <!-- fin POST_ACT_PREC -->
 
+     <!-- GET_CTZ_RECEP_COTZ -->
+     <wsdl:message name="GET_CTZ_RECEP_COTZSoapIn">
+          <wsdl:part name="parameters" element="tns:GET_CTZ_RECEP_COTZ" />
+     </wsdl:message>
+     <wsdl:message name="GET_CTZ_RECEP_COTZSoapOut">
+          <wsdl:part name="parameters" element="tns:GET_CTZ_RECEP_COTZResponse" />
+     </wsdl:message>
+     <!-- fin GET_CTZ_RECEP_COTZ -->
+
 
      <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
@@ -363,6 +437,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin POST_ACT_PREC -->
+
+     <!-- GET_CTZ_RECEP_COTZ -->
+     <wsdl:portType name="GET_CTZ_RECEP_COTZSoap">
+          <wsdl:operation name="GET_CTZ_RECEP_COTZ">
+               <wsdl:input message="tns:GET_CTZ_RECEP_COTZSoapIn" />
+               <wsdl:output message="tns:GET_CTZ_RECEP_COTZSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin GET_CTZ_RECEP_COTZ -->
      <!-- fin de registro -->
 
 
@@ -449,6 +532,20 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:binding>
      <!-- fin POST_ACT_PREC -->
+     <!-- GET_CTZ_RECEP_COTZ -->
+     <wsdl:binding name="GET_CTZ_RECEP_COTZSoap" type="tns:GET_CTZ_RECEP_COTZSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="GET_CTZ_RECEP_COTZ">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin GET_CTZ_RECEP_COTZ -->
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
@@ -494,5 +591,12 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:port>
      </wsdl:service>
      <!-- fin POST_ACT_PREC -->
+     <!-- GET_CTZ_RECEP_COTZ -->
+     <wsdl:service name="GET_CTZ_RECEP_COTZ">
+          <wsdl:port name="GET_CTZ_RECEP_COTZSoap" binding="tns:GET_CTZ_RECEP_COTZSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+     <!-- fin GET_CTZ_RECEP_COTZ -->
      <!-- fin de servicios -->
 </wsdl:definitions>

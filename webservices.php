@@ -136,7 +136,7 @@ class WebServices
           ];
           return $m->createClients($data);
      }
-     
+
      /**
       * Consulta de Clientes Registrados
       *
@@ -239,4 +239,38 @@ class WebServices
           return $m->updatePrice($data);
      }
      /* fin precios */
+
+
+     /* Cotizaciones  */
+
+     /**
+      * Obtiene Cotizaciones de un cliente Especifico
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $cd_cli Correlativo cliente
+      * @param string $id_cli Codigo Cliente
+      * @param string $fcre Fecha de creacion
+      * @return array Respuesta del Servidor
+      */
+     public function GET_CTZ_RECEP_COTZ($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "params" => [
+                    "id_soc" => $request->id_soc,
+                    "cd_cli" => $request->cd_cli,
+                    "id_cli" => $request->id_cli,
+                    "fcre" => $request->fcre,
+                    "cod" => $request->cod,
+               ],
+          ];
+          return $m->GetQuote($data);
+     }
 }

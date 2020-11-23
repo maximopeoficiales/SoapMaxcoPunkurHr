@@ -104,6 +104,24 @@ class MethodsSoap
                }
           }, ["security" => "required", "credito" => "required"]);
      }
+
+     public function GetQuote($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $params = $data["params"];
+               $validateParamsQuote = $this->mfValidateQuoteParams($params);
+               if ($validateParamsQuote["validate"]) {
+                    $updated = $this->m()->GetQuoteWoo($params);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateParamsQuote["message"]);
+               }
+          }, ["security" => "required", "params" => "required"]);
+     }
+
+
+
      /* retornadores de respuestas */
      private function mfIsAuthorized($user, $password)
      {
@@ -247,6 +265,20 @@ class MethodsSoap
           ];
           return $this->mfUtilityValidator($params, $validations);
      }
+
+     private function mfValidateQuoteParams($params)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'cd_cli'                  => 'required|numeric|digits_between:1,10',
+               'id_cli'                  => 'required|numeric|digits_between:1,10',
+               'fcre'                  => 'required|max:10|date:Y-m-d',
+               'cod'                  => 'required|max:1|numeric|in:0,1',
+          ];
+          return $this->mfUtilityValidator($params, $validations);
+     }
+
+
      private function mfUtilityValidator($params, $validations)
      {
           $validator = new Validator;
