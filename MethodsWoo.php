@@ -455,12 +455,12 @@ class MethodsWoo
                     $this->createAddressSoap($user_id, $params, true);
                     return [
                          "value" => 2,
-                         "message" => "Cliente con id_cli: $user_id y id_dest: $id_dest actualizado",
+                         "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
                     ];
                }
                return [
                     "value" => 2,
-                    "message" => "Cliente con id_cli: $user_id actualizado",
+                    "message" => "Cliente con id_cli: $id_cli actualizado",
                ];
           } catch (\Throwable $th) {
                return [
