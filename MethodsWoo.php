@@ -300,7 +300,7 @@ class MethodsWoo
                } else if ($cod == 1) {
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
-                    //crea destinatarios
+                    //solo crea destinatarios
                     $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
                     if ($this->createAddressSoap($user_id, $params)) {
                          return [
@@ -314,19 +314,19 @@ class MethodsWoo
                          ];
                     }
                } else if ($cod == 3) {
-                    /* actualiza destinatarios */
-                    // $this->createRecipientAddress($cliente, 1);
-                    $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    if ($this->createAddressSoap($user_id, $params, true)) {
-                         return [
-                              "value" => 2,
-                              "message" => "El id_dest : $id_dest ha sido actualizado ",
-                         ];
-                    }
-               } else if ($cod == 4) {
+
                     /*crea cliente y crea direccion  */
                     return $this->createCliente($cliente, true);
-               } else if ($cod == 5) {
+                    /* actualiza destinatarios */
+                    // $this->createRecipientAddress($cliente, 1);
+                    // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    // if ($this->createAddressSoap($user_id, $params, true)) {
+                    //      return [
+                    //           "value" => 2,
+                    //           "message" => "El id_dest : $id_dest ha sido actualizado ",
+                    //      ];
+                    // }
+               } else if ($cod == 4) {
                     /*actualizar cliente y actualizar direccion  */
                     return $this->UpdateCliente($cliente, true);
                } else {
