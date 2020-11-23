@@ -405,7 +405,7 @@ class MethodsWoo
                     }
                     return [
                          "value" => 1,
-                         "data" => "id_cli: " .  $id_cli,
+                         "data" => "cd_cli: " .  $cd_cli,
                          "message" => "Registro de Cliente Exitoso",
                     ];
                }
