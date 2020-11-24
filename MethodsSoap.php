@@ -263,10 +263,9 @@ class MethodsSoap
                'telf_eje'                  => 'max:9',
                'email_eje'                  => 'max:30|email',
                'id_dest'              => 'numeric|digits_between:1,10',
-               'drcdest'              => '',
+               'drcdest'              => 'max:250',
                'cod'              => 'required|max:5|numeric',
-               'id_dest'                  => 'numeric|digits_between:1,10',
-               'drcdest'                  => 'max:70',
+               
           ];
           return $this->mfUtilityValidator($client, $validations);
      }
