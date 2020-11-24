@@ -883,7 +883,7 @@ class MethodsWoo
           $cod = $params["cod"];
 
           if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
-               $id_soc = 999;
+               // $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
@@ -912,6 +912,62 @@ class MethodsWoo
           }
      }
 
+     public function PostQuoteWoo($params)
+     {
+
+          $id_soc = $params["id_soc"];
+          $pos = $params["pos"];
+          $id_order = $params["id_ctwb"];
+          $sku = $params["id_mat"];
+          $quantity = $params["cant"];
+          $prctot = $params["prctot"];
+
+          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+               // $id_soc = 999;
+               try {
+                    $data = [];
+                    if ($pos == 0) {
+                         //agrega un nuevo producto
+                         $data = array(
+                              'line_items' => array(array(
+                                   'quantity' => $quantity,
+                                   'sku' => $sku,
+                                   'total' => number_format($prctot, 2, ".", ""),
+                              ))
+                         );
+                         $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                         return [
+                              "value" => 2,
+                              "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
+                         ];
+                    } else {
+                         $data = array(
+                              'line_items' => array(array(
+                                   'id' => $pos,
+                                   'quantity' => $quantity,
+                                   'sku' => $sku,
+                                   'total' => number_format($prctot, 2, ".", ""),
+                              ))
+                         );
+                         $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                         return [
+                              "value" => 2,
+                              "message" => "El id_ctwb: $id_order se ha actualizado",
+                         ];
+                    }
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "El id_ctwb: $id_order no existe",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
      private function existingUserQuotes($user_id, $fcre, $cod, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);

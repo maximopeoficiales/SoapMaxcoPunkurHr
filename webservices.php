@@ -273,4 +273,52 @@ class WebServices
           ];
           return $m->GetQuote($data);
      }
+
+     /* Cotizaciones  */
+
+     /**
+      * Modifica Cotizaciones de un cliente Especifico
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $id_ctwb ID de cotizacion web
+      * @param string $id_ped ID del pedido
+      * @param string $pos Posicion de la cotizacion web
+      * @param string $id_mat Sku del material
+      * @param string $nomb Nombre del producto
+      * @param string $cant Cantidad del material
+      * @param string $und Unidad de medida
+      * @param string $prec Precio del producto
+      * @param string $dsct Descuento del producto
+      * @param string $prctot Precio Total del Producto
+      * @return array Respuesta del Servidor
+      */
+     public function POST_CTZ_ENV_COTZ($request)
+     {
+          $cot = $request->det_cot;
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "cotizacion" => [
+                    "id_soc" => $request->id_soc,
+                    "id_ctwb" => $request->id_ctwb,
+                    "id_ped" => $request->id_ped,
+
+                    "pos" => $cot->pos,
+                    "id_mat" => $cot->id_mat,
+                    "nomb" => $cot->nomb,
+                    "cant" => $cot->cant,
+                    "und" => $cot->und,
+                    "prec" => $cot->prec,
+                    "dsct" => $cot->dsct,
+                    "prctot" => $cot->prctot,
+               ],
+          ];
+          return $m->PostQuote($data);
+     }
 }

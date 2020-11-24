@@ -119,6 +119,20 @@ class MethodsSoap
                }
           }, ["security" => "required", "params" => "required"]);
      }
+     public function PostQuote($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $params = $data["cotizacion"];
+               $validateParamsQuote = $this->mfValidateQuotePost($params);
+               if ($validateParamsQuote["validate"]) {
+                    $updated = $this->m()->PostQuoteWoo($params);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateParamsQuote["message"]);
+               }
+          }, ["security" => "required", "cotizacion" => "required"]);
+     }
 
 
 
@@ -274,6 +288,24 @@ class MethodsSoap
                'id_cli'                  => 'required|numeric|digits_between:1,10',
                'fcre'                  => 'required|max:10|date:Y-m-d',
                'cod'                  => 'required|max:1|numeric|in:0,1',
+          ];
+          return $this->mfUtilityValidator($params, $validations);
+     }
+     private function mfValidateQuotePost($params)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'id_ctwb'                  => 'required|numeric|digits_between:1,10',
+               'id_ped'                  => 'required|numeric|digits_between:1,10',
+
+               'pos'                  => 'required|max:3',
+               'id_mat'                  => 'required|max:12',
+               'nomb'                  => 'required|max:40',
+               'cant'                  => 'required|max:4',
+               'und'                  => 'required|max:3',
+               'prec'                  => 'required|max:6',
+               'dsct'                  => 'required|max:6',
+               'prctot'                  => 'required|max:6',
           ];
           return $this->mfUtilityValidator($params, $validations);
      }
