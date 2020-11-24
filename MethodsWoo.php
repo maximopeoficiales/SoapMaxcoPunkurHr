@@ -936,6 +936,8 @@ class MethodsWoo
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                         $this->changeCodQuote($id_order, $id_soc);
+
                          return [
                               "value" => 2,
                               "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
@@ -950,6 +952,8 @@ class MethodsWoo
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                         $this->changeCodQuote($id_order, $id_soc);
+
                          return [
                               "value" => 2,
                               "message" => "El id_ctwb: $id_order se ha actualizado",
@@ -968,6 +972,14 @@ class MethodsWoo
                ];
           }
      }
+
+     private function changeCodQuote($id_order, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "UPDATE wp_cotizaciones SET cod = 1 WHERE id_order = $id_order";
+          $wpdb->query($sql);
+     }
+
      private function existingUserQuotes($user_id, $fcre, $cod, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
