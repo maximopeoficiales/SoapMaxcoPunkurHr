@@ -933,7 +933,7 @@ class MethodsWoo
                               'line_items' => array(array(
                                    'quantity' => $quantity,
                                    'sku' => $sku,
-                                   'total' => number_format($prctot, 2, ".", ""),
+                                   'total' => number_format($prctot/1.18, 2, ".", ""),
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
@@ -949,7 +949,7 @@ class MethodsWoo
                                    'id' => $pos,
                                    'quantity' => $quantity,
                                    'sku' => $sku,
-                                   'total' => number_format($prctot, 2, ".", ""),
+                                   'total' => number_format($prctot/1.18, 2, ".", ""),
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
