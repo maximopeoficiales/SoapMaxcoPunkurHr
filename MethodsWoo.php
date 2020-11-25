@@ -941,7 +941,7 @@ class MethodsWoo
 
                          return [
                               "value" => 1,
-                              "message" => "$cod Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
+                              "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
                          ];
                     } else if ($cod == 1) {
                          $data = array(
