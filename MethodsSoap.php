@@ -305,6 +305,7 @@ class MethodsSoap
                'prec'                  => 'required|max:6',
                'dsct'                  => 'required|max:6',
                'prctot'                  => 'required|max:6',
+               'cod'                  => 'max:1',
           ];
           return $this->mfUtilityValidator($params, $validations);
      }

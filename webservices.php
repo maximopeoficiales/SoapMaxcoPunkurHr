@@ -317,6 +317,7 @@ class WebServices
                     "prec" => $cot->prec,
                     "dsct" => $cot->dsct,
                     "prctot" => $cot->prctot,
+                    "cod" => $cot->cod,
                ],
           ];
           return $m->PostQuote($data);

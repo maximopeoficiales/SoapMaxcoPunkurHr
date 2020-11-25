@@ -355,6 +355,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="prec" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="dsct" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="prctot" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cod" type="s:string" />
                     </s:sequence>
                </s:complexType>
                <s:element name="POST_CTZ_ENV_COTZResponse">

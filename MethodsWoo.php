@@ -917,17 +917,18 @@ class MethodsWoo
 
           $id_soc = $params["id_soc"];
           $pos = $params["pos"];
+          $cod = $params["cod"];
           $id_order = $params["id_ctwb"];
           $sku = $params["id_mat"];
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
-
+          
           if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
                // $id_soc = 999;
                try {
                     $data = [];
-                    if ($pos == 0) {
-                         //agrega un nuevo producto
+                    if ($cod == 0) {
+                         // agrega un nuevo producto
                          $data = array(
                               'line_items' => array(array(
                                    'quantity' => $quantity,
@@ -939,10 +940,10 @@ class MethodsWoo
                          $this->changeCodQuote($id_order, $id_soc);
 
                          return [
-                              "value" => 2,
-                              "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
+                              "value" => 1,
+                              "message" => "$cod Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
                          ];
-                    } else {
+                    } else if ($cod == 1) {
                          $data = array(
                               'line_items' => array(array(
                                    'id' => $pos,
