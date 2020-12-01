@@ -885,7 +885,7 @@ class MethodsWoo
           $fcre = $params["fcre"];
           $cod = $params["cod"];
 
-          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+          if ($id_soc == $this->MAXCO) {
                // $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
@@ -919,7 +919,7 @@ class MethodsWoo
           $id_soc = $params["id_soc"];
           $id_order = $params["id_ctwb"];
 
-          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+          if ($id_soc == $this->MAXCO ) {
                // $id_soc = 999;
                try {
                     $orderData = $this->GetStatusQuote($id_order, $id_soc);
@@ -953,7 +953,7 @@ class MethodsWoo
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
-          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+          if ($id_soc == $this->MAXCO ) {
                // $id_soc = 999;
                try {
                     $data = [];
