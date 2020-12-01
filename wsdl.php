@@ -221,10 +221,6 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="city" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="distr" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="codubig" type="s:string" />
-                         <s:element minOccurs="1" maxOccurs="1" name="drcdest" type="s:string" />
-                         <s:element minOccurs="1" maxOccurs="1" name="city2" type="s:string" />
-                         <s:element minOccurs="1" maxOccurs="1" name="distr2" type="s:string" />
-                         <s:element minOccurs="1" maxOccurs="1" name="codubig2" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="obs" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="cod" type="s:string" />
                     </s:sequence>
@@ -273,6 +269,12 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     <s:sequence>
                          <s:element minOccurs="1" maxOccurs="1" name="id_ctwb" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="direcdest" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="codpostal" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="lat" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="long" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="tpodesp" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="tpcotz" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="prctotal" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="materials" type="tns:ArrayMaterials" />
                     </s:sequence>

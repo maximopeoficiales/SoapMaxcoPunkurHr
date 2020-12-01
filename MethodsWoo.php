@@ -688,7 +688,7 @@ class MethodsWoo
                     }
                     // /* drcdest */
                     if ($temp["name"] == "Tu dirección") {
-                         $datos["drcdest"] = $temp["value"];
+                         $datos["drcfisc"] = $temp["value"];
                     }
 
                     /* observaciones */
@@ -704,10 +704,10 @@ class MethodsWoo
                     if ($dSap->email == $client["email"]) {
                          $dSap->nrdoc = $client["nrdoc"];
                          $dSap->telf = $client["telf"];
+                         $dSap->drcfisc = $client["drcfisc"];
                          $dSap->city = $client["city"];
                          $dSap->distr = $client["distr"];
                          $dSap->codubig = $client["codubig"];
-                         $dSap->drcfisc = $client["drcdest"];
                          $dSap->obs = $client["obs"];
                     }
                }
@@ -720,8 +720,8 @@ class MethodsWoo
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
                $array["telf"] = $obj->telf;
+               $array["drcfisc"] = $obj->drcfisc;
                $array["email"] = $obj->email;
-               $array["drcdest"] = $obj->drcfisc;
                $array["city"] = $obj->city;
                $array["distr"] = $obj->distr;
                $array["codubig"] = $obj->codubig;
@@ -886,14 +886,14 @@ class MethodsWoo
           $cod = $params["cod"];
 
           if ($id_soc == $this->MAXCO) {
-               // $id_soc = 999;
+               $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
                     $quotes = $this->GetFormattedQuotes($idOrders, $user_id, $id_soc);
                     return [
                          "value" => 1,
-                         "message" => "Cotizaciones del $id_cli en la fecha: $fcre",
+                         "message" => "Cotizaciones del id_cli: $id_cli en la fecha: $fcre",
                          "data" => $quotes
                     ];
                } else if ($idOrders == null && $cod == 0) {
@@ -919,7 +919,7 @@ class MethodsWoo
           $id_soc = $params["id_soc"];
           $id_order = $params["id_ctwb"];
 
-          if ($id_soc == $this->MAXCO ) {
+          if ($id_soc == $this->MAXCO) {
                // $id_soc = 999;
                try {
                     $orderData = $this->GetStatusQuote($id_order, $id_soc);
@@ -953,7 +953,7 @@ class MethodsWoo
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
-          if ($id_soc == $this->MAXCO ) {
+          if ($id_soc == $this->MAXCO) {
                // $id_soc = 999;
                try {
                     $data = [];
@@ -1037,9 +1037,25 @@ class MethodsWoo
                     $und = ($unidad == null) ? "kg" : $unidad;
                     array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
+               $lat = "";
+               $long = "";
+               $status = 0;
+
+               if ($quote->status == "completed") {
+                    $status = 1;
+               }
+               foreach ($quote->meta_data as $m) {
+                    if ($m->key == "ce_latitud") {
+                         $lat = $m->value;
+                    }
+                    if ($m->key == "ce_longitud") {
+                         $long = $m->value;
+                    }
+               }
+
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
           }
           return $arrayQuotes;
