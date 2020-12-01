@@ -370,6 +370,50 @@ $urlsoap = url_completa() . "/webservices/init.php";
                </s:element>
                <!-- FIN POST_CTZ_ENV_COTZ -->
 
+               <!-- GET_PAG_RECEP_PAGO -->
+               <s:element name="GET_PAG_RECEP_PAGO">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:GET_PAG_RECEP_PAGORequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="GET_PAG_RECEP_PAGORequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_ctwb" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_ped" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+
+
+               <s:element name="GET_PAG_RECEP_PAGOResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="tns:resultSTPAG" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="resultSTPAG">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="unbounded" name="RESP_RECEP_PAGO" type="tns:RESP_RECEP_PAGO" />
+                    </s:sequence>
+               </s:complexType>
+
+               <s:complexType name="RESP_RECEP_PAGO">
+                    <s:sequence>
+                         <s:element minOccurs="1" maxOccurs="1" name="stpag" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="dscrp" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="tpcob" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- FIN GET_PAG_RECEP_PAGO -->
+
 
           </s:schema>
      </wsdl:types>
@@ -442,6 +486,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:message>
      <!-- fin POST_CTZ_ENV_COTZ -->
 
+     <!-- GET_PAG_RECEP_PAGO -->
+     <wsdl:message name="GET_PAG_RECEP_PAGOSoapIn">
+          <wsdl:part name="parameters" element="tns:GET_PAG_RECEP_PAGO" />
+     </wsdl:message>
+     <wsdl:message name="GET_PAG_RECEP_PAGOSoapOut">
+          <wsdl:part name="parameters" element="tns:GET_PAG_RECEP_PAGOResponse" />
+     </wsdl:message>
+     <!-- fin GET_PAG_RECEP_PAGO -->
+
 
      <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
@@ -510,6 +563,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin POST_CTZ_ENV_COTZ -->
+
+     <!-- POST_CTZ_ENV_COTZ -->
+     <wsdl:portType name="GET_PAG_RECEP_PAGOSoap">
+          <wsdl:operation name="GET_PAG_RECEP_PAGO">
+               <wsdl:input message="tns:GET_PAG_RECEP_PAGOSoapIn" />
+               <wsdl:output message="tns:GET_PAG_RECEP_PAGOSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin GET_PAG_RECEP_PAGO -->
      <!-- fin de registro -->
 
 
@@ -626,6 +688,21 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:binding>
      <!-- fin POST_CTZ_ENV_COTZ -->
 
+     <!-- GET_PAG_RECEP_PAGO -->
+     <wsdl:binding name="GET_PAG_RECEP_PAGOSoap" type="tns:GET_PAG_RECEP_PAGOSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="GET_PAG_RECEP_PAGO">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin GET_PAG_RECEP_PAGO -->
+
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
@@ -686,5 +763,13 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:port>
      </wsdl:service>
      <!-- fin POST_CTZ_ENV_COTZ -->
+
+     <!-- GET_PAG_RECEP_PAGO -->
+     <wsdl:service name="GET_PAG_RECEP_PAGO">
+          <wsdl:port name="GET_PAG_RECEP_PAGOSoap" binding="tns:GET_PAG_RECEP_PAGOSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+     <!-- fin GET_PAG_RECEP_PAGO -->
      <!-- fin de servicios -->
 </wsdl:definitions>

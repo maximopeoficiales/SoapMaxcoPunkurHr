@@ -133,6 +133,20 @@ class MethodsSoap
                }
           }, ["security" => "required", "cotizacion" => "required"]);
      }
+     public function GetQuoteStatus($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $params = $data["params"];
+               $validateParamsQuote = $this->mfValidateQuoteStatus($params);
+               if ($validateParamsQuote["validate"]) {
+                    $updated = $this->m()->GetQuoteStatusWoo($params);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateParamsQuote["message"]);
+               }
+          }, ["security" => "required", "params" => "required"]);
+     }
 
 
 
@@ -306,6 +320,15 @@ class MethodsSoap
                'dsct'                  => 'required|max:6',
                'prctot'                  => 'required|max:6',
                'cod'                  => 'max:1',
+          ];
+          return $this->mfUtilityValidator($params, $validations);
+     }
+     private function mfValidateQuoteStatus($params)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'id_ctwb'                  => 'required|numeric|digits_between:1,10',
+               'id_ped'                  => 'required|numeric|digits_between:1,12',
           ];
           return $this->mfUtilityValidator($params, $validations);
      }

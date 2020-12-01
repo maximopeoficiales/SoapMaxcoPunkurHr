@@ -322,4 +322,33 @@ class WebServices
           ];
           return $m->PostQuote($data);
      }
+
+
+     /**
+      * Obtiene status de una cotizacion especifica
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $id_ctwb ID de cotizacion web
+      * @param string $id_ped ID del pedido
+      * @return array Respuesta del Servidor
+      */
+     public function GET_PAG_RECEP_PAGO($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "params" => [
+                    "id_soc" => $request->id_soc,
+                    "id_ctwb" => $request->id_ctwb,
+                    "id_ped" => $request->id_ped,
+               ],
+          ];
+          return $m->GetQuoteStatus($data);
+     }
 }

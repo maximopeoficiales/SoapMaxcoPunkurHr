@@ -7,6 +7,7 @@ require "./Client.php";
 //respuesta de cotizacion
 require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
+require "./responses/cotizacion/CotizacionStatus.php";
 
 class MethodsWoo
 {
@@ -786,6 +787,7 @@ class MethodsWoo
                          }
                     }
                }
+               //en esta parte si esos campos no son creados aqui los crea
                foreach ($data as $key => $fieldUpdated) {
                     if (!$this->isCreated($fieldUpdated["id"], $dataVerify)) {
                          $id_field = $fieldUpdated["id"];
@@ -794,6 +796,7 @@ class MethodsWoo
                          $wpdb->flush();
                     }
                }
+
 
                /* update wallet balancec aqui es necesario crear estos campos*/
                if (!$this->haveCredits($user_id, $id_soc)) {
@@ -911,6 +914,33 @@ class MethodsWoo
                ];
           }
      }
+     public function GetQuoteStatusWoo($params)
+     {
+          $id_soc = $params["id_soc"];
+          $id_order = $params["id_ctwb"];
+
+          if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
+               // $id_soc = 999;
+               try {
+                    $orderData = $this->GetStatusQuote($id_order, $id_soc);
+                    return [
+                         "value" => 1,
+                         "message" => "Cotizacion con id_ctwb: $id_order",
+                         "data" => $orderData,
+                    ];
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "Cotizacion con id_ctwb: $id_order no existe",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
 
      public function PostQuoteWoo($params)
      {
@@ -922,7 +952,7 @@ class MethodsWoo
           $sku = $params["id_mat"];
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
-          
+
           if ($id_soc == $this->MAXCO || $id_soc == $this->PRECOR) {
                // $id_soc = 999;
                try {
@@ -933,7 +963,7 @@ class MethodsWoo
                               'line_items' => array(array(
                                    'quantity' => $quantity,
                                    'sku' => $sku,
-                                   'total' => number_format($prctot/1.18, 2, ".", ""),
+                                   'total' => number_format($prctot / 1.18, 2, ".", ""),
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
@@ -949,7 +979,7 @@ class MethodsWoo
                                    'id' => $pos,
                                    'quantity' => $quantity,
                                    'sku' => $sku,
-                                   'total' => number_format($prctot/1.18, 2, ".", ""),
+                                   'total' => number_format($prctot / 1.18, 2, ".", ""),
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
@@ -1013,5 +1043,30 @@ class MethodsWoo
                );
           }
           return $arrayQuotes;
+     }
+     private function GetStatusQuote($id_order, $id_soc)
+     {
+          $woo = $this->getWoocommerce($id_soc);
+          $quote = $woo->get("orders/$id_order");
+          $statusCode = 0;
+          $pagado = ["completed"];
+          $pendiente = ["pending", "ywraq-pending", "processing", "on-hold"];
+          $vencido = ["ywraq-rejected", "ywraq-expired", "cancelled", "failed"];
+          foreach ($pagado as $v1) {
+               if ($v1 == $quote->status) {
+                    $statusCode = 1;
+               }
+          }
+          foreach ($pendiente as $v2) {
+               if ($v2 == $quote->status) {
+                    $statusCode = 2;
+               }
+          }
+          foreach ($vencido as $v3) {
+               if ($v3 == $quote->status) {
+                    $statusCode = 3;
+               }
+          }
+          return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title)];
      }
 }
