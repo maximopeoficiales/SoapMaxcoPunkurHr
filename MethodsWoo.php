@@ -886,7 +886,7 @@ class MethodsWoo
           $cod = $params["cod"];
 
           if ($id_soc == $this->MAXCO) {
-               $id_soc = 999;
+               // $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
@@ -1031,32 +1031,34 @@ class MethodsWoo
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
                $quote = $woo->get("orders/$order->id_order");
-               $arraymaterials = [];
-               foreach ($quote->line_items as  $m) {
-                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
-                    $und = ($unidad == null) ? "kg" : $unidad;
-                    array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
-               }
-               $lat = "";
-               $long = "";
-               $status = 0;
-
-               if ($quote->status == "completed") {
-                    $status = 1;
-               }
-               foreach ($quote->meta_data as $m) {
-                    if ($m->key == "ce_latitud") {
-                         $lat = $m->value;
+               if ($quote->created_via == "ywraq") {
+                    $arraymaterials = [];
+                    foreach ($quote->line_items as  $m) {
+                         $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
+                         $und = ($unidad == null) ? "kg" : $unidad;
+                         array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                     }
-                    if ($m->key == "ce_longitud") {
-                         $long = $m->value;
-                    }
-               }
+                    $lat = "";
+                    $long = "";
+                    $status = 0;
 
-               array_push(
-                    $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
-               );
+                    if ($quote->status == "completed") {
+                         $status = 1;
+                    }
+                    foreach ($quote->meta_data as $m) {
+                         if ($m->key == "ce_latitud") {
+                              $lat = $m->value;
+                         }
+                         if ($m->key == "ce_longitud") {
+                              $long = $m->value;
+                         }
+                    }
+
+                    array_push(
+                         $arrayQuotes,
+                         new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    );
+               }
           }
           return $arrayQuotes;
      }
