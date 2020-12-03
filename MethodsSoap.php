@@ -147,6 +147,20 @@ class MethodsSoap
                }
           }, ["security" => "required", "params" => "required"]);
      }
+     public function UpdateQuoteStatus($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $params = $data["params"];
+               $validateParamsQuote = $this->mfValidateUpdateQuoteStatus($params);
+               if ($validateParamsQuote["validate"]) {
+                    $updated = $this->m()->UpdateQuoteStatusWoo($params);
+                    return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validateParamsQuote["message"]);
+               }
+          }, ["security" => "required", "params" => "required"]);
+     }
 
 
 
@@ -279,7 +293,7 @@ class MethodsSoap
                'id_dest'              => 'numeric|digits_between:1,10',
                'drcdest'              => 'max:250',
                'cod'              => 'required|max:5|numeric',
-               
+
           ];
           return $this->mfUtilityValidator($client, $validations);
      }
@@ -329,6 +343,16 @@ class MethodsSoap
                'id_soc'                  =>  'required|max:4',
                'id_ctwb'                  => 'required|numeric|digits_between:1,10',
                'id_ped'                  => 'required|numeric|digits_between:1,12',
+          ];
+          return $this->mfUtilityValidator($params, $validations);
+     }
+     private function mfValidateUpdateQuoteStatus($params)
+     {
+          $validations = [
+               'id_soc'                  =>  'required|max:4',
+               'id_ctwb'                  => 'required|numeric|digits_between:1,10',
+               'id_ped'                  => 'required|numeric|digits_between:1,12',
+               'stat'                  => 'required',
           ];
           return $this->mfUtilityValidator($params, $validations);
      }

@@ -941,6 +941,51 @@ class MethodsWoo
                ];
           }
      }
+     public function UpdateQuoteStatusWoo($params)
+     {
+          function getStatusDescrip($statusCode)
+          {
+               $estados = [
+                    "ywraq-pending" => 1,
+                    "ywraq-accepted" => 2,
+                    "on-hold" => 3,
+                    "on-hold" => 4,
+                    "completed" => 5,
+               ];
+               foreach ($estados as $key => $value) {
+                    if ($value == $statusCode) {
+                         return $key;
+                    }
+               }
+          }
+          $id_soc = $params["id_soc"];
+          $id_order = $params["id_ctwb"];
+          $stat = $params["stat"];
+          $statusCode = intval(explode("-", $stat)[0]);
+          if ($id_soc == $this->MAXCO) {
+               // $id_soc = 999;
+               $status_descrip = getStatusDescrip($statusCode);
+               try {
+                    $this->getWoocommerce($id_soc)->put("orders/$id_order", [
+                         "status" => $status_descrip
+                    ]);
+                    return [
+                         "value" => 1,
+                         "message" => "El estado ha sido actualizado a $stat",
+                    ];
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "El id_ctwb: $id_order no existe",
+                    ];
+               }
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc: $id_soc no coincide con nuestra sociedad",
+               ];
+          }
+     }
 
      public function PostQuoteWoo($params)
      {
