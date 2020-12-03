@@ -414,7 +414,38 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="tpcob" type="s:string" />
                     </s:sequence>
                </s:complexType>
+
                <!-- FIN GET_PAG_RECEP_PAGO -->
+
+               <!-- POST_ACT_STAT_DESP -->
+               <s:element name="POST_ACT_STAT_DESP">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:POST_ACT_STAT_DESPRequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_STAT_DESPRequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_ctwb" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_ped" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="stat" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <s:element name="POST_ACT_STAT_DESPResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <!-- FIN POST_ACT_STAT_DESP -->
 
 
           </s:schema>
@@ -497,6 +528,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:message>
      <!-- fin GET_PAG_RECEP_PAGO -->
 
+     <!-- POST_ACT_STAT_DESP -->
+     <wsdl:message name="POST_ACT_STAT_DESPSoapIn">
+          <wsdl:part name="parameters" element="tns:POST_ACT_STAT_DESP" />
+     </wsdl:message>
+     <wsdl:message name="POST_ACT_STAT_DESPSoapOut">
+          <wsdl:part name="parameters" element="tns:POST_ACT_STAT_DESPResponse" />
+     </wsdl:message>
+     <!-- fin POST_ACT_STAT_DESP -->
+
 
      <!-- se registrar la funciones de entrada y salida -->
      <wsdl:portType name="POST_ACT_MATSoap">
@@ -566,7 +606,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:portType>
      <!-- fin POST_CTZ_ENV_COTZ -->
 
-     <!-- POST_CTZ_ENV_COTZ -->
+     <!-- GET_PAG_RECEP_PAGO -->
      <wsdl:portType name="GET_PAG_RECEP_PAGOSoap">
           <wsdl:operation name="GET_PAG_RECEP_PAGO">
                <wsdl:input message="tns:GET_PAG_RECEP_PAGOSoapIn" />
@@ -574,6 +614,16 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:operation>
      </wsdl:portType>
      <!-- fin GET_PAG_RECEP_PAGO -->
+
+
+     <!-- POST_ACT_STAT_DESP -->
+     <wsdl:portType name="POST_ACT_STAT_DESPSoap">
+          <wsdl:operation name="POST_ACT_STAT_DESP">
+               <wsdl:input message="tns:POST_ACT_STAT_DESPSoapIn" />
+               <wsdl:output message="tns:POST_ACT_STAT_DESPSoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin POST_ACT_STAT_DESP -->
      <!-- fin de registro -->
 
 
@@ -705,6 +755,21 @@ $urlsoap = url_completa() . "/webservices/init.php";
      </wsdl:binding>
      <!-- fin GET_PAG_RECEP_PAGO -->
 
+     <!-- POST_ACT_STAT_DESP -->
+     <wsdl:binding name="POST_ACT_STAT_DESPSoap" type="tns:POST_ACT_STAT_DESPSoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="POST_ACT_STAT_DESP">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     <!-- fin POST_ACT_STAT_DESP -->
+
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
@@ -773,5 +838,13 @@ $urlsoap = url_completa() . "/webservices/init.php";
           </wsdl:port>
      </wsdl:service>
      <!-- fin GET_PAG_RECEP_PAGO -->
+
+     <!-- POST_ACT_STAT_DESP -->
+     <wsdl:service name="POST_ACT_STAT_DESP">
+          <wsdl:port name="POST_ACT_STAT_DESPSoap" binding="tns:POST_ACT_STAT_DESPSoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+     <!-- fin POST_ACT_STAT_DESP -->
      <!-- fin de servicios -->
 </wsdl:definitions>
