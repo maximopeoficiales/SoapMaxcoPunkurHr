@@ -969,6 +969,7 @@ class MethodsWoo
                     $this->getWoocommerce($id_soc)->put("orders/$id_order", [
                          "status" => $status_descrip
                     ]);
+                    $this->changeCodQuote($id_order, $id_soc); //actualiza cod a 1
                     return [
                          "value" => 1,
                          "message" => "El estado ha sido actualizado a $stat",
