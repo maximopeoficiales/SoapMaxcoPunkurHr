@@ -891,11 +891,18 @@ class MethodsWoo
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
                     $quotes = $this->GetFormattedQuotes($idOrders, $user_id, $id_soc);
-                    return [
-                         "value" => 1,
-                         "message" => "Cotizaciones del id_cli: $id_cli en la fecha: $fcre",
-                         "data" => $quotes
-                    ];
+                    if (count($quotes) == 0) {
+                         return [
+                              "value" => 0,
+                              "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre"
+                         ];
+                    } else {
+                         return [
+                              "value" => 1,
+                              "message" => "Cotizaciones del id_cli: $id_cli en la fecha: $fcre",
+                              "data" => $quotes
+                         ];
+                    }
                } else if ($idOrders == null && $cod == 0) {
                     return [
                          "value" => 0,
@@ -969,7 +976,7 @@ class MethodsWoo
                     $this->getWoocommerce($id_soc)->put("orders/$id_order", [
                          "status" => $status_descrip
                     ]);
-                    $this->changeCodQuote($id_order, $id_soc); //actualiza cod a 1
+                    $this->changeCodQuote($id_order, $id_soc); //actu+aliza cod a 1
                     return [
                          "value" => 1,
                          "message" => "El estado ha sido actualizado a $stat",
