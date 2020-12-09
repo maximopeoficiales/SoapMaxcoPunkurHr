@@ -1007,7 +1007,7 @@ class MethodsWoo
           $prctot = $params["prctot"];
 
           if ($id_soc == $this->MAXCO) {
-               $id_soc = 999;
+               // $id_soc = 999;
                try {
                     $data = [];
                     if ($cod == 0) {
