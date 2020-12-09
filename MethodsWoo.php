@@ -1110,6 +1110,9 @@ class MethodsWoo
                          $und = ($unidad == null) ? "kg" : $unidad;
                          array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                     }
+                    foreach ($quote->shipping_lines as $delivery) {
+                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                    }
                     $lat = "";
                     $long = "";
                     $status = 0;
