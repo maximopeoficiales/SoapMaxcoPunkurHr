@@ -1007,26 +1007,45 @@ class MethodsWoo
           $prctot = $params["prctot"];
 
           if ($id_soc == $this->MAXCO) {
-               // $id_soc = 999;
+               $id_soc = 999;
                try {
                     $data = [];
                     if ($cod == 0) {
-                         // agrega un nuevo producto
-                         $data = array(
-                              'line_items' => array(array(
-                                   'quantity' => $quantity,
-                                   'sku' => $sku,
-                                   'total' => number_format($prctot / 1.18, 2, ".", ""),
-                              ))
-                         );
-                         $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                         $this->changeCodQuote($id_order, $id_soc);
-
                          return [
                               "value" => 1,
-                              "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
+                              "message" => "Haz enviado el cod: $cod",
                          ];
                     } else if ($cod == 1) {
+                         // agrega un nuevo producto
+                         $pos = "";
+                         if ($this->verifyMaterialSku($sku, $id_soc)) {
+                              $data = array(
+                                   'line_items' => array(array(
+                                        'quantity' => $quantity,
+                                        'sku' => $sku,
+                                        'total' => number_format($prctot / 1.18, 2, ".", ""),
+                                   ))
+                              );
+                              $order = $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                              $this->changeCodQuote($id_order, $id_soc);
+                              foreach ($order->line_items as  $value) {
+                                   if ($value->sku == $sku) {
+                                        $pos = $value->id;
+                                   }
+                              }
+                              return [
+                                   "value" => 1,
+                                   "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
+                                   "data" => "POS: $pos",
+                              ];
+                         } else {
+                              return [
+                                   "value" => 0,
+                                   "message" => "El material con sku: $sku no existe",
+                              ];
+                         }
+                    } else if ($cod == 2) {
+                         //actualiza producto
                          $data = array(
                               'line_items' => array(array(
                                    'id' => $pos,
@@ -1139,5 +1158,10 @@ class MethodsWoo
                }
           }
           return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title)];
+     }
+     private function verifyMaterialSku($sku, $id_soc)
+     {
+          $material = $this->getWoocommerce($id_soc)->get("products", ["sku" => $sku]);
+          return (count($material) == 0) ? false : true;
      }
 }
