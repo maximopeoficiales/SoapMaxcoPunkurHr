@@ -281,7 +281,7 @@ class MethodsSoap
                'id_soc'                  =>  'required|max:4',
                'id_cli'                  => 'required|numeric|digits_between:1,10',
                'categ'                  => 'max:10',
-               'nomb'                  => 'required|max:40',
+               'nomb'                  => 'required',
                'nrdoc'                  => 'required|max:11',
                'telf'                  => 'max:9',
                'email'                  => 'max:30|email',
