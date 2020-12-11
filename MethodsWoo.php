@@ -323,10 +323,12 @@ class MethodsWoo
                } else if ($cod == 2) {
                     //solo crea destinatarios
                     $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                     if ($this->createAddressSoap($user_id, $params)) {
                          return [
                               "value" => 1,
                               "message" => "El id_dest : $id_dest ha sido creado ",
+                              "data" => "cd_cli: $cd_cli",
                          ];
                     } else {
                          return [
@@ -458,6 +460,7 @@ class MethodsWoo
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
+               $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
                     $params = array(
@@ -477,11 +480,14 @@ class MethodsWoo
                     return [
                          "value" => 2,
                          "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
+                         "data" => "cd_cli: $cd_cli",
+
                     ];
                }
                return [
                     "value" => 2,
                     "message" => "Cliente con id_cli: $id_cli actualizado",
+                    "data" => "cd_cli: $cd_cli",
                ];
           } catch (\Throwable $th) {
                return [
@@ -489,6 +495,12 @@ class MethodsWoo
                     "message" => "El Cliente con el id_cli: $id_cli no existe",
                ];
           }
+     }
+     private function getCdCliWithUserIdSap($user_id, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
+          return $results[0]->cd_cli;
      }
      private function getCd_CliSap($user_id, $data = [], $id_soc)
      {
