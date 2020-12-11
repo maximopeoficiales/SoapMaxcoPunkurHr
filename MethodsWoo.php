@@ -37,13 +37,13 @@ class MethodsWoo
      private function getWPDB($id_soc)
      {
 
-          if (($id_soc) === $this->isMaxco($id_soc)) {
+          if ($this->isMaxco($id_soc)) {
                /* maxco */
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
-          } else if (($id_soc) === $this->isPrecor($id_soc)) {
+          } else if ($this->isPrecor($id_soc)) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
-          } else if (($id_soc) == 999) {
+          } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           } else if ($id_soc == 1000) {
@@ -59,7 +59,7 @@ class MethodsWoo
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
-          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                $sku = $material["id_mat"];
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
@@ -125,7 +125,7 @@ class MethodsWoo
           }
           array_push($dataSend["meta_data"], ["key" => "peso", "value" => $weight]); //funcion con acf
 
-          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
@@ -182,7 +182,7 @@ class MethodsWoo
                "price" => $price,
                "regular_price" => $price,
           ];
-          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                /* creacion y actualizacion */
                // $id_soc = 999;
                $metadata = [];
@@ -274,7 +274,7 @@ class MethodsWoo
           $fecfin = $params["fecfin"];
 
           //get clients solo esta habilitado para maxco
-          if (($id_soc) == $this->isMaxco($id_soc)) {
+          if ($this->isMaxco($id_soc)) {
                // $id_soc = 999;
                $response = $this->getClientsByDate($id_soc, $fecini, $fecfin);
                if ($response == null) {
@@ -313,7 +313,7 @@ class MethodsWoo
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
-          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                // $cliente["id_soc"] = 1000;
                /* creacion */
                if ($cod == 0) {
@@ -762,7 +762,7 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
-          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                     $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
