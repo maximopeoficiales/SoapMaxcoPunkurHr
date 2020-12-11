@@ -736,8 +736,8 @@ class MethodsWoo
 
           foreach ($dataSap as $key => $obj) {
                $array = [];
-               // $array["id_soc"] = $id_soc;
-               $array["id_soc"] = "MA01";
+               $array["id_soc"] = $id_soc;
+               // $array["id_soc"] = "MA01";
                $array["cd_cli"] = $obj->cd_cli;
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
