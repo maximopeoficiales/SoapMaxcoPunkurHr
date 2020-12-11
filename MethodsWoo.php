@@ -12,15 +12,35 @@ require "./responses/cotizacion/CotizacionStatus.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR = "PR01";
-     private $MAXCO = "EM01";
+     // private $PRECOR = "PR01";
+     // private $MAXCO = "EM01";
+     private function isMaxco($id_soc)
+     {
+          if ($id_soc == "EM01") {
+               return true;
+          } else if ($id_soc == "MA01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
+     private function isPrecor($id_soc)
+     {
+          if ($id_soc == "PR01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
      private function getWPDB($id_soc)
      {
 
-          if (($id_soc) === $this->MAXCO) {
+          if (($id_soc) === $this->isMaxco($id_soc)) {
                /* maxco */
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
-          } else if (($id_soc) === $this->PRECOR) {
+          } else if (($id_soc) === $this->isPrecor($id_soc)) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
           } else if (($id_soc) == 999) {
@@ -39,7 +59,7 @@ class MethodsWoo
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
                $sku = $material["id_mat"];
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
@@ -105,7 +125,7 @@ class MethodsWoo
           }
           array_push($dataSend["meta_data"], ["key" => "peso", "value" => $weight]); //funcion con acf
 
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
@@ -162,7 +182,7 @@ class MethodsWoo
                "price" => $price,
                "regular_price" => $price,
           ];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
                /* creacion y actualizacion */
                // $id_soc = 999;
                $metadata = [];
@@ -254,7 +274,7 @@ class MethodsWoo
           $fecfin = $params["fecfin"];
 
           //get clients solo esta habilitado para maxco
-          if (($id_soc) == $this->MAXCO) {
+          if (($id_soc) == $this->isMaxco($id_soc)) {
                // $id_soc = 999;
                $response = $this->getClientsByDate($id_soc, $fecini, $fecfin);
                if ($response == null) {
@@ -293,7 +313,7 @@ class MethodsWoo
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
                // $cliente["id_soc"] = 1000;
                /* creacion */
                if ($cod == 0) {
@@ -376,7 +396,7 @@ class MethodsWoo
                if ($response->id !== null) {
                     $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
                     $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                    if ($activeDest  && $id_soc == $this->PRECOR) {
+                    if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
                          $params = array(
                               "id_dest" => $cliente["id_dest"],
                               "first_name" => $cliente["nomb"],
@@ -438,7 +458,7 @@ class MethodsWoo
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-               if ($activeDest && $id_soc == $this->PRECOR) {
+               if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
                     $params = array(
                          "id_dest" => $cliente["id_dest"],
@@ -619,6 +639,7 @@ class MethodsWoo
           $phone = $params["phone"];
           $email = $params["email "];
           $curl = curl_init();
+          //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
                CURLOPT_URL => "https://precor.punkuhr.com/wp-json/max_functions/v1/address",
                // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
@@ -715,7 +736,8 @@ class MethodsWoo
 
           foreach ($dataSap as $key => $obj) {
                $array = [];
-               $array["id_soc"] = $id_soc;
+               // $array["id_soc"] = $id_soc;
+               $array["id_soc"] = "MA01";
                $array["cd_cli"] = $obj->cd_cli;
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
@@ -740,7 +762,7 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if (($id_soc) == $this->isMaxco($id_soc) || ($id_soc) == $this->isPrecor($id_soc)) {
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                     $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
@@ -885,7 +907,7 @@ class MethodsWoo
           $fcre = $params["fcre"];
           $cod = $params["cod"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
@@ -926,7 +948,7 @@ class MethodsWoo
           $id_soc = $params["id_soc"];
           $id_order = $params["id_ctwb"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                try {
                     $orderData = $this->GetStatusQuote($id_order, $id_soc);
@@ -969,7 +991,7 @@ class MethodsWoo
           $id_order = $params["id_ctwb"];
           $stat = $params["stat"];
           $statusCode = intval(explode("-", $stat)[0]);
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc)) {
                // $id_soc = 999;
                $status_descrip = getStatusDescrip($statusCode);
                try {
@@ -1006,7 +1028,7 @@ class MethodsWoo
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                try {
                     $data = [];
@@ -1103,37 +1125,38 @@ class MethodsWoo
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
                $quote = $woo->get("orders/$order->id_order");
-               if ($quote->created_via == "ywraq") {
-                    $arraymaterials = [];
-                    foreach ($quote->line_items as  $m) {
-                         $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
-                         $und = ($unidad == null) ? "kg" : $unidad;
-                         array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
-                    }
-                    foreach ($quote->shipping_lines as $delivery) {
-                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
-                    }
-                    $lat = "";
-                    $long = "";
-                    $status = 0;
-
-                    if ($quote->status == "completed") {
-                         $status = 1;
-                    }
-                    foreach ($quote->meta_data as $m) {
-                         if ($m->key == "ce_latitud") {
-                              $lat = $m->value;
-                         }
-                         if ($m->key == "ce_longitud") {
-                              $long = $m->value;
-                         }
-                    }
-
-                    array_push(
-                         $arrayQuotes,
-                         new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
-                    );
+               // if ($quote->created_via == "ywraq") {
+               $arraymaterials = [];
+               foreach ($quote->line_items as  $m) {
+                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
+                    $und = ($unidad == null) ? "kg" : $unidad;
+                    array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
+               foreach ($quote->shipping_lines as $delivery) {
+                    array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+               }
+
+               $lat = "";
+               $long = "";
+               $status = 0;
+
+               if ($quote->status == "completed") {
+                    $status = 1;
+               }
+               foreach ($quote->meta_data as $m) {
+                    if ($m->key == "ce_latitud") {
+                         $lat = $m->value;
+                    }
+                    if ($m->key == "ce_longitud") {
+                         $long = $m->value;
+                    }
+               }
+
+               array_push(
+                    $arrayQuotes,
+                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+               );
+               // }
           }
           return $arrayQuotes;
      }
