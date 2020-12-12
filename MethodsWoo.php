@@ -642,14 +642,14 @@ class MethodsWoo
      {
           $id_dest = $params["id_dest"];
           $first_name = $params["first_name"];
-          $last_name = $params["last_name"];
+          $last_name = $params["first_name"];
           $company = $params["company"];
           $country = $params["country"];
           $address_1 = $params["address_1"];
           $address_2 = $params["address_2"];
           $postcode = $params["postcode"];
           $phone = $params["phone"];
-          $email = $params["email "];
+          $email = $params["email"];
           $curl = curl_init();
           //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
