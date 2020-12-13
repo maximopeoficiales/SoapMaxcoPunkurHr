@@ -461,6 +461,7 @@ class MethodsWoo
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+
                if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
                     $params = array(
@@ -484,6 +485,7 @@ class MethodsWoo
 
                     ];
                }
+
                return [
                     "value" => 2,
                     "message" => "Cliente con id_cli: $id_cli actualizado",
@@ -1145,7 +1147,9 @@ class MethodsWoo
                     array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
                foreach ($quote->shipping_lines as $delivery) {
-                    array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                    if ($delivery->total != "0.00") {
+                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                    }
                }
 
                $lat = "";
