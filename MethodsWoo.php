@@ -314,7 +314,7 @@ class MethodsWoo
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
-               // $cliente["id_soc"] = 1000;
+               // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
                     return $this->createCliente($cliente, false);
@@ -457,7 +457,11 @@ class MethodsWoo
                ],
           ];
           try {
+               //cuando tenga un id_cli si es null busca por email
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+               if ($user_id == null) {
+                    $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+               }
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
@@ -585,6 +589,13 @@ class MethodsWoo
           $sql = "SELECT user_id FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
           $data = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
           return $data[0]->user_id;
+     }
+     private function getUserIDByEmail($email, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT * FROM wp_users WHERE user_email=%s LIMIT 1";
+          $data = $wpdb->get_results($wpdb->prepare($sql, $email));
+          return $data[0]->ID;
      }
 
      private function verifyEmail($email, $id_soc)
