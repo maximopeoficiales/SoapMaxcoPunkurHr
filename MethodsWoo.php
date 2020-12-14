@@ -1016,7 +1016,7 @@ class MethodsWoo
           $id_order = $params["id_ctwb"];
           $stat = $params["stat"];
           $statusCode = intval(explode("-", $stat)[0]);
-          if ($id_soc == $this->isMaxco($id_soc)) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                $status_descrip = getStatusDescrip($statusCode);
                try {
