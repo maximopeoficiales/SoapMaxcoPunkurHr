@@ -941,12 +941,14 @@ class MethodsWoo
                     if (count($quotes) == 0) {
                          return [
                               "value" => 0,
-                              "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre"
+                              "message" => "No hay cotizaciones  del ID_CLI: $id_cli en la fecha: $fcre"
                          ];
                     } else {
+                         //todo positivo
+                         $tipoOrden = $cod == 0 ? "Cotizaciones" : "Ordenes";
                          return [
                               "value" => 1,
-                              "message" => "Cotizaciones del id_cli: $id_cli en la fecha: $fcre",
+                              "message" => "$tipoOrden del ID_CLI: $id_cli en la fecha: $fcre",
                               "data" => $quotes
                          ];
                     }
@@ -958,7 +960,7 @@ class MethodsWoo
                } else if ($idOrders == null && $cod == 1) {
                     return [
                          "value" => 0,
-                         "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre",
+                         "message" => "No hay ordenes del ID_CLI: $id_cli en la fecha: $fcre",
                     ];
                }
           } else {
@@ -1023,7 +1025,7 @@ class MethodsWoo
                     $this->getWoocommerce($id_soc)->put("orders/$id_order", [
                          "status" => $status_descrip
                     ]);
-                    $this->changeCodQuote($id_order, $id_soc); //actu+aliza cod a 1
+                    // $this->changeCodQuote($id_order, $id_soc); //actu+aliza cod a 1
                     return [
                          "value" => 1,
                          "message" => "El estado ha sido actualizado a $stat",
@@ -1074,7 +1076,7 @@ class MethodsWoo
                                    ))
                               );
                               $order = $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                              $this->changeCodQuote($id_order, $id_soc);
+                              // $this->changeCodQuote($id_order, $id_soc);
                               foreach ($order->line_items as  $value) {
                                    if ($value->sku == $sku) {
                                         $pos = $value->id;
@@ -1102,7 +1104,7 @@ class MethodsWoo
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                         $this->changeCodQuote($id_order, $id_soc);
+                         // $this->changeCodQuote($id_order, $id_soc);
 
                          return [
                               "value" => 2,
