@@ -614,6 +614,15 @@ class MethodsWoo
           $results = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
           return count($results) == 0 ? true : false;
      }
+     private function getValueProfileExtraFields($field_name, $user_id, $id_soc)
+     {
+          $datafields = $this->mfGetDataPFXFields($id_soc, [$field_name => "1"]);
+          $id_field = $datafields[0]["id"];
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE field_id=$id_field AND user_id=$user_id LIMIT 1";
+          $results = $wpdb->get_results($wpdb->prepare($sql));
+          return $results[0]->user_value;
+     }
      //crea direccion de destinatarios
      private function createRecipientAddress($cliente, $cod)
      {
@@ -694,7 +703,7 @@ class MethodsWoo
           //example : 2020-11-20 - 2020-11-21
           $response = [];
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
+          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb,s.user_id as user_id FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
           $dataSap = $wpdb->get_results($wpdb->prepare($sql, $fecini, $fecfin));
           $primerClient = "";
           $ORS = "";
@@ -750,12 +759,12 @@ class MethodsWoo
                     if ($dSap->email == $client["email"]) {
                          $dSap->nrdoc = $client["nrdoc"];
                          $dSap->telf = $client["telf"];
-                         $dSap->telfmov = $client["telfmov"];
                          $dSap->drcfisc = $client["drcfisc"];
                          $dSap->city = $client["city"];
                          $dSap->distr = $client["distr"];
                          $dSap->codubig = $client["codubig"];
                          $dSap->obs = $client["obs"];
+                         //obtengo valor del data profile extra fields
                     }
                }
           };
@@ -763,17 +772,15 @@ class MethodsWoo
           foreach ($dataSap as $key => $obj) {
                $array = [];
                if ($this->isMaxco($id_soc)) {
-                    $array["id_soc"]="MA01";
-               }else{
-                    $array["id_soc"]="PR01";
-
+                    $array["id_soc"] = "MA01";
+               } else {
+                    $array["id_soc"] = "PR01";
                }
                // $array["id_soc"] = ;
                $array["cd_cli"] = $obj->cd_cli;
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
                $array["telf"] = $obj->telf;
-               $array["telfmov"] = $obj->telfmov;
                $array["drcfisc"] = $obj->drcfisc;
                $array["email"] = $obj->email;
                $array["city"] = $obj->city;
@@ -781,6 +788,8 @@ class MethodsWoo
                $array["codubig"] = $obj->codubig;
                $array["obs"] = $obj->obs;
                $array["cod"] = $obj->cod;
+               //profile extra fields               
+               $array["telfmov"] = $this->getValueProfileExtraFields("telfmov", $obj->user_id, $id_soc);
                array_push($response, new Client($array));
           }
           return $response;
