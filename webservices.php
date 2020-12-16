@@ -96,6 +96,7 @@ class WebServices
       * @param string $nomb Nombre del material
       * @param string $nrdoc Nro Doc Cliente
       * @param string $telf Telefono Cliente
+      * @param string $telfmov Telefono movil
       * @param string $email Email Cliente
       * @param string $drcfisc Direccion Fiscal
       * @param int $id_eje Codigo Ejecutivo Vendedor
@@ -123,6 +124,7 @@ class WebServices
                     "nomb" => $request->nomb,
                     "nrdoc" => $request->nrdoc,
                     "telf" => $request->telf,
+                    "telfmov" => $request->telfmov,
                     "email" => $request->email,
                     "drcfisc" => $request->drcfisc,
                     "id_eje" => $request->id_eje,

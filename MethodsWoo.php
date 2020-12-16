@@ -377,7 +377,7 @@ class MethodsWoo
                'billing' => [
                     "address_1" => $cliente["drcfisc"],
                     'email' => $cliente["email"],
-                    'phone' => $cliente["telf"],
+                    'phone' => $cliente["telfmov"],
                ],
           ];
           $email = $cliente["email"];
@@ -408,7 +408,7 @@ class MethodsWoo
                               "address_1" => $cliente["drcdest"],
                               "address_2" => "",
                               "postcode" => "07001",
-                              "phone" => $cliente["telf"],
+                              "phone" => $cliente["telfmov"],
                               "email" => $cliente["email"]
                          );
                          // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
@@ -449,7 +449,7 @@ class MethodsWoo
                'first_name' => $cliente["nomb"],
                'billing' => [
                     'email' => $cliente["email"],
-                    'phone' => $cliente["telf"],
+                    'phone' => $cliente["telfmov"],
                     'address_1' => $cliente["drcfisc"],
                     // 'company' => $cliente["nrdoc"],
                     'postcode' => "15000",
@@ -477,7 +477,7 @@ class MethodsWoo
                          "address_1" => $cliente["drcdest"],
                          "address_2" => "",
                          "postcode" => "07001",
-                         "phone" => $cliente["telf"],
+                         "phone" => $cliente["telfmov"],
                          "email" => $cliente["email"]
                     );
                     // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
@@ -750,6 +750,7 @@ class MethodsWoo
                     if ($dSap->email == $client["email"]) {
                          $dSap->nrdoc = $client["nrdoc"];
                          $dSap->telf = $client["telf"];
+                         $dSap->telfmov = $client["telfmov"];
                          $dSap->drcfisc = $client["drcfisc"];
                          $dSap->city = $client["city"];
                          $dSap->distr = $client["distr"];
@@ -772,6 +773,7 @@ class MethodsWoo
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
                $array["telf"] = $obj->telf;
+               $array["telfmov"] = $obj->telfmov;
                $array["drcfisc"] = $obj->drcfisc;
                $array["email"] = $obj->email;
                $array["city"] = $obj->city;

@@ -6,6 +6,7 @@ class Client
      public $nrdoc;
      public $nomb;
      public $telf;
+     public $telfmov;
      public $email;
      public $drcfisc;
      public $city;
@@ -20,6 +21,7 @@ class Client
           $this->nrdoc = $data["nrdoc"];
           $this->nomb = $data["nomb"];
           $this->telf = $data["telf"];
+          $this->telfmov = $data["telfmov"];
           $this->email = $data["email"];
           $this->drcfisc = $data["drcfisc"];
           $this->city = $data["city"];
