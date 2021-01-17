@@ -390,41 +390,63 @@ class MethodsWoo
           if (!$this->verifyId_cli($id_cli, $id_soc)) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe",
+                    "message" => "El id_cli: $id_cli ya existe en nuestra base de datos",
                ];
           }
           try {
                $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                if ($response->id !== null) {
-                    $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
-                    $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                    if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
-                         $params = array(
-                              "id_dest" => $cliente["id_dest"],
-                              "first_name" => $cliente["nomb"],
-                              "last_name" => "",
-                              "company" => $cliente["nrdoc"],
-                              "country" => "PE",
-                              "address_1" => $cliente["drcdest"],
-                              "address_2" => "",
-                              "postcode" => "07001",
-                              "phone" => $cliente["telfmov"],
-                              "email" => $cliente["email"]
-                         );
-                         // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                         if ($this->createAddressSoap($response->id, $params)) {
-                              return [
-                                   "value" => 1,
-                                   "data" => "cd_cli: " .  $cd_cli,
-                                   "message" => "Registro de Cliente y direccion Exitosa",
-                              ];
-                         } else {
-                              return [
-                                   "value" => 0,
-                                   "data" => "cd_cli: " .  $cd_cli,
-                                   "message" => "Error en creacion de direccion",
-                              ];
+                    try {
+                         $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error al generar el cd_cli",
+                         ];
+                    }
+
+                    try {
+                         $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error al crear los campos en PFX",
+                         ];
+                    }
+                    try {
+                         if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
+                              $params = array(
+                                   "id_dest" => $cliente["id_dest"],
+                                   "first_name" => $cliente["nomb"],
+                                   "last_name" => "",
+                                   "company" => $cliente["nrdoc"],
+                                   "country" => "PE",
+                                   "address_1" => $cliente["drcdest"],
+                                   "address_2" => "",
+                                   "postcode" => "07001",
+                                   "phone" => $cliente["telfmov"],
+                                   "email" => $cliente["email"]
+                              );
+                              // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                              if ($this->createAddressSoap($response->id, $params)) {
+                                   return [
+                                        "value" => 1,
+                                        "data" => "cd_cli: " .  $cd_cli,
+                                        "message" => "Registro de Cliente y direccion Exitosa",
+                                   ];
+                              } else {
+                                   return [
+                                        "value" => 0,
+                                        "data" => "cd_cli: " .  $cd_cli,
+                                        "message" => "Error en creacion de direccion",
+                                   ];
+                              }
                          }
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error en la creacion de destinatarios",
+                         ];
                     }
                     return [
                          "value" => 1,
@@ -435,7 +457,7 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe",
+                    "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente",
                ];
           }
      }
