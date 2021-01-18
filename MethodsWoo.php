@@ -460,7 +460,9 @@ class MethodsWoo
                return [
                     "value" => 0,
                     "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente,
-                         los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc",
+                    
+                    los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc \n" . "
+                    error: $th",
                ];
           }
      }
