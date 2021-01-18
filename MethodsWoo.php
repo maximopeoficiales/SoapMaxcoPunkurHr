@@ -377,7 +377,7 @@ class MethodsWoo
                'billing' => [
                     "address_1" => $cliente["drcfisc"],
                     'email' => $cliente["email"],
-                    'phone' => $cliente["telfmov"],
+                    'phone' => strval($cliente["telfmov"]),
                ],
           ];
           $email = $cliente["email"];
@@ -393,7 +393,9 @@ class MethodsWoo
                     "message" => "El id_cli: $id_cli ya existe en nuestra base de datos",
                ];
           }
+
           try {
+               // este metodo crea el cliente si no devuelve null sigue con los demas metodos
                $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                if ($response->id !== null) {
                     try {
@@ -457,7 +459,8 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente",
+                    "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente,
+                         los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc",
                ];
           }
      }
