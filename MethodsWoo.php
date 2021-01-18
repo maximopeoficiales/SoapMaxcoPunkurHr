@@ -375,9 +375,9 @@ class MethodsWoo
                'username' => $cliente["email"],
                'password' => "123456789",
                'billing' => [
-                    "address_1" => $cliente["drcfisc"],
+                    "address_1" => $cliente["drcfisc"] == null ? "" : $cliente["drcfisc"],
                     'email' => $cliente["email"],
-                    'phone' => strval($cliente["telfmov"]),
+                    'phone' => $cliente["telfmov"] == null ? "" : $cliente["telfmov"],
                ],
           ];
           $email = $cliente["email"];
