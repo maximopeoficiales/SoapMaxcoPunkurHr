@@ -980,7 +980,7 @@ class MethodsWoo
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
-                    $quotes = $this->GetFormattedQuotes($idOrders, $user_id, $id_soc);
+                    $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $id_soc);
                     if (count($quotes) == 0) {
                          return [
                               "value" => 0,
