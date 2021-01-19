@@ -245,7 +245,7 @@ class MethodsSoap
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
                'paqxun'              => 'digits_between:1,3|numeric',
-               'unxpaq'              => 'numeric|digits_between:1,2',
+               'unxpaq'              => 'numeric',
                'peso'              => 'required|max:7',
                'jprod'              => 'required|max:20',
                'cod'              => 'required|max:1|numeric|in:0,1',
