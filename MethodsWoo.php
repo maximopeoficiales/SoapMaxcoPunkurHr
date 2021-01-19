@@ -799,7 +799,8 @@ class MethodsWoo
           foreach ($dataSap as $key => $obj) {
                $array = [];
                if ($this->isMaxco($id_soc)) {
-                    $array["id_soc"] = "MA01";
+                    // cambiar aqui el id soc si es maxco
+                    $array["id_soc"] = "EM01";
                } else {
                     $array["id_soc"] = "PR01";
                }
