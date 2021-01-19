@@ -270,7 +270,7 @@ class MethodsSoap
                'id_mat'                  => 'required',
                'canal'              => 'required|max:6',
                'categ'              => 'max:20',
-               'prec'              => 'required|max:6',
+               'prec'              => 'required',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }
@@ -331,9 +331,9 @@ class MethodsSoap
                'nomb'                  => 'required|max:40',
                'cant'                  => 'required|max:4',
                'und'                  => 'required|max:3',
-               'prec'                  => 'required|max:6',
-               'dsct'                  => 'required|max:6',
-               'prctot'                  => 'required|max:6',
+               'prec'                  => 'required',
+               'dsct'                  => 'required',
+               'prctot'                  => 'required',
                'cod'                  => 'max:1',
           ];
           return $this->mfUtilityValidator($params, $validations);
