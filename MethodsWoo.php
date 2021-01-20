@@ -181,6 +181,7 @@ class MethodsWoo
           $dataSend = [
                "price" => $price,
                "regular_price" => $price,
+               "sale_price" => $price,
           ];
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                /* creacion y actualizacion */
