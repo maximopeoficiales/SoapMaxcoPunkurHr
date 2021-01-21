@@ -7,9 +7,29 @@ class WoocommerceClient
 {
      private $PRECOR = "PR01";
      private $MAXCO = "EM01";
+     private function isMaxco($id_soc)
+     {
+          if ($id_soc == "EM01") {
+               return true;
+          } else if ($id_soc == "MA01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
+     private function isPrecor($id_soc)
+     {
+          if ($id_soc == "PR01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
      public function getWoocommerce($id_soc)
      {
-          if ($id_soc == $this->MAXCO) {
+          if ($this->isMaxco($id_soc)) {
                /* maxco */
                return new Client(
                     "https://maxco.punkuhr.com/",
@@ -19,7 +39,7 @@ class WoocommerceClient
                          'version' => 'wc/v3',
                     ]
                );
-          } else if ($id_soc == $this->PRECOR) {
+          } else if ($this->isPrecor($id_soc)) {
                /* precor */
                return new Client(
                     "https://precor.punkuhr.com/",

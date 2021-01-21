@@ -245,7 +245,7 @@ class MethodsSoap
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
                'paqxun'              => 'digits_between:1,3|numeric',
-               'unxpaq'              => 'numeric|digits_between:1,2',
+               'unxpaq'              => 'numeric',
                'peso'              => 'required|max:7',
                'jprod'              => 'required|max:20',
                'cod'              => 'required|max:1|numeric|in:0,1',
@@ -270,7 +270,7 @@ class MethodsSoap
                'id_mat'                  => 'required',
                'canal'              => 'required|max:6',
                'categ'              => 'max:20',
-               'prec'              => 'required|max:6',
+               'prec'              => 'required',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }
@@ -283,9 +283,10 @@ class MethodsSoap
                'categ'                  => 'max:10',
                'nomb'                  => 'required',
                'nrdoc'                  => 'required|max:11',
-               'telf'                  => 'max:9',
+               'telf'                  => 'max:10',
                'email'                  => 'max:45|email',
-               'drcfisc'                  => 'max:70',
+               'telfmov'                  => 'max:10|required',
+               'drcfisc'                  => 'max:70|required',
                'id_eje'                  => 'numeric|digits_between:1,10',
                'nombeje'                  => 'max:40',
                'telf_eje'                  => 'max:9',
@@ -330,9 +331,9 @@ class MethodsSoap
                'nomb'                  => 'required|max:40',
                'cant'                  => 'required|max:4',
                'und'                  => 'required|max:3',
-               'prec'                  => 'required|max:6',
-               'dsct'                  => 'required|max:6',
-               'prctot'                  => 'required|max:6',
+               'prec'                  => 'required',
+               'dsct'                  => 'required',
+               'prctot'                  => 'required',
                'cod'                  => 'max:1',
           ];
           return $this->mfUtilityValidator($params, $validations);

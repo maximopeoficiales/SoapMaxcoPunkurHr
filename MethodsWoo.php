@@ -12,18 +12,38 @@ require "./responses/cotizacion/CotizacionStatus.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR = "PR01";
-     private $MAXCO = "EM01";
+     // private $PRECOR = "PR01";
+     // private $MAXCO = "EM01";
+     private function isMaxco($id_soc)
+     {
+          if ($id_soc == "EM01") {
+               return true;
+          } else if ($id_soc == "MA01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
+     private function isPrecor($id_soc)
+     {
+          if ($id_soc == "PR01") {
+               return true;
+          } else {
+               return false;
+          }
+     }
+
      private function getWPDB($id_soc)
      {
 
-          if (($id_soc) === $this->MAXCO) {
+          if ($this->isMaxco($id_soc)) {
                /* maxco */
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
-          } else if (($id_soc) === $this->PRECOR) {
+          } else if ($this->isPrecor($id_soc)) {
                /* precor */
                return new wpdb('i5142852_wp7', 'O.WfNQrZjiDKYtz507j13', 'i5142852_wp7', 'localhost');
-          } else if (($id_soc) == 999) {
+          } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
           } else if ($id_soc == 1000) {
@@ -39,7 +59,7 @@ class MethodsWoo
      public function UpdateMaterialStockWoo($material)
      {
           $id_soc = $material["id_soc"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                $sku = $material["id_mat"];
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
@@ -105,7 +125,7 @@ class MethodsWoo
           }
           array_push($dataSend["meta_data"], ["key" => "peso", "value" => $weight]); //funcion con acf
 
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
@@ -161,8 +181,9 @@ class MethodsWoo
           $dataSend = [
                "price" => $price,
                "regular_price" => $price,
+               "sale_price" => $price,
           ];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                /* creacion y actualizacion */
                // $id_soc = 999;
                $metadata = [];
@@ -254,7 +275,7 @@ class MethodsWoo
           $fecfin = $params["fecfin"];
 
           //get clients solo esta habilitado para maxco
-          if (($id_soc) == $this->MAXCO) {
+          if ($this->isMaxco($id_soc)) {
                // $id_soc = 999;
                $response = $this->getClientsByDate($id_soc, $fecini, $fecfin);
                if ($response == null) {
@@ -293,8 +314,8 @@ class MethodsWoo
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           $id_dest = $cliente["id_dest"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
-               // $cliente["id_soc"] = 1000;
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
+               // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
                     return $this->createCliente($cliente, false);
@@ -303,10 +324,12 @@ class MethodsWoo
                } else if ($cod == 2) {
                     //solo crea destinatarios
                     $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                     if ($this->createAddressSoap($user_id, $params)) {
                          return [
                               "value" => 1,
                               "message" => "El id_dest : $id_dest ha sido creado ",
+                              "data" => "cd_cli: $cd_cli",
                          ];
                     } else {
                          return [
@@ -353,9 +376,9 @@ class MethodsWoo
                'username' => $cliente["email"],
                'password' => "123456789",
                'billing' => [
-                    "address_1" => $cliente["drcfisc"],
+                    "address_1" => $cliente["drcfisc"] == null ? "" : $cliente["drcfisc"],
                     'email' => $cliente["email"],
-                    'phone' => $cliente["telf"],
+                    'phone' => $cliente["telfmov"] == null ? "" : $cliente["telfmov"],
                ],
           ];
           $email = $cliente["email"];
@@ -368,41 +391,65 @@ class MethodsWoo
           if (!$this->verifyId_cli($id_cli, $id_soc)) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe",
+                    "message" => "El id_cli: $id_cli ya existe en nuestra base de datos",
                ];
           }
+
           try {
+               // este metodo crea el cliente si no devuelve null sigue con los demas metodos
                $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                if ($response->id !== null) {
-                    $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
-                    $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                    if ($activeDest  && $id_soc == $this->PRECOR) {
-                         $params = array(
-                              "id_dest" => $cliente["id_dest"],
-                              "first_name" => $cliente["nomb"],
-                              "last_name" => "",
-                              "company" => $cliente["nrdoc"],
-                              "country" => "PE",
-                              "address_1" => $cliente["drcdest"],
-                              "address_2" => "",
-                              "postcode" => "07001",
-                              "phone" => $cliente["telf"],
-                              "email" => $cliente["email"]
-                         );
-                         // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                         if ($this->createAddressSoap($response->id, $params)) {
-                              return [
-                                   "value" => 1,
-                                   "data" => "cd_cli: " .  $cd_cli,
-                                   "message" => "Registro de Cliente y direccion Exitosa",
-                              ];
-                         } else {
-                              return [
-                                   "value" => 0,
-                                   "data" => "cd_cli: " .  $cd_cli,
-                                   "message" => "Error en creacion de direccion",
-                              ];
+                    try {
+                         $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error al generar el cd_cli",
+                         ];
+                    }
+
+                    try {
+                         $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error al crear los campos en PFX",
+                         ];
+                    }
+                    try {
+                         if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
+                              $params = array(
+                                   "id_dest" => $cliente["id_dest"],
+                                   "first_name" => $cliente["nomb"],
+                                   "last_name" => "",
+                                   "company" => $cliente["nrdoc"],
+                                   "country" => "PE",
+                                   "address_1" => $cliente["drcdest"],
+                                   "address_2" => "",
+                                   "postcode" => "07001",
+                                   "phone" => $cliente["telfmov"],
+                                   "email" => $cliente["email"]
+                              );
+                              // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                              if ($this->createAddressSoap($response->id, $params)) {
+                                   return [
+                                        "value" => 1,
+                                        "data" => "cd_cli: " .  $cd_cli,
+                                        "message" => "Registro de Cliente y direccion Exitosa",
+                                   ];
+                              } else {
+                                   return [
+                                        "value" => 0,
+                                        "data" => "cd_cli: " .  $cd_cli,
+                                        "message" => "Error en creacion de direccion",
+                                   ];
+                              }
                          }
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error en la creacion de destinatarios",
+                         ];
                     }
                     return [
                          "value" => 1,
@@ -413,7 +460,10 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe",
+                    "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente,
+                    
+                    los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc \n" . "
+                    error: $th",
                ];
           }
      }
@@ -427,7 +477,7 @@ class MethodsWoo
                'first_name' => $cliente["nomb"],
                'billing' => [
                     'email' => $cliente["email"],
-                    'phone' => $cliente["telf"],
+                    'phone' => $cliente["telfmov"],
                     'address_1' => $cliente["drcfisc"],
                     // 'company' => $cliente["nrdoc"],
                     'postcode' => "15000",
@@ -435,10 +485,16 @@ class MethodsWoo
                ],
           ];
           try {
+               //cuando tenga un id_cli si es null busca por email
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+               if ($user_id == null) {
+                    $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+               }
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-               if ($activeDest && $id_soc == $this->PRECOR) {
+               $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+
+               if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
                     $params = array(
                          "id_dest" => $cliente["id_dest"],
@@ -449,7 +505,7 @@ class MethodsWoo
                          "address_1" => $cliente["drcdest"],
                          "address_2" => "",
                          "postcode" => "07001",
-                         "phone" => $cliente["telf"],
+                         "phone" => $cliente["telfmov"],
                          "email" => $cliente["email"]
                     );
                     // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
@@ -457,11 +513,15 @@ class MethodsWoo
                     return [
                          "value" => 2,
                          "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
+                         "data" => "cd_cli: $cd_cli",
+
                     ];
                }
+
                return [
                     "value" => 2,
                     "message" => "Cliente con id_cli: $id_cli actualizado",
+                    "data" => "cd_cli: $cd_cli",
                ];
           } catch (\Throwable $th) {
                return [
@@ -469,6 +529,12 @@ class MethodsWoo
                     "message" => "El Cliente con el id_cli: $id_cli no existe",
                ];
           }
+     }
+     private function getCdCliWithUserIdSap($user_id, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
+          return $results[0]->cd_cli;
      }
      private function getCd_CliSap($user_id, $data = [], $id_soc)
      {
@@ -552,6 +618,13 @@ class MethodsWoo
           $data = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
           return $data[0]->user_id;
      }
+     private function getUserIDByEmail($email, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT * FROM wp_users WHERE user_email=%s LIMIT 1";
+          $data = $wpdb->get_results($wpdb->prepare($sql, $email));
+          return $data[0]->ID;
+     }
 
      private function verifyEmail($email, $id_soc)
      {
@@ -568,6 +641,15 @@ class MethodsWoo
           $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
           $results = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
           return count($results) == 0 ? true : false;
+     }
+     private function getValueProfileExtraFields($field_name, $user_id, $id_soc)
+     {
+          $datafields = $this->mfGetDataPFXFields($id_soc, [$field_name => "1"]);
+          $id_field = $datafields[0]["id"];
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE field_id=$id_field AND user_id=$user_id LIMIT 1";
+          $results = $wpdb->get_results($wpdb->prepare($sql));
+          return $results[0]->user_value;
      }
      //crea direccion de destinatarios
      private function createRecipientAddress($cliente, $cod)
@@ -610,15 +692,16 @@ class MethodsWoo
      {
           $id_dest = $params["id_dest"];
           $first_name = $params["first_name"];
-          $last_name = $params["last_name"];
+          $last_name = $params["first_name"];
           $company = $params["company"];
           $country = $params["country"];
           $address_1 = $params["address_1"];
           $address_2 = $params["address_2"];
           $postcode = $params["postcode"];
           $phone = $params["phone"];
-          $email = $params["email "];
+          $email = $params["email"];
           $curl = curl_init();
+          //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
                CURLOPT_URL => "https://precor.punkuhr.com/wp-json/max_functions/v1/address",
                // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
@@ -648,7 +731,7 @@ class MethodsWoo
           //example : 2020-11-20 - 2020-11-21
           $response = [];
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
+          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb,s.user_id as user_id FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
           $dataSap = $wpdb->get_results($wpdb->prepare($sql, $fecini, $fecfin));
           $primerClient = "";
           $ORS = "";
@@ -709,13 +792,20 @@ class MethodsWoo
                          $dSap->distr = $client["distr"];
                          $dSap->codubig = $client["codubig"];
                          $dSap->obs = $client["obs"];
+                         //obtengo valor del data profile extra fields
                     }
                }
           };
 
           foreach ($dataSap as $key => $obj) {
                $array = [];
-               $array["id_soc"] = $id_soc;
+               if ($this->isMaxco($id_soc)) {
+                    // cambiar aqui el id soc si es maxco
+                    $array["id_soc"] = "EM01";
+               } else {
+                    $array["id_soc"] = "PR01";
+               }
+               // $array["id_soc"] = ;
                $array["cd_cli"] = $obj->cd_cli;
                $array["nrdoc"] = $obj->nrdoc;
                $array["nomb"] = $obj->nomb;
@@ -727,6 +817,8 @@ class MethodsWoo
                $array["codubig"] = $obj->codubig;
                $array["obs"] = $obj->obs;
                $array["cod"] = $obj->cod;
+               //profile extra fields               
+               $array["telfmov"] = $this->getValueProfileExtraFields("telfmov", $obj->user_id, $id_soc);
                array_push($response, new Client($array));
           }
           return $response;
@@ -740,7 +832,7 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
-          if (($id_soc) == $this->MAXCO || ($id_soc) == $this->PRECOR) {
+          if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                     $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
@@ -885,21 +977,23 @@ class MethodsWoo
           $fcre = $params["fcre"];
           $cod = $params["cod"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
-                    $quotes = $this->GetFormattedQuotes($idOrders, $user_id, $id_soc);
+                    $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $id_soc);
                     if (count($quotes) == 0) {
                          return [
                               "value" => 0,
-                              "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre"
+                              "message" => "No hay cotizaciones  del ID_CLI: $id_cli en la fecha: $fcre"
                          ];
                     } else {
+                         //todo positivo
+                         $tipoOrden = $cod == 0 ? "Cotizaciones" : "Ordenes";
                          return [
                               "value" => 1,
-                              "message" => "Cotizaciones del id_cli: $id_cli en la fecha: $fcre",
+                              "message" => "$tipoOrden del ID_CLI: $id_cli en la fecha: $fcre",
                               "data" => $quotes
                          ];
                     }
@@ -911,7 +1005,7 @@ class MethodsWoo
                } else if ($idOrders == null && $cod == 1) {
                     return [
                          "value" => 0,
-                         "message" => "No hay cotizaciones actualizadas del ID_CLI: $id_cli en la fecha: $fcre",
+                         "message" => "No hay ordenes del ID_CLI: $id_cli en la fecha: $fcre",
                     ];
                }
           } else {
@@ -926,7 +1020,7 @@ class MethodsWoo
           $id_soc = $params["id_soc"];
           $id_order = $params["id_ctwb"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                try {
                     $orderData = $this->GetStatusQuote($id_order, $id_soc);
@@ -969,14 +1063,14 @@ class MethodsWoo
           $id_order = $params["id_ctwb"];
           $stat = $params["stat"];
           $statusCode = intval(explode("-", $stat)[0]);
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                $status_descrip = getStatusDescrip($statusCode);
                try {
                     $this->getWoocommerce($id_soc)->put("orders/$id_order", [
                          "status" => $status_descrip
                     ]);
-                    $this->changeCodQuote($id_order, $id_soc); //actu+aliza cod a 1
+                    // $this->changeCodQuote($id_order, $id_soc); //actu+aliza cod a 1
                     return [
                          "value" => 1,
                          "message" => "El estado ha sido actualizado a $stat",
@@ -1006,7 +1100,7 @@ class MethodsWoo
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
-          if ($id_soc == $this->MAXCO) {
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                try {
                     $data = [];
@@ -1027,7 +1121,7 @@ class MethodsWoo
                                    ))
                               );
                               $order = $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                              $this->changeCodQuote($id_order, $id_soc);
+                              // $this->changeCodQuote($id_order, $id_soc);
                               foreach ($order->line_items as  $value) {
                                    if ($value->sku == $sku) {
                                         $pos = $value->id;
@@ -1055,7 +1149,7 @@ class MethodsWoo
                               ))
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                         $this->changeCodQuote($id_order, $id_soc);
+                         // $this->changeCodQuote($id_order, $id_soc);
 
                          return [
                               "value" => 2,
@@ -1103,37 +1197,40 @@ class MethodsWoo
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
                $quote = $woo->get("orders/$order->id_order");
-               if ($quote->created_via == "ywraq") {
-                    $arraymaterials = [];
-                    foreach ($quote->line_items as  $m) {
-                         $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
-                         $und = ($unidad == null) ? "kg" : $unidad;
-                         array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
-                    }
-                    foreach ($quote->shipping_lines as $delivery) {
+               // if ($quote->created_via == "ywraq") {
+               $arraymaterials = [];
+               foreach ($quote->line_items as  $m) {
+                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
+                    $und = ($unidad == null) ? "kg" : $unidad;
+                    array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+               }
+               foreach ($quote->shipping_lines as $delivery) {
+                    if ($delivery->total != "0.00") {
                          array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
                     }
-                    $lat = "";
-                    $long = "";
-                    $status = 0;
-
-                    if ($quote->status == "completed") {
-                         $status = 1;
-                    }
-                    foreach ($quote->meta_data as $m) {
-                         if ($m->key == "ce_latitud") {
-                              $lat = $m->value;
-                         }
-                         if ($m->key == "ce_longitud") {
-                              $long = $m->value;
-                         }
-                    }
-
-                    array_push(
-                         $arrayQuotes,
-                         new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
-                    );
                }
+
+               $lat = "";
+               $long = "";
+               $status = 0;
+
+               if ($quote->status == "completed") {
+                    $status = 1;
+               }
+               foreach ($quote->meta_data as $m) {
+                    if ($m->key == "ce_latitud") {
+                         $lat = $m->value;
+                    }
+                    if ($m->key == "ce_longitud") {
+                         $long = $m->value;
+                    }
+               }
+
+               array_push(
+                    $arrayQuotes,
+                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+               );
+               // }
           }
           return $arrayQuotes;
      }
