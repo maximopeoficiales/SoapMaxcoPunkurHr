@@ -178,6 +178,7 @@ class MethodsWoo
           $id_soc = $material["id_soc"];
           $id_mat = $material["id_mat"];
           $price = $material["prec"];
+          $categ = $material["categ"];
           $dataSend = [
                "price" => $price,
                "regular_price" => $price,
@@ -206,7 +207,20 @@ class MethodsWoo
                          $this->createFieldMaterialMetadata("categ", $material["categ"], $id_material, $id_soc);
                     }
 
-
+                    // este procedure solo se ejecuta si
+                    if ($this->isPrecor($id_soc)) {
+                         try {
+                              $wpdb = $this->getWPDB($id_soc);
+                              $sql = "CALL update_rol_precio($id_material,%s,$price)";
+                              $wpdb->query($wpdb->prepare($sql, $categ));
+                              $wpdb->flush();
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error: $th",
+                              ];
+                         }
+                    }
                     return [
                          "value" => 2,
                          "message" => "Precio de Material $id_mat Actualizado",
