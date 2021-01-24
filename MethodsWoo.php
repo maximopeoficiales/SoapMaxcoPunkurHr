@@ -1335,7 +1335,7 @@ class MethodsWoo
      // envia email al cliente creando una nueva nota por el id_order
      private function sendEmailbyIdOrder($message, $id_order, $id_soc)
      {
-          $this->getWoocommerce($id_soc)->post("/orders/$id_order/notes", [
+          $this->getWoocommerce($id_soc)->post("orders/$id_order/notes", [
                "note" => $message,
                "customer_note" => "true"
           ]);
