@@ -1337,7 +1337,7 @@ class MethodsWoo
      {
           $this->getWoocommerce($id_soc)->post("/orders/$id_order/notes", [
                "note" => $message,
-               "customer_note" => true
+               "customer_note" => "true"
           ]);
      }
 }
