@@ -348,7 +348,7 @@ class MethodsWoo
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest : $id_dest ya existe sido creado ",
+                              "message" => "El id_dest : $id_dest ya existe ",
                          ];
                     }
                } else if ($cod == 3) {
@@ -523,13 +523,21 @@ class MethodsWoo
                          "email" => $cliente["email"]
                     );
                     // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    $this->createAddressSoap($user_id, $params, true);
-                    return [
-                         "value" => 2,
-                         "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
-                         "data" => "cd_cli: $cd_cli",
+                    if ($this->createAddressSoap($user_id, $params, true)) {
+                         return [
+                              "value" => 2,
+                              "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
+                              "data" => "cd_cli: $cd_cli",
+     
+                         ];
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "El id_dest : $id_dest no existe, por favor creelo",
+                         ];
+                    }
 
-                    ];
+                    
                }
 
                return [
