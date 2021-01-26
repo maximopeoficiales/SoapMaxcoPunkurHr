@@ -432,6 +432,7 @@ class MethodsWoo
                     }
                     try {
                          if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
+                              $id_dest = $cliente["id_dest"];
                               $params = array(
                                    "id_dest" => $cliente["id_dest"],
                                    "first_name" => $cliente["nomb"],
@@ -455,7 +456,7 @@ class MethodsWoo
                                    return [
                                         "value" => 0,
                                         "data" => "cd_cli: " .  $cd_cli,
-                                        "message" => "Error en creacion de direccion",
+                                        "message" => "Se creo cliente pero hubo error en creacion de direccion id_dest: $id_dest ya registrado",
                                    ];
                               }
                          }
@@ -528,16 +529,14 @@ class MethodsWoo
                               "value" => 2,
                               "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
                               "data" => "cd_cli: $cd_cli",
-     
+
                          ];
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest : $id_dest no existe, por favor creelo",
+                              "message" => "Se actualizo el cliente, pero  no se creo direccion. El id_dest : $id_dest no existe, por favor creelo",
                          ];
                     }
-
-                    
                }
 
                return [
