@@ -338,6 +338,10 @@ class MethodsWoo
                } else if ($cod == 2) {
                     //solo crea destinatarios
                     $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    // linea necesario para que pueda crear destinatarios solo con el email
+                    if ($user_id == null) {
+                         $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+                    }
                     $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                     if ($this->createAddressSoap($user_id, $params)) {
                          return [
@@ -421,7 +425,7 @@ class MethodsWoo
                               "message" => "Error al generar el cd_cli",
                          ];
                     }
-
+                    
                     try {
                          $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
                     } catch (\Throwable $th) {
