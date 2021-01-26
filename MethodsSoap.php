@@ -286,7 +286,7 @@ class MethodsSoap
                'telf'                  => 'max:10',
                'email'                  => 'max:45|email',
                'telfmov'                  => 'max:10|required',
-               'drcfisc'                  => 'max:70|required',
+               'drcfisc'                  => 'max:90|required',
                'id_eje'                  => 'numeric|digits_between:1,10',
                'nombeje'                  => 'max:40',
                'telf_eje'                  => 'max:9',
