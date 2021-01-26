@@ -612,16 +612,7 @@ class MethodsWoo
                $this->createPFXFieldsClient($user_id, $data, $id_soc);
           }
      }
-     private function updateMetadataClients($user_id, $data, $id_soc)
-     {
-          $wpdb = $this->getWPDB($id_soc);
-          foreach ($data as $key => $value) {
-               $sql = "UPDATE wp_usermeta SET meta_value = %s where user_id=$user_id AND meta_key=%s";
-               $result = $wpdb->query($wpdb->prepare($sql, $value["value"], $value["key"]));
-               $wpdb->flush();
-               if (!$result) new Error("Error en la actualizacion de  datos");
-          }
-     }
+     
      private function createPFXFieldsClient($user_id, $data, $id_soc)
      {
           $IdsAndDataUpdated = $this->mfGetDataPFXFields($id_soc, $data);
@@ -676,42 +667,8 @@ class MethodsWoo
           $results = $wpdb->get_results($wpdb->prepare($sql));
           return $results[0]->user_value;
      }
-     //crea direccion de destinatarios
-     private function createRecipientAddress($cliente, $cod)
-     {
-          $id_soc = $cliente["id_soc"];
-          $id_cli = $cliente["id_cli"];
-          $id_dest = $cliente["id_dest"];
-          $drcdest = $cliente["drcdest"];
-          $fecha_actual = date("Y-m-d H:i:s");
-          $wpdb = $this->getWPDB($id_soc);
-          $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
-          $notIDDEST = $this->verifyIdDest($user_id, $id_dest, $id_soc);
-          if (intval($cod) == 0 && !$notIDDEST) {
-               return false;
-          } else if (intval($cod) == 0) {
-               //crear credito
-               $sql = "INSERT INTO wp_clientdirections (user_id,id_dest,drcdest,date_created) VALUES($user_id,$id_dest,%s,%s)";
-               $resultw = $wpdb->query($wpdb->prepare($sql, $drcdest, $fecha_actual));
-               $wpdb->flush();
-               if (!$resultw) new Error("Error en la creacion de  direcciones");
-               return  true;
-          } else if (intval($cod) == 1) {
-               /* actualizacion */
-               $sqlu = "UPDATE wp_clientdirections SET drcdest = %s  WHERE user_id = $user_id AND id_dest = $id_dest";
-               $resultw = $wpdb->query($wpdb->prepare($sqlu, $drcdest));
-               $wpdb->flush();
-               if (!$resultw) new Error("Error en la actualizacion de  datos");
-               return true;
-          }
-     }
-     private function verifyIdDest($user_id, $id_dest, $id_soc)
-     {
-          $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT id_dest FROM wp_clientdirections WHERE user_id= $user_id AND id_dest=$id_dest";
-          $results = $wpdb->get_results($wpdb->prepare($sql));
-          return count($results) == 0 ? true : false;
-     }
+     
+     
 
      private function createAddressSoap($user_id, $params, $update = false)
      {
