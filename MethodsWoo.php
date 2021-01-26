@@ -12,8 +12,8 @@ require "./responses/cotizacion/CotizacionStatus.php";
 class MethodsWoo
 {
      /* constantes */
-     // private $PRECOR = "PR01";
-     // private $MAXCO = "EM01";
+     private $PRECOR_URL = "https://precor.punkuhr.com/";
+     private $MAXCO_URL = "https://maxco.punkuhr.com/";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -1003,7 +1003,7 @@ class MethodsWoo
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
-                    $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $id_soc);
+                    $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $cod, $id_soc);
                     if (count($quotes) == 0) {
                          return [
                               "value" => 0,
@@ -1148,6 +1148,11 @@ class MethodsWoo
                                         $pos = $value->id;
                                    }
                               }
+                              // $id_soc = "EM01";
+                              // actualiza el estado de una cotizacion a presupuesto pendiente
+                              $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
+                              // envio email al cliente notificando la cotizacion
+                              $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
                               return [
                                    "value" => 1,
                                    "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
@@ -1171,7 +1176,11 @@ class MethodsWoo
                          );
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
                          // $this->changeCodQuote($id_order, $id_soc);
-
+                         // $id_soc = "EM01";
+                         // actualiza el estado de una cotizacion a presupuesto pendiente
+                         $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
+                         // envio email al cliente notificando la cotizacion
+                         $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
                          return [
                               "value" => 2,
                               "message" => "El id_ctwb: $id_order se ha actualizado",
@@ -1212,8 +1221,48 @@ class MethodsWoo
           $result = $wpdb->get_results($wpdb->prepare($sql, $meta_key));
           return strval($result[0]->meta_value);
      }
-     private function GetFormattedQuotes($orders, $cd_cli, $id_soc)
+     private function GetFormattedQuotes($orders, $cd_cli, $tpcotz, $id_soc)
      {
+
+          function getCodStatusByDescription(int $tpcotz, string $description): int
+          {
+               // es cotizacion
+               $cod_status = 0;
+               if ($tpcotz == 0) {
+                    switch ($description) {
+                         case 'ywraq-new':
+                              $cod_status = 0;
+                              break;
+                         case 'ywraq-pending':
+                              $cod_status = 1;
+                              break;
+                         case 'ywraq-rejected':
+                              $cod_status = 2;
+                              break;
+                         case 'ywraq-accepted':
+                              $cod_status = 3;
+                              break;
+                         case 'ywraq-expired':
+                              $cod_status = 4;
+                              break;
+                         default:
+                              break;
+                    }
+               } else if ($tpcotz == 1) {
+                    // es un pedido ordinario
+                    switch ($description) {
+                         case 'pending':
+                              $cod_status = 0;
+                              break;
+                         case 'completed':
+                              $cod_status = 1;
+                              break;
+                         default:
+                              break;
+                    }
+               }
+               return $cod_status;
+          }
           $arrayQuotes = [];
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
@@ -1233,11 +1282,7 @@ class MethodsWoo
 
                $lat = "";
                $long = "";
-               $status = 0;
 
-               if ($quote->status == "completed") {
-                    $status = 1;
-               }
                foreach ($quote->meta_data as $m) {
                     if ($m->key == "ce_latitud") {
                          $lat = $m->value;
@@ -1249,7 +1294,7 @@ class MethodsWoo
 
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
@@ -1261,8 +1306,8 @@ class MethodsWoo
           $quote = $woo->get("orders/$id_order");
           $statusCode = 0;
           $pagado = ["completed"];
-          $pendiente = ["pending", "ywraq-pending", "processing", "on-hold"];
-          $vencido = ["ywraq-rejected", "ywraq-expired", "cancelled", "failed"];
+          $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
+          $vencido = ["ywraq-expired", "cancelled", "failed"];
           foreach ($pagado as $v1) {
                if ($v1 == $quote->status) {
                     $statusCode = 1;
@@ -1284,5 +1329,22 @@ class MethodsWoo
      {
           $material = $this->getWoocommerce($id_soc)->get("products", ["sku" => $sku]);
           return (count($material) == 0) ? false : true;
+     }
+
+     private function notifyUserAboutQuoteByIdOrder($id_order, $id_soc)
+     {
+          $domain = $this->isMaxco($id_soc) ? $this->MAXCO_URL : $this->PRECOR_URL;
+          $urlViewQuote = "$domain/mi-cuenta/view-quote/$id_order/";
+          $message = "Estimado usuario, su cotización $id_order ha sido mejorada. Puede entrar al portal <a href='$urlViewQuote'>Aqui</a> para visualizarla.";
+          $this->sendEmailbyIdOrder($message, $id_order, $id_soc);
+     }
+
+     // envia email al cliente creando una nueva nota por el id_order
+     private function sendEmailbyIdOrder($message, $id_order, $id_soc)
+     {
+          $this->getWoocommerce($id_soc)->post("orders/$id_order/notes", [
+               "note" => $message,
+               "customer_note" => "true"
+          ]);
      }
 }

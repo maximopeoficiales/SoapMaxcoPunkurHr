@@ -277,6 +277,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="long" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="tpodesp" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="tpcotz" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cod_status" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="status_desc" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="prctotal" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="materials" type="tns:ArrayMaterials" />
                     </s:sequence>
