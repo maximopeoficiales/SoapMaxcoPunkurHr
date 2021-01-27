@@ -227,10 +227,10 @@ class MethodsSoap
           $validations = [
                'id_soc'                  => 'required|max:4',
                'cd_cli'                  => 'required|max:10',
-               'id_cli'                  => 'required|digits_between:1,10|numeric',
-               'mntcred'              => 'required|numeric',
-               'mntutil'              => 'required|numeric',
-               'mntdisp'              => 'required|numeric',
+               'id_cli'                  => 'required|numeric',
+               'mntcred'              => 'required',
+               'mntutil'              => 'required',
+               'mntdisp'              => 'required',
                'fvenc'              => 'required|max:10|date:Y-m-d',
           ];
           return $this->mfUtilityValidator($credito, $validations);
