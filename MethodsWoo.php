@@ -332,7 +332,7 @@ class MethodsWoo
                // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
-                    return $this->createCliente($cliente, false);
+                    return $this->createCliente($cliente, false, true);
                } else if ($cod == 1) {
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
@@ -384,7 +384,7 @@ class MethodsWoo
                ];
           }
      }
-     private function createCliente($cliente, $activeDest = false)
+     private function createCliente($cliente, $activeDest = false, $copiarAddress = false)
      {
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
@@ -438,12 +438,12 @@ class MethodsWoo
                          if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
                               $id_dest = $cliente["id_dest"];
                               $params = array(
-                                   "id_dest" => $cliente["id_dest"],
+                                   "id_dest" => $copiarAddress ? 1 : $id_dest,
                                    "first_name" => $cliente["nomb"],
                                    "last_name" => "",
                                    "company" => $cliente["nrdoc"],
                                    "country" => "PE",
-                                   "address_1" => $cliente["drcdest"],
+                                   "address_1" => $copiarAddress ? $cliente["drcfisc"] : $cliente["drcdest"],
                                    "address_2" => "",
                                    "postcode" => "07001",
                                    "phone" => $cliente["telfmov"],
@@ -453,7 +453,7 @@ class MethodsWoo
                               if ($this->createAddressSoap($response->id, $params)) {
                                    return [
                                         "value" => 1,
-                                        "data" => "cd_cli: " .  $cd_cli,
+                                        "data" => "cd_cli: $cd_cli, id_dest: $id_dest",
                                         "message" => "Registro de Cliente y direccion Exitosa",
                                    ];
                               } else {
@@ -1102,7 +1102,7 @@ class MethodsWoo
                                         'total' => number_format($prctot / 1.18, 2, ".", ""),
                                    ))
                               );
-                              $order =(object) $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                              $order = (object) $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
                               // $this->changeCodQuote($id_order, $id_soc);
                               foreach ($order->line_items as  $value) {
                                    if ($value->sku == $sku) {
@@ -1227,7 +1227,7 @@ class MethodsWoo
           $arrayQuotes = [];
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
-               $quote =(object) $woo->get("orders/$order->id_order");
+               $quote = (object) $woo->get("orders/$order->id_order");
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
