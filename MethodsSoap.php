@@ -228,9 +228,9 @@ class MethodsSoap
                'id_soc'                  => 'required|max:4',
                'cd_cli'                  => 'required|max:10',
                'id_cli'                  => 'required|digits_between:1,10|numeric',
-               'mntcred'              => 'required',
-               'mntutil'              => 'required',
-               'mntdisp'              => 'required',
+               'mntcred'              => 'required|numeric',
+               'mntutil'              => 'required|numeric',
+               'mntdisp'              => 'required|numeric',
                'fvenc'              => 'required|max:10|date:Y-m-d',
           ];
           return $this->mfUtilityValidator($credito, $validations);
@@ -239,7 +239,7 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  => 'required|max:4',
-               'id_mat'                  => 'required',
+               'id_mat'                  => 'required|numeric',
                'nomb'              => 'required|max:40',
                'paq'              => 'max:1',
                'undpaq'              => 'max:3',
@@ -256,7 +256,7 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  =>  'required|max:4',
-               'id_mat'                  => 'required',
+               'id_mat'                  => 'required|numeric',
                'und'              => 'required|max:3',
                'undpaq'              => 'max:3',
                'stck'              => 'required|numeric',
@@ -267,7 +267,7 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  =>  'required|max:4',
-               'id_mat'                  => 'required',
+               'id_mat'                  => 'required|numeric',
                'canal'              => 'required|max:6',
                'categ'              => 'max:20',
                'prec'              => 'required',
@@ -327,7 +327,7 @@ class MethodsSoap
                'id_ped'                  => 'required|numeric|digits_between:1,10',
 
                'pos'                  => 'required|max:3',
-               'id_mat'                  => 'required',
+               'id_mat'                  => 'required|numeric',
                'nomb'                  => 'required|max:40',
                'cant'                  => 'required|max:4',
                'und'                  => 'required|max:3',
