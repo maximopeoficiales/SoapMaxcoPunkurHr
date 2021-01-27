@@ -817,12 +817,20 @@ class MethodsWoo
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
-                    $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
-                    return [
-                         "value" => 2,
-                         "message" => "Credito con el id_cli: $id_cli actualizado",
-                         "data" => "Monto Disponible: " . $mntdisp
-                    ];
+                    if ($user_id != null) {
+
+                         $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
+                         return [
+                              "value" => 2,
+                              "message" => "Credito con el id_cli: $id_cli actualizado",
+                              "data" => "Monto Disponible: " . $mntdisp
+                         ];
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "No existe el usuario con id_cli: $id_cli",
+                         ];
+                    }
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
