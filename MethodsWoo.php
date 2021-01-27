@@ -436,7 +436,7 @@ class MethodsWoo
                     }
                     try {
                          if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
-                              $id_dest = $cliente["id_dest"];
+                              $id_dest = $copiarAddress ? 1 : $cliente["id_dest"];
                               $params = array(
                                    "id_dest" => $copiarAddress ? 1 : $id_dest,
                                    "first_name" => $cliente["nomb"],
