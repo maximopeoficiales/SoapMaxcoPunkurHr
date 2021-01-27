@@ -78,7 +78,7 @@ class MethodsWoo
                try {
                     $user_ide = $this->mfGetIdMaterialWithSku($sku, $id_soc);
                     $this->mfUpdateMetadataMaterial($user_ide, $metadata, $id_soc);
-                    $response = $this->mfUpdateMaterialWithSku($sku, $dataUpdated, $id_soc);
+                    $response = (object) $this->mfUpdateMaterialWithSku($sku, $dataUpdated, $id_soc);
                     return [
                          "value" => 2,
                          "message" => "Material con sku: $sku actualizado",
@@ -129,7 +129,7 @@ class MethodsWoo
                /* creacion */
                if ($material["cod"] == 0) {
                     try {
-                         $response = $woo->post('products', $dataSend); //devuelve un objeto
+                         $response = (object) $woo->post('products', $dataSend); //devuelve un objeto
                          if ($response->id !== null) {
                               return [
                                    "value" => 1,
@@ -415,7 +415,7 @@ class MethodsWoo
 
           try {
                // este metodo crea el cliente si no devuelve null sigue con los demas metodos
-               $response = $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
+               $response = (object)$this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                if ($response->id !== null) {
                     try {
                          $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
@@ -425,7 +425,7 @@ class MethodsWoo
                               "message" => "Error al generar el cd_cli",
                          ];
                     }
-                    
+
                     try {
                          $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
                     } catch (\Throwable $th) {
@@ -612,7 +612,7 @@ class MethodsWoo
                $this->createPFXFieldsClient($user_id, $data, $id_soc);
           }
      }
-     
+
      private function createPFXFieldsClient($user_id, $data, $id_soc)
      {
           $IdsAndDataUpdated = $this->mfGetDataPFXFields($id_soc, $data);
@@ -667,8 +667,8 @@ class MethodsWoo
           $results = $wpdb->get_results($wpdb->prepare($sql));
           return $results[0]->user_value;
      }
-     
-     
+
+
 
      private function createAddressSoap($user_id, $params, $update = false)
      {
@@ -1102,7 +1102,7 @@ class MethodsWoo
                                         'total' => number_format($prctot / 1.18, 2, ".", ""),
                                    ))
                               );
-                              $order = $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
+                              $order =(object) $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
                               // $this->changeCodQuote($id_order, $id_soc);
                               foreach ($order->line_items as  $value) {
                                    if ($value->sku == $sku) {
@@ -1227,7 +1227,7 @@ class MethodsWoo
           $arrayQuotes = [];
           $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
-               $quote = $woo->get("orders/$order->id_order");
+               $quote =(object) $woo->get("orders/$order->id_order");
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
@@ -1264,7 +1264,7 @@ class MethodsWoo
      private function GetStatusQuote($id_order, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
-          $quote = $woo->get("orders/$id_order");
+          $quote = (object) $woo->get("orders/$id_order");
           $statusCode = 0;
           $pagado = ["completed"];
           $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
