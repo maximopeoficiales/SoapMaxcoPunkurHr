@@ -453,7 +453,7 @@ class MethodsWoo
                               if ($this->createAddressSoap($response->id, $params)) {
                                    return [
                                         "value" => 1,
-                                        "data" => "cd_cli: $cd_cli, id_dest: $id_dest",
+                                        "data" => "cd_cli: $cd_cli|id_dest: $id_dest",
                                         "message" => "Registro de Cliente y direccion Exitosa",
                                    ];
                               } else {
