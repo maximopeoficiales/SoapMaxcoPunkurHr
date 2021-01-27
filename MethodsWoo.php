@@ -332,7 +332,7 @@ class MethodsWoo
                // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
-                    return $this->createCliente($cliente, true, true);
+                    return $this->createCliente($cliente, false);
                } else if ($cod == 1) {
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
