@@ -1217,6 +1217,9 @@ class MethodsWoo
                          case 'on-hold':
                               $cod_status = 5;
                               break;
+                         case 'completed':
+                              $cod_status = 6;
+                              break;
                          default:
                               break;
                     }
