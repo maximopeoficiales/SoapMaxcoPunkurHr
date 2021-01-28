@@ -1214,6 +1214,9 @@ class MethodsWoo
                          case 'ywraq-expired':
                               $cod_status = 4;
                               break;
+                         case 'on-hold':
+                              $cod_status = 5;
+                              break;
                          default:
                               break;
                     }
