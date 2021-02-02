@@ -273,6 +273,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="direcdest" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="codpostal" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="payment_method" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="payment_method_title" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="lat" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="long" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="tpodesp" type="s:string" />
