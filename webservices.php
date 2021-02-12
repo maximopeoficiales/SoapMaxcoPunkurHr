@@ -178,6 +178,8 @@ class WebServices
       * @param string $id_soc Id de sociedad
       * @param string $cd_cli Correlativo Cliente
       * @param int $id_cli Codigo del Cliente
+      * @param string $status Estatus del Credito
+      * @param string $lock_descrip Descripcion del bloqueo
       * @param string $mnt_cred Monto Credito
       * @param string $mntutil Monto Utilizado
       * @param string $mntdisp Monto Disponible
@@ -197,6 +199,8 @@ class WebServices
                     "id_soc" => $request->id_soc,
                     "cd_cli" => $request->cd_cli,
                     "id_cli" => $request->id_cli,
+                    "status" => $request->status,
+                    "wallet_comentario" => $request->lock_descrip,
                     "mntcred" => $request->mntcred,
                     "mntutil" => $request->mntutil,
                     "mntdisp" => $request->mntdisp,
@@ -353,7 +357,7 @@ class WebServices
           ];
           return $m->GetQuoteStatus($data);
      }
-     
+
      /**
       * Actualiza status de una cotizacion especifica
       *
@@ -365,22 +369,22 @@ class WebServices
       * @param string $stat Status del pedido
       * @return array Respuesta del Servidor
       */
-      public function POST_ACT_STAT_DESP($request)
-      {
-           $request = $request->request;
-           $m = $this->getMethods();
-           $data = [
-                "security" => [
-                     "user" => $request->user,
-                     "pass" => $request->pass,
-                ],
-                "params" => [
-                     "id_soc" => $request->id_soc,
-                     "id_ctwb" => $request->id_ctwb,
-                     "id_ped" => $request->id_ped,
-                     "stat" => $request->stat,
-                ],
-           ];
-           return $m->UpdateQuoteStatus($data);
-      }
+     public function POST_ACT_STAT_DESP($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "params" => [
+                    "id_soc" => $request->id_soc,
+                    "id_ctwb" => $request->id_ctwb,
+                    "id_ped" => $request->id_ped,
+                    "stat" => $request->stat,
+               ],
+          ];
+          return $m->UpdateQuoteStatus($data);
+     }
 }

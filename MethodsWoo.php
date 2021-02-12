@@ -814,17 +814,30 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
+          $wallet_status = $credito["status"] == 1 ? "unlocked" : "locked";
+          // wallet_comentario asi se llama el campo para el profile extrafields 
+          $wallet_comentario = $credito["wallet_comentario"] ? $credito["wallet_comentario"]  : "";
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
+               // $id_soc = 999;
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+                    // $user_id = 3;
                     if ($user_id != null) {
-
-                         $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new Error();
-                         return [
-                              "value" => 2,
-                              "message" => "Credito con el id_cli: $id_cli actualizado",
-                              "data" => "Monto Disponible: " . $mntdisp
-                         ];
+                         $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new
+                              Error();
+                         $error = $this->mfUpdateStatusCreditoByUserID($wallet_status, $wallet_comentario, $user_id, $id_soc);
+                         if ($error) {
+                              return [
+                                   "value" => 2,
+                                   "message" => "Credito con el id_cli: $id_cli actualizado",
+                                   "data" => "Monto Disponible: " . $mntdisp
+                              ];
+                         } else {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error al actualizar estado del credito",
+                              ];
+                         }
                     } else {
                          return [
                               "value" => 0,
@@ -845,6 +858,12 @@ class MethodsWoo
           }
      }
 
+     private function mfUpdateStatusCreditoByUserID($status, $comment, $user_id, $id_soc): bool
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "UPDATE wp_fswcwallet SET status =%s, lock_message=%s WHERE user_id=$user_id";
+          return $wpdb->query($wpdb->prepare($sql, $status, $comment));;
+     }
      private function mfUpdateFieldsCredito($id_soc, $user_id, $fields_data, $mntdisp)
      {
           try {

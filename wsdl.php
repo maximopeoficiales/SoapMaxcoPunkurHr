@@ -109,6 +109,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="cd_cli" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_cli" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="status" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="lock_descrip" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntcred" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntutil" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntdisp" type="s:string" />

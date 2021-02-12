@@ -228,6 +228,8 @@ class MethodsSoap
                'id_soc'                  => 'required|max:4',
                'cd_cli'                  => 'required|max:10',
                'id_cli'                  => 'required|numeric',
+               'status'                  => 'required|numeric|in:0,1',
+               'lock_descrip'                  => 'max:200',
                'mntcred'              => 'required',
                'mntutil'              => 'required',
                'mntdisp'              => 'required',
