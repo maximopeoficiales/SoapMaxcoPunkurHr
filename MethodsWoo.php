@@ -1115,6 +1115,7 @@ class MethodsWoo
                     $data = [];
                     if ($cod == 0) {
                          $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
+                         $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
                          return [
                               "value" => 1,
                               "message" => "La cotizacion no tiene ninguna modificacion",
