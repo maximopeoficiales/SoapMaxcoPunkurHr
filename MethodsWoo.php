@@ -1114,9 +1114,10 @@ class MethodsWoo
                try {
                     $data = [];
                     if ($cod == 0) {
+                         $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
                          return [
                               "value" => 1,
-                              "message" => "Haz enviado el cod: $cod",
+                              "message" => "La cotizacion no tiene ninguna modificacion",
                          ];
                     } else if ($cod == 1) {
                          // agrega un nuevo producto
