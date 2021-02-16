@@ -1260,7 +1260,7 @@ class MethodsWoo
                }
                return $cod_status;
           }
-          function getCodDestByBillingAdress(string $billingAddress, int $user_id, int $id_soc, $object): int
+          function getCodDestByBillingAdress(string $billingAddress, int $user_id,  $id_soc, $object): int
           {
                $user = (object) $object->getWoocommerce($id_soc)->get("/customers/$user_id");
                $direcciones = [];
