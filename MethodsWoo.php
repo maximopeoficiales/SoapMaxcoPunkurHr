@@ -1305,7 +1305,7 @@ class MethodsWoo
                     foreach ($direcciones as $direccion) {
                          if ($direccion->value->address_1 === $quote->billing->address_1) {
                               $codDest = $direccion->value->id_dest;
-                              // break;
+                              break;
                          }
                     }
                }
