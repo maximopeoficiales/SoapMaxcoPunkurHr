@@ -1260,26 +1260,7 @@ class MethodsWoo
                }
                return $cod_status;
           }
-          function getCodDestByBillingAdress(string $billingAddress, int $user_id,  $id_soc, $object): int
-          {
-               $user = (object) $object->getWoocommerce($id_soc)->get("/customers/$user_id");
-               $direcciones = [];
-               $codDest = 0;
-               // busco en el metada del cliente las direcciones
-               foreach ($user->meta_data as $meta) {
-                    if ($meta->key == "fabfw_address") {
-                         array_push($direcciones, $meta);
-                    }
-               }
-
-               foreach ($direcciones as $direccion) {
-                    if (strval($direccion->value->address_1) === $billingAddress) {
-                         $codDest = intval($direccion->value->id_dest);
-                         return null;
-                    }
-               }
-               return $codDest;
-          }
+         
 
           $arrayQuotes = [];
           foreach ($orders as  $order) {
@@ -1308,10 +1289,29 @@ class MethodsWoo
                          $long = $m->value;
                     }
                }
-               $cod_dest = getCodDestByBillingAdress($quote->billing->address_1, $quote->customer_id, $id_soc, $this);
+               // obtencion de cod_dest
+
+               $user_id = $quote->customer_id;
+               $user = (object) $woo->get("/customers/$user_id");
+               $direcciones = [];
+               $codDest = 0;
+               // busco en el metada del cliente las direcciones
+               foreach ($user->meta_data as $meta) {
+                    if ($meta->key == "fabfw_address") {
+                         array_push($direcciones, $meta);
+                    }
+               }
+
+               foreach ($direcciones as $direccion) {
+                    if (strval($direccion->value->address_1) === $quote->billing->address_1) {
+                         $codDest = intval($direccion->value->id_dest);
+                         return null;
+                    }
+               }
+               // fin de busqueda
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $cod_dest, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
