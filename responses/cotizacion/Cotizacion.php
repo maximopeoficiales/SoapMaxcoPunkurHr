@@ -17,10 +17,11 @@ class Cotizacion
      private $prctotal;
      private $materials;
 
-     public function __construct($id_ctwb, $cd_cli, $direcdest, $codpostal, $payment_method, $payment_method_title, $lat, $long, $tpodesp, $tpcotz, $cod_status, $status_desc, $prctotal, $materials = [])
+     public function __construct($id_ctwb, $cd_cli, $cod_dest, $direcdest, $codpostal, $payment_method, $payment_method_title, $lat, $long, $tpodesp, $tpcotz, $cod_status, $status_desc, $prctotal, $materials = [])
      {
           $this->id_ctwb = $id_ctwb;
           $this->cd_cli = $cd_cli;
+          $this->cod_dest = $cod_dest;
           $this->direcdest = $direcdest;
           $this->codpostal = $codpostal;
           $this->payment_method = $payment_method;

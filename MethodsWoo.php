@@ -1213,7 +1213,7 @@ class MethodsWoo
      }
      private function GetFormattedQuotes($orders, $cd_cli, $tpcotz, $id_soc)
      {
-
+          $woo = $this->getWoocommerce($id_soc);
           function getCodStatusByDescription(int $tpcotz, string $description): int
           {
                // es cotizacion
@@ -1259,8 +1259,28 @@ class MethodsWoo
                }
                return $cod_status;
           }
+          function getCodDestByBillingAdress(string $billingAddress, int $user_id, mixed $woo): int
+          {
+               $user = (object) $woo->get("/customers/$user_id");
+               $direcciones = [];
+               $codDest = 0;
+               // busco en el metada del cliente las direcciones
+               foreach ($user->meta_data as $meta) {
+                    if ($meta->key == "fabfw_address") {
+                         array_push($direcciones, $meta);
+                    }
+               }
+
+               foreach ($direcciones as $direccion) {
+                    if (strval($direccion->value->address_1) === $billingAddress) {
+                         $codDest = intval($direccion->value->id_dest);
+                         return null;
+                    }
+               }
+               return $codDest;
+          }
+
           $arrayQuotes = [];
-          $woo = $this->getWoocommerce($id_soc);
           foreach ($orders as  $order) {
                $quote = (object) $woo->get("orders/$order->id_order");
                // if ($quote->created_via == "ywraq") {
@@ -1287,10 +1307,10 @@ class MethodsWoo
                          $long = $m->value;
                     }
                }
-
+               $cod_dest = getCodDestByBillingAdress($quote->billing->address_1, $quote->customer_id, $woo);
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $cod_dest, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
