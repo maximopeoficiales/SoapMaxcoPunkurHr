@@ -60,7 +60,7 @@ class MethodsWoo
      {
           $id_soc = $material["id_soc"];
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
-               $sku = $material["id_mat"];
+               $sku = intval($material["id_mat"]);
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
                ];
@@ -102,7 +102,7 @@ class MethodsWoo
 
           $weight = number_format($material["peso"], 3, ".", "");
           $material["peso"] = $weight;
-          $sku = $material["id_mat"];
+          $sku = intval($material["id_mat"]);
           $dataSend = [
                'name' => $material["nomb"],
                'sku' => $sku,
@@ -176,7 +176,7 @@ class MethodsWoo
      public function updateMaterialPrice($material)
      {
           $id_soc = $material["id_soc"];
-          $id_mat = $material["id_mat"];
+          $id_mat = intval($material["id_mat"]);
           $price = $material["prec"];
           $categ = $material["categ"];
           $dataSend = [
