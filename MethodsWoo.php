@@ -1214,6 +1214,7 @@ class MethodsWoo
      private function GetFormattedQuotes($orders, $cd_cli, $tpcotz, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
+
           function getCodStatusByDescription(int $tpcotz, string $description): int
           {
                // es cotizacion
@@ -1259,9 +1260,9 @@ class MethodsWoo
                }
                return $cod_status;
           }
-          function getCodDestByBillingAdress(string $billingAddress, int $user_id, mixed $woo): int
+          function getCodDestByBillingAdress(string $billingAddress, int $user_id, int $id_soc, $object): int
           {
-               $user = (object) $woo->get("/customers/$user_id");
+               $user = (object) $object->getWoocommerce($id_soc)->get("/customers/$user_id");
                $direcciones = [];
                $codDest = 0;
                // busco en el metada del cliente las direcciones
@@ -1307,7 +1308,7 @@ class MethodsWoo
                          $long = $m->value;
                     }
                }
-               $cod_dest = getCodDestByBillingAdress($quote->billing->address_1, $quote->customer_id, $woo);
+               $cod_dest = getCodDestByBillingAdress($quote->billing->address_1, $quote->customer_id, $id_soc, $this);
                array_push(
                     $arrayQuotes,
                     new Cotizacion($order->id_order, $cd_cli, $cod_dest, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
