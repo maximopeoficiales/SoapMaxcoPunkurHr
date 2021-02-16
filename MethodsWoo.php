@@ -1311,7 +1311,7 @@ class MethodsWoo
                // fin de busqueda
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, 123, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
