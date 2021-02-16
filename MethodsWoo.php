@@ -50,7 +50,7 @@ class MethodsWoo
                return new wpdb('root', '', 'precorpunkuhr', 'localhost:3307');
           }
      }
-     public function getWoocommerce($id_soc)
+     private function getWoocommerce($id_soc)
      {
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
