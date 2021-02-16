@@ -1291,23 +1291,25 @@ class MethodsWoo
                }
                // obtencion de cod_dest
 
-               $user_id = $quote->customer_id;
-               $user = (object) $woo->get("customers/$user_id");
-               $direcciones = [];
                $codDest = 0;
-               // busco en el metada del cliente las direcciones
-               foreach ($user->meta_data as $meta) {
-                    if ($meta->key == "fabfw_address") {
-                         array_push($direcciones, $meta);
+               if ($this->isPrecor($id_soc)) {
+                    $user_id = $quote->customer_id;
+                    $user = (object) $woo->get("customers/$user_id");
+                    $direcciones = [];
+                    // busco en el metada del cliente las direcciones
+                    foreach ($user->meta_data as $meta) {
+                         if ($meta->key == "fabfw_address") {
+                              array_push($direcciones, $meta);
+                         }
+                    }
+                    foreach ($direcciones as $direccion) {
+                         if ($direccion->value->address_1 === $quote->billing->address_1) {
+                              $codDest = $direccion->value->id_dest;
+                              // break;
+                         }
                     }
                }
 
-               foreach ($direcciones as $direccion) {
-                    if (strval($direccion->value->address_1) === $quote->billing->address_1) {
-                         $codDest = intval($direccion->value->id_dest);
-                         return null;
-                    }
-               }
                // fin de busqueda
                array_push(
                     $arrayQuotes,
