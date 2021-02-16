@@ -1105,7 +1105,7 @@ class MethodsWoo
           $pos = $params["pos"];
           $cod = $params["cod"];
           $id_order = $params["id_ctwb"];
-          $sku = $params["id_mat"];
+          $sku = intval($params["id_mat"]);
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
