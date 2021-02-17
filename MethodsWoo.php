@@ -87,7 +87,7 @@ class MethodsWoo
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "El material con el sku: $sku no existe",
+                         "message" => "El material con el sku: $sku no existe, Error: $th",
                     ];
                }
           } else {
@@ -156,7 +156,7 @@ class MethodsWoo
                     } catch (\Throwable $th) {
                          return [
                               "value" => 0,
-                              "message" => "El material con el sku: $sku no existe",
+                              "message" => "El material con el sku: $sku no existe, Error: $th",
                          ];
                     }
                } else {
