@@ -337,25 +337,33 @@ class MethodsWoo
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
                     //solo crea destinatarios
-                    $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    // linea necesario para que pueda crear destinatarios solo con el email
-                    if ($user_id == null) {
-                         $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
-                    }
-                    $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-                    if ($this->createAddressSoap($user_id, $params)) {
-                         return [
-                              "value" => 1,
-                              "message" => "El id_dest : $id_dest ha sido creado ",
-                              "data" => "cd_cli: $cd_cli",
-                         ];
+                    if ($id_dest != "" || $cliente["drcdest"] != "") {
+                         $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                         // linea necesario para que pueda crear destinatarios solo con el email
+                         if ($user_id == null) {
+                              $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+                         }
+                         $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+                         if ($this->createAddressSoap($user_id, $params)) {
+                              return [
+                                   "value" => 1,
+                                   "message" => "El id_dest : $id_dest ha sido creado ",
+                                   "data" => "cd_cli: $cd_cli",
+                              ];
+                         } else {
+                              return [
+                                   "value" => 0,
+                                   "message" => "El id_dest : $id_dest ya existe ",
+                              ];
+                         }
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest : $id_dest ya existe ",
+                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
                          ];
                     }
                } else if ($cod == 3) {
+                    // crea cliente y direccion
                     if ($id_dest != "" || $cliente["drcdest"] != "") {
                          return $this->createCliente($cliente, true);
                     } else {
