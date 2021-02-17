@@ -1179,7 +1179,7 @@ class MethodsWoo
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "El id_ctwb: $id_order no existe",
+                         "message" => "El id_ctwb: $id_order no existe error: $th",
                     ];
                }
           } else {
