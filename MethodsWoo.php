@@ -356,9 +356,15 @@ class MethodsWoo
                          ];
                     }
                } else if ($cod == 3) {
-
+                    if ($id_dest != "" || $cliente["drcdest"] != "") {
+                         return $this->createCliente($cliente, true);
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
+                         ];
+                    }
                     /*crea cliente y crea direccion  */
-                    return $this->createCliente($cliente, true);
                     /* actualiza destinatarios */
                     // $this->createRecipientAddress($cliente, 1);
                     // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
@@ -370,12 +376,14 @@ class MethodsWoo
                     // }
                } else if ($cod == 4) {
                     /*actualizar cliente y actualizar direccion  */
-                    return $this->UpdateCliente($cliente, true);
-               } else {
-                    return [
-                         "value" => 0,
-                         "message" => "El cod : $cod enviado no es valido",
-                    ];
+                    if ($id_dest != "" || $cliente["drcdest"] != "") {
+                         return $this->UpdateCliente($cliente, true);
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "El id_dest vacio por favor rellenelo",
+                         ];
+                    }
                }
           } else {
                return [
@@ -1230,7 +1238,7 @@ class MethodsWoo
                          case 'ywraq-rejected':
                               $cod_status = 2;
                               break;
-                         case 'ywraq-accepted':
+                         case 'ywraq-accepted': //este estado es momentaneo -> on-hold
                               $cod_status = 3;
                               break;
                          case 'ywraq-expired':
@@ -1304,7 +1312,7 @@ class MethodsWoo
                     }
                     foreach ($direcciones as $direccion) {
                          if ($direccion->value->address_1 === $quote->billing->address_1) {
-                              $codDest = $direccion->value->id_dest;
+                              $codDest = $direccion->value->id_dest == null  ? 0 : $direccion->value->id_dest;
                               break;
                          }
                     }
