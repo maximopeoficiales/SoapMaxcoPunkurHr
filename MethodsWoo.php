@@ -1160,7 +1160,7 @@ class MethodsWoo
                               'line_items' => array(array(
                                    'id' => $pos,
                                    'quantity' => $quantity,
-                                   'sku' => $sku,
+                                   'sku' => strval($sku),
                                    'total' => number_format($prctot / 1.18, 2, ".", ""),
                               ))
                          );
