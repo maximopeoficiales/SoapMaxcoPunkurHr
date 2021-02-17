@@ -1237,25 +1237,25 @@ class MethodsWoo
                $cod_status = 0;
                if ($tpcotz == 0) {
                     switch ($description) {
-                         case 'ywraq-new':
+                         case 'ywraq-new': //nueva cotizacion
                               $cod_status = 0;
                               break;
-                         case 'ywraq-pending':
+                         case 'ywraq-pending': // cotizacion pediente aqui el cliente puede aceptar o rechazar
                               $cod_status = 1;
                               break;
-                         case 'ywraq-rejected':
+                         case 'ywraq-rejected': // cotizacion rechazada
                               $cod_status = 2;
                               break;
-                         case 'ywraq-accepted': //este estado es momentaneo -> on-hold
+                         case 'ywraq-accepted': //este estado es momentaneo se va defrente a -> on-hold
                               $cod_status = 3;
                               break;
-                         case 'ywraq-expired':
+                         case 'ywraq-expired': //cotizacion expirada
                               $cod_status = 4;
                               break;
-                         case 'on-hold':
+                         case 'on-hold': //cotizacion en espera para ti este es el aceptado
                               $cod_status = 5;
                               break;
-                         case 'completed':
+                         case 'completed': // cotizacion pagada y completada
                               $cod_status = 6;
                               break;
                          default:
@@ -1264,11 +1264,14 @@ class MethodsWoo
                } else if ($tpcotz == 1) {
                     // es un pedido ordinario
                     switch ($description) {
-                         case 'pending':
+                         case 'on-hold': // esta en espera aun no se paga del pago
                               $cod_status = 0;
                               break;
-                         case 'completed':
+                         case 'completed': // la orden a sido pagado y completada
                               $cod_status = 1;
+                              break;
+                         case 'pending': // este estado es momentaneo ocurre cuando se hace la transaccion
+                              $cod_status = 2;
                               break;
                          default:
                               break;
