@@ -381,7 +381,7 @@ class MethodsWoo
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest vacio por favor rellenelo",
+                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
                          ];
                     }
                }
