@@ -176,7 +176,7 @@ class MethodsWoo
      public function updateMaterialPrice($material)
      {
           $id_soc = $material["id_soc"];
-          $id_mat = intval($material["id_mat"]);
+          $id_mat = strval(intval($material["id_mat"]));
           $price = $material["prec"];
           $categ = $material["categ"];
           $dataSend = [
@@ -1105,7 +1105,7 @@ class MethodsWoo
           $pos = $params["pos"];
           $cod = $params["cod"];
           $id_order = $params["id_ctwb"];
-          $sku = intval($params["id_mat"]);
+          $sku = strval(intval($params["id_mat"]));
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
 
@@ -1160,7 +1160,7 @@ class MethodsWoo
                               'line_items' => array(array(
                                    'id' => $pos,
                                    'quantity' => $quantity,
-                                   'sku' => strval($sku),
+                                   'sku' => $sku,
                                    'total' => number_format($prctot / 1.18, 2, ".", ""),
                               ))
                          );
