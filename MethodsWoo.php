@@ -1299,7 +1299,7 @@ class MethodsWoo
 
                $lat = "";
                $long = "";
-               $obs_niubiz = "{}";
+               $obs_niubiz = "";
                foreach ($quote->meta_data as $m) {
                     if ($m->key == "ce_latitud") {
                          $lat = $m->value;
