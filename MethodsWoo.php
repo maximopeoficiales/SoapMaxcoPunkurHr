@@ -700,7 +700,7 @@ class MethodsWoo
           $curl = curl_init();
           //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
-               CURLOPT_URL => $this->PRECOR_URL . "wp-json/max_functions/v1/address",
+               CURLOPT_URL => "https://tiendaenlinea.precor.pe/wp-json/max_functions/v1/address",
                // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
                CURLOPT_RETURNTRANSFER => true,
                CURLOPT_ENCODING => "",
