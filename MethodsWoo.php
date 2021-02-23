@@ -1024,7 +1024,7 @@ class MethodsWoo
                } else if ($idOrders == null && $cod == 0) {
                     return [
                          "value" => 0,
-                         "message" => "No hay cotizaciones del ID_CLI: $id_cli en la fecha: $fcre",
+                         "message" => "No hay cotizaciones del ID_CLI: $id_cli en la fecha: $fcre, no hay idOrders",
                     ];
                } else if ($idOrders == null && $cod == 1) {
                     return [
