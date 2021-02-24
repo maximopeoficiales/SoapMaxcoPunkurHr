@@ -1007,20 +1007,20 @@ class MethodsWoo
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
                if (!$idOrders == null) {
                     $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $cod, $id_soc);
-                    if (count($quotes) == 0) {
-                         return [
-                              "value" => 0,
-                              "message" => "No hay cotizaciones  del ID_CLI: $id_cli en la fecha: $fcre"
-                         ];
-                    } else {
-                         //todo positivo
-                         $tipoOrden = $cod == 0 ? "Cotizaciones" : "Ordenes";
-                         return [
-                              "value" => 1,
-                              "message" => "$tipoOrden del ID_CLI: $id_cli en la fecha: $fcre",
-                              "data" => $quotes
-                         ];
-                    }
+                    // if (count($quotes) == 0) {
+                    //      return [
+                    //           "value" => 0,
+                    //           "message" => "No hay cotizaciones  del ID_CLI: $id_cli en la fecha: $fcre"
+                    //      ];
+                    // } else {
+                    //todo positivo
+                    $tipoOrden = $cod == 0 ? "Cotizaciones" : "Ordenes";
+                    return [
+                         "value" => 1,
+                         "message" => "$tipoOrden del ID_CLI: $id_cli en la fecha: $fcre",
+                         "data" => $quotes
+                    ];
+                    // }
                } else if ($idOrders == null && $cod == 0) {
                     return [
                          "value" => 0,
