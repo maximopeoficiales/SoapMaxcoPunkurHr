@@ -840,11 +840,11 @@ class MethodsWoo
                $array["cod"] = $obj->cod;
                //profile extra fields               
                $array["telfmov"] = $this->getValueProfileExtraFields("telfmov", $obj->user_id, $id_soc);
-               
+
                // META VALUES
                $array["cond_pago"] = $this->getMetaValueByKey("cond_pago", $obj->user_id, $id_soc);
                $array["descrip_cond_pago"] = $this->getMetaValueByKey("descrip_cond_pago", $obj->user_id, $id_soc);
-               
+
                array_push($response, new Client($array));
           }
           return $response;
@@ -881,7 +881,9 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
-          $wallet_status = $credito["status"] == 1 ? "unlocked" : "locked";
+          if ($credito["status"] != null) {
+               $wallet_status = $credito["status"] == 1 ? "unlocked" : "locked";
+          }
           // wallet_comentario asi se llama el campo para el profile extrafields 
           $wallet_comentario = $credito["wallet_comentario"] ? $credito["wallet_comentario"]  : "";
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
@@ -927,9 +929,12 @@ class MethodsWoo
 
      private function mfUpdateStatusCreditoByUserID($status, $comment, $user_id, $id_soc): bool
      {
-          $wpdb = $this->getWPDB($id_soc);
-          $sql = "UPDATE wp_fswcwallet SET status =%s, lock_message=%s WHERE user_id=$user_id";
-          return $wpdb->query($wpdb->prepare($sql, $status, $comment));;
+          if ($status != null) {
+               $wpdb = $this->getWPDB($id_soc);
+               $sql = "UPDATE wp_fswcwallet SET status =%s, lock_message=%s WHERE user_id=$user_id";
+               return $wpdb->query($wpdb->prepare($sql, $status, $comment));
+          }
+          return true;
      }
      private function mfUpdateFieldsCredito($id_soc, $user_id, $fields_data, $mntdisp)
      {
