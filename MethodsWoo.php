@@ -881,6 +881,7 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
+          $wallet_status = $credito["status"];
           if ($credito["status"] != null) {
                $wallet_status = $credito["status"] == 1 ? "unlocked" : "locked";
           }
