@@ -8,6 +8,7 @@ require "./Client.php";
 require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
+require "./responses/cotizacion/Niubiz.php";
 
 class MethodsWoo
 {
@@ -1298,6 +1299,7 @@ class MethodsWoo
 
                $lat = "";
                $long = "";
+               // niubiz llega vacia si no hay data
                $obs_niubiz = "";
                foreach ($quote->meta_data as $m) {
                     if ($m->key == "ce_latitud") {
@@ -1310,6 +1312,10 @@ class MethodsWoo
                          $obs_niubiz = $m->value;
                     }
                }
+               // convierto a json el obsniubiz
+               $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
+               $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
+
                // obtencion de cod_dest
 
                $codDest = 0;
@@ -1334,7 +1340,7 @@ class MethodsWoo
                // fin de busqueda
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $obs_niubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }

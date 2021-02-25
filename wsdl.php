@@ -273,7 +273,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     <s:sequence>
                          <s:element minOccurs="1" maxOccurs="1" name="id_ctwb" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="cd_cli" type="s:string" />
-                         <s:element minOccurs="1" maxOccurs="1" name="obs_niubiz" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="obs_niubiz" type="tns:Niubiz" />
                          <s:element minOccurs="1" maxOccurs="1" name="cod_dest" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="direcdest" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="codpostal" type="s:string" />
@@ -287,6 +287,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="status_desc" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="prctotal" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="materials" type="tns:ArrayMaterials" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- objecto niubiz -->
+               <s:complexType name="Niubiz">
+                    <s:sequence>
+                         <s:element minOccurs="1" maxOccurs="1" name="trace_number" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="brand" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="status" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="resp" type="s:string" />
                     </s:sequence>
                </s:complexType>
                <s:complexType name="ArrayMaterials">
