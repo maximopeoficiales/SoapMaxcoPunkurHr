@@ -14,6 +14,9 @@ class Client
      public $codubig;
      public $obs;
      public $cod;
+     // nuevos campos
+     public $cond_pago;
+     public $descrip_cond_pago;
      function __construct($data = [])
      {
           $this->id_soc = $data["id_soc"];
@@ -29,5 +32,8 @@ class Client
           $this->codubig = $data["codubig"];
           $this->obs = $data["obs"];
           $this->cod = $data["cod"];
+          // nuevos campos
+          $this->cond_pago = $data["cond_pago"];
+          $this->descrip_cond_pago = $data["descrip_cond_pago"];
      }
 }

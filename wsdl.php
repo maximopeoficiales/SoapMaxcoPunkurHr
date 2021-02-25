@@ -150,6 +150,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="telf" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="telfmov" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cond_pago" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="descrip_cond_pago" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="drcfisc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_eje" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="nombeje" type="s:string" />
@@ -221,6 +223,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="telf" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="telfmov" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="email" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="cond_pago" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="descrip_cond_pago" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="drcfisc" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="city" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="distr" type="s:string" />

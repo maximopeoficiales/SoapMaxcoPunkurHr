@@ -404,6 +404,8 @@ class MethodsWoo
      {
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
+          $cond_pago = $cliente["cond_pago"];
+          $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -441,7 +443,16 @@ class MethodsWoo
                               "message" => "Error al generar el cd_cli",
                          ];
                     }
-
+                    // creacion de cond_pago y descripcion_cond_pago
+                    try {
+                         $this->createMetaValueByKey("cond_pago", $cond_pago, $response->id, $id_soc);
+                         $this->createMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $response->id, $id_soc);
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error al crear los campos en cond_pago y status_desc Error: $th",
+                         ];
+                    }
                     try {
                          $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
                     } catch (\Throwable $th) {
@@ -507,6 +518,8 @@ class MethodsWoo
           /* actualizacion */
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
+          $cond_pago = $cliente["cond_pago"];
+          $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -528,6 +541,16 @@ class MethodsWoo
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+               // actualizo los nuevos campos
+               try {
+                    $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
+                    $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
+                    ];
+               }
 
                if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
@@ -817,9 +840,37 @@ class MethodsWoo
                $array["cod"] = $obj->cod;
                //profile extra fields               
                $array["telfmov"] = $this->getValueProfileExtraFields("telfmov", $obj->user_id, $id_soc);
+               
+               // META VALUES
+               $array["cond_pago"] = $this->getMetaValueByKey("cond_pago", $obj->user_id, $id_soc);
+               $array["descrip_cond_pago"] = $this->getMetaValueByKey("descrip_cond_pago", $obj->user_id, $id_soc);
+               
                array_push($response, new Client($array));
           }
           return $response;
+     }
+     private function getMetaValueByKey($key, $user_id, $id_soc): string
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "SELECT wu.meta_value FROM wp_usermeta wu WHERE wu.user_id = $user_id AND wu.meta_key = %s LIMIT 1";
+          $results = $wpdb->get_results($wpdb->prepare($sql, $key));
+          $wpdb->flush();
+          return $results[0]->meta_value == null ? "" : $results[0]->meta_value;
+     }
+     private function updateMetaValueByKey($key, $meta_value, $user_id, $id_soc): void
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "UPDATE wp_usermeta  SET meta_value =%s WHERE meta_key = %s AND user_id = $user_id";
+          $wpdb->query($wpdb->prepare($sql,  $meta_value, $key));
+          $wpdb->flush();
+     }
+     private function createMetaValueByKey($key, $meta_value, $user_id, $id_soc): void
+     {
+          $meta_value = $meta_value != null ? $meta_value : "";
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "INSERT INTO wp_usermeta (user_id,meta_key,meta_value) VALUES ($user_id,%s,%s) ";
+          $wpdb->query($wpdb->prepare($sql, $key, $meta_value));
+          $wpdb->flush();
      }
      /*  Fin Clientes */
 
