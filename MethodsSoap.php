@@ -286,6 +286,8 @@ class MethodsSoap
                'nomb'                  => 'required',
                'nrdoc'                  => 'required|max:11',
                'telf'                  => 'max:10',
+               'cond_pago'                  => 'max:4',
+               'descrip_cond_pago'                  => 'max:40',
                'email'                  => 'max:45|email',
                'telfmov'                  => 'max:10|required',
                'drcfisc'                  => 'max:90|required',

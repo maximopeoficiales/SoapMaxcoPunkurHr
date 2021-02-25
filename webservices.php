@@ -125,6 +125,8 @@ class WebServices
                     "nrdoc" => $request->nrdoc,
                     "telf" => $request->telf,
                     "telfmov" => $request->telfmov,
+                    "cond_pago" => $request->cond_pago,
+                    "descrip_cond_pago" => $request->descrip_cond_pago,
                     "email" => $request->email,
                     "drcfisc" => $request->drcfisc,
                     "id_eje" => $request->id_eje,
