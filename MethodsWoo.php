@@ -890,15 +890,15 @@ class MethodsWoo
           $wallet_comentario = $credito["wallet_comentario"] ? $credito["wallet_comentario"]  : "";
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                // $id_soc = 999;
-               $fecha_actual = strtotime(date("Y-m-d", time()));
-               $fecha_entrada = strtotime($fvenc);
-               // si la fecha ingresa es menor que la fecha de hoy
-               if (!$fecha_actual >= $fecha_entrada) {
-                    return [
-                         "value" => 0,
-                         "message" => "No puedes enviar esa fecha: $fvenc es menor que el dia de hoy",
-                    ];
-               }
+               // $fecha_actual = strtotime(date("Y-m-d", time()));
+               // $fecha_entrada = strtotime($fvenc);
+               // // si la fecha ingresa es menor que la fecha de hoy
+               // if (!$fecha_actual >= $fecha_entrada) {
+               //      return [
+               //           "value" => 0,
+               //           "message" => "No puedes enviar esa fecha: $fvenc es menor que el dia de hoy",
+               //      ];
+               // }
                try {
                     $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                     // $user_id = 3;
