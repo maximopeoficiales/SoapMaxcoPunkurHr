@@ -1436,7 +1436,18 @@ class MethodsWoo
                     $statusCode = 3;
                }
           }
-          return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title)];
+          // obtencion de objeto niubiz
+          $obs_niubiz = null;
+          foreach ($quote->meta_data as $m) {
+               if ($m->key == "_visanetRetorno") {
+                    $obs_niubiz = $m->value;
+               }
+          }
+          // convierto a json el obsniubiz
+          $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
+          $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
+
+          return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
      {

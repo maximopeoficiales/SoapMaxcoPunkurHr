@@ -439,6 +439,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="stpag" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="dscrp" type="s:string" />
                          <s:element minOccurs="1" maxOccurs="1" name="tpcob" type="s:string" />
+                         <s:element minOccurs="1" maxOccurs="1" name="obs_niubiz" type="tns:Niubiz" />
                     </s:sequence>
                </s:complexType>
 
