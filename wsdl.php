@@ -442,6 +442,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="obs_niubiz" type="tns:Niubiz" />
                     </s:sequence>
                </s:complexType>
+               
 
                <!-- FIN GET_PAG_RECEP_PAGO -->
 
