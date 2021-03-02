@@ -140,7 +140,7 @@ class MethodsWoo
                     } catch (\Throwable $th) {
                          return [
                               "value" => 0,
-                              "message" => "EL SKU: $sku ya existe",
+                              "message" => "EL SKU: $sku ya existe error: $th",
                          ];
                     }
                } else if ($material["cod"] == 1) {
