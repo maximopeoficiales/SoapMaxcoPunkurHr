@@ -286,7 +286,7 @@ class MethodsSoap
                'nomb'                  => 'required',
                'nrdoc'                  => 'required|max:11',
                'telf'                  => 'max:10',
-               'cond_pago'                  => '',
+               // 'cond_pago'                  => '',
                'descrip_cond_pago'                  => 'max:40',
                // se quito validacion  de email porque daba problemas
                'email'                  => 'max:45',
