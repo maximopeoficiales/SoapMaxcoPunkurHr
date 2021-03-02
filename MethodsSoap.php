@@ -295,7 +295,8 @@ class MethodsSoap
                'id_eje'                  => 'numeric|digits_between:1,10',
                'nombeje'                  => 'max:40',
                'telf_eje'                  => 'max:9',
-               'email_eje'                  => 'max:45|email',
+               // SE QUITO EMAIL PORQUE SOPORTABA EMAIL COORPORATIVOS
+               'email_eje'                  => 'max:45',
                'id_dest'              => 'numeric|digits_between:1,10',
                'drcdest'              => 'max:250',
                'cod'              => 'required|max:5|numeric',

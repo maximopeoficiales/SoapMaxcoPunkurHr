@@ -506,8 +506,7 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe, error en la creacion de cliente,
-                    
+                    "message" => "Error en la creacion de cliente,
                     los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc \n" . "
                     error: $th",
                ];
