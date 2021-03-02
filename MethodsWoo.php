@@ -507,8 +507,7 @@ class MethodsWoo
                return [
                     "value" => 0,
                     "message" => "Error en la creacion de cliente,
-                    los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . " etc \n" . "
-                    error: $th",
+                    los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . ",error: $th",
                ];
           }
      }
