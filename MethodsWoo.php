@@ -102,7 +102,7 @@ class MethodsWoo
 
           $weight = number_format($material["peso"], 3, ".", "");
           $material["peso"] = $weight;
-          $sku = intval($material["id_mat"]);
+          $sku = strval(intval($material["id_mat"]));
           $dataSend = [
                'name' => $material["nomb"],
                'sku' => $sku,
