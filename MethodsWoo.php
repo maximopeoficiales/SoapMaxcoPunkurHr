@@ -588,7 +588,7 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "El Cliente con el id_cli: $id_cli no existe",
+                    "message" => "Error en la actualizacion de client, error: $th",
                ];
           }
      }
