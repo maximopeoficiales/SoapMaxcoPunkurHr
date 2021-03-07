@@ -118,8 +118,13 @@ class MethodsWoo
                ];
           }
           $id_soc = $material["id_soc"];
+          // campos para vender por paquete
+          $material["group_of_quantity"] = $material["group_of_quantity"] ?? "";
+          $material["minimum_allowed_quantity"] = $material["minimum_allowed_quantity"] ?? "";
+          // fin de campos
           $woo = $this->getWoocommerce($id_soc);
-          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod", "und"];
+          $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod", "und", "group_of_quantity", "minimum_allowed_quantity"];
+          // los agrego al metadata
           foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
                array_push($dataSend["meta_data"], $value);
           }
