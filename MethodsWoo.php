@@ -119,8 +119,8 @@ class MethodsWoo
           }
           $id_soc = $material["id_soc"];
           // campos para vender por paquete
-          $material["group_of_quantity"] = $material["group_of_quantity"] ?? "";
-          $material["minimum_allowed_quantity"] = $material["minimum_allowed_quantity"] ?? "";
+          $material["group_of_quantity"] = $material["unxpaq"] ?? "";
+          $material["minimum_allowed_quantity"] = $material["unxpaq"] ?? "";
           // fin de campos
           $woo = $this->getWoocommerce($id_soc);
           $newfields = ["id_soc", "paq", "undpaq", "paqxun", "unxpaq", "jprod", "und", "group_of_quantity", "minimum_allowed_quantity"];
