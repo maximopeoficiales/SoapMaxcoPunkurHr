@@ -931,7 +931,7 @@ class MethodsWoo
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "El Credito  con el id_cli: $id_cli no existe",
+                         "message" => "El Credito  con el id_cli: $id_cli no existe error:$th",
                     ];
                }
           } else {
