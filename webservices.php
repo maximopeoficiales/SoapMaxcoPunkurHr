@@ -203,6 +203,7 @@ class WebServices
                     "id_cli" => $request->id_cli,
                     "status" => $request->status,
                     "wallet_comentario" => $request->lock_descrip,
+                    "clase_riesgo" => $request->clase_riesgo,
                     "mntcred" => $request->mntcred,
                     "mntutil" => $request->mntutil,
                     "mntdisp" => $request->mntdisp,

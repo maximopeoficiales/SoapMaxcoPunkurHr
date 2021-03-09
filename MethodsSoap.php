@@ -230,6 +230,7 @@ class MethodsSoap
                'id_cli'                  => 'required|numeric',
                'status'                  => 'required|numeric|in:0,1',
                'lock_descrip'                  => 'max:200',
+               'clase_riesgo'                  => 'max:3',
                'mntcred'              => 'required',
                'mntutil'              => 'required',
                'mntdisp'              => 'required',

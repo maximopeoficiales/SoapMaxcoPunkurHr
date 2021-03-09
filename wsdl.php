@@ -111,6 +111,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="id_cli" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="status" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="lock_descrip" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="clase_riesgo" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntcred" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntutil" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="mntdisp" type="s:string" />
@@ -294,7 +295,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     </s:sequence>
                </s:complexType>
                <!-- objecto niubiz -->
-             
+
 
                <s:complexType name="Niubiz">
                     <s:sequence>
@@ -304,7 +305,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="resp" type="s:string" />
                     </s:sequence>
                </s:complexType>
-               
+
                <s:complexType name="ArrayMaterials">
                     <s:sequence>
                          <s:element minOccurs="0" maxOccurs="unbounded" name="material" type="tns:Material" />
@@ -442,7 +443,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="obs_niubiz" type="tns:Niubiz" />
                     </s:sequence>
                </s:complexType>
-               
+
 
                <!-- FIN GET_PAG_RECEP_PAGO -->
 

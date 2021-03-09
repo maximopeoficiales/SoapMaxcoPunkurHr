@@ -891,6 +891,7 @@ class MethodsWoo
           }
           // wallet_comentario asi se llama el campo para el profile extrafields 
           $wallet_comentario = $credito["wallet_comentario"] ? $credito["wallet_comentario"]  : "";
+          $clase_riesgo = $credito["clase_riesgo"] ? $credito["clase_riesgo"]  : "";
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                // $fecha_actual = strtotime(date("Y-m-d", time()));
