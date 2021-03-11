@@ -448,20 +448,7 @@ class MethodsWoo
                               "message" => "Error al generar el cd_cli",
                          ];
                     }
-                    // llamado a call user_role($user_id)
-                    if ($this->isPrecor($id_soc)) {
-                         try {
-                              $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL user_role({$response->id})";
-                              $wpdb->query($wpdb->prepare($sql));
-                              $wpdb->flush();
-                         } catch (\Throwable $th) {
-                              return [
-                                   "value" => 0,
-                                   "message" => "Error: $th",
-                              ];
-                         }
-                    }
+
                     // creacion de cond_pago y descripcion_cond_pago
                     try {
                          $this->createMetaValueByKey("cond_pago", $cond_pago, $response->id, $id_soc);
@@ -517,6 +504,20 @@ class MethodsWoo
                               "message" => "Error en la creacion de destinatarios",
                          ];
                     }
+                    // llamado a call user_role($user_id)
+                    if ($this->isPrecor($id_soc)) {
+                         try {
+                              $wpdb = $this->getWPDB($id_soc);
+                              $sql = "CALL user_role({$response->id})";
+                              $wpdb->query($wpdb->prepare($sql));
+                              $wpdb->flush();
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error: $th",
+                              ];
+                         }
+                    }
                     return [
                          "value" => 1,
                          "data" => "cd_cli: " .  $cd_cli,
@@ -557,6 +558,20 @@ class MethodsWoo
                     $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                }
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+
+
+               $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
+               $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+               // actualizo los nuevos campos
+               try {
+                    $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
+                    $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
+               } catch (\Throwable $th) {
+                    return [
+                         "value" => 0,
+                         "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
+                    ];
+               }
                // llamado a call user_role($user_id)
                if ($this->isPrecor($id_soc)) {
                     try {
@@ -571,20 +586,6 @@ class MethodsWoo
                          ];
                     }
                }
-
-               $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-               $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-               // actualizo los nuevos campos
-               try {
-                    $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
-                    $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
-               } catch (\Throwable $th) {
-                    return [
-                         "value" => 0,
-                         "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
-                    ];
-               }
-
                if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
                     $id_dest = $cliente["id_dest"];
                     $params = array(
