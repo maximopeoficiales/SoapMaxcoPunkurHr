@@ -216,8 +216,8 @@ class MethodsWoo
                     if ($this->isPrecor($id_soc)) {
                          try {
                               $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL update_rol_precio($id_material,%s,$price)";
-                              $wpdb->query($wpdb->prepare($sql, $categ));
+                              $sql = "CALL update_rol_precio($id_material)";
+                              $wpdb->query($wpdb->prepare($sql));
                               $wpdb->flush();
                          } catch (\Throwable $th) {
                               return [
@@ -448,6 +448,20 @@ class MethodsWoo
                               "message" => "Error al generar el cd_cli",
                          ];
                     }
+                    // llamado a call user_role($user_id)
+                    if ($this->isPrecor($id_soc)) {
+                         try {
+                              $wpdb = $this->getWPDB($id_soc);
+                              $sql = "CALL user_role({$response->id})";
+                              $wpdb->query($wpdb->prepare($sql));
+                              $wpdb->flush();
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error: $th",
+                              ];
+                         }
+                    }
                     // creacion de cond_pago y descripcion_cond_pago
                     try {
                          $this->createMetaValueByKey("cond_pago", $cond_pago, $response->id, $id_soc);
@@ -466,6 +480,7 @@ class MethodsWoo
                               "message" => "Error al crear los campos en PFX",
                          ];
                     }
+
                     try {
                          if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
                               $id_dest = $copiarAddress ? 1 : $cliente["id_dest"];
@@ -542,6 +557,21 @@ class MethodsWoo
                     $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                }
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+               // llamado a call user_role($user_id)
+               if ($this->isPrecor($id_soc)) {
+                    try {
+                         $wpdb = $this->getWPDB($id_soc);
+                         $sql = "CALL user_role($user_id)";
+                         $wpdb->query($wpdb->prepare($sql));
+                         $wpdb->flush();
+                    } catch (\Throwable $th) {
+                         return [
+                              "value" => 0,
+                              "message" => "Error: $th",
+                         ];
+                    }
+               }
+
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                // actualizo los nuevos campos
