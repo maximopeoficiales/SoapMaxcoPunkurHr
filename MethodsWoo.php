@@ -607,8 +607,8 @@ class MethodsWoo
                if ($this->isPrecor($id_soc)) {
                     try {
                          $wpdb = $this->getWPDB($id_soc);
-                         $sql = "CALL user_role($user_id,$categ)";
-                         $wpdb->query($wpdb->prepare($sql));
+                         $sql = "CALL user_role($user_id,%s)";
+                         $wpdb->query($wpdb->prepare($sql,$categ));
                          $wpdb->flush();
                     } catch (\Throwable $th) {
                          return [
