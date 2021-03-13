@@ -118,6 +118,7 @@ class MethodsWoo
                ];
           }
           $id_soc = $material["id_soc"];
+          $jprod = $material["jprod"];
           // campos para vender por paquete
           $material["group_of_quantity"] = $material["unxpaq"] ?? "";
           $material["minimum_allowed_quantity"] = $material["unxpaq"] ?? "";
@@ -135,6 +136,20 @@ class MethodsWoo
                if ($material["cod"] == 0) {
                     try {
                          $response = (object) $woo->post('products', $dataSend); //devuelve un objeto
+                         // este procedure solo se ejecuta cambia la categoria segun el jprod
+                         if ($this->isPrecor($id_soc)) {
+                              try {
+                                   $wpdb = $this->getWPDB($id_soc);
+                                   $sql = "CALL producto_categoria({$response->id},%s)";
+                                   $wpdb->query($wpdb->prepare($sql, $jprod));
+                                   $wpdb->flush();
+                              } catch (\Throwable $th) {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error: $th",
+                                   ];
+                              }
+                         }
                          if ($response->id !== null) {
                               return [
                                    "value" => 1,
@@ -151,9 +166,23 @@ class MethodsWoo
                } else if ($material["cod"] == 1) {
                     /* actualizacion */
                     try {
-                         $user_ide = $this->mfGetIdMaterialWithSku($sku, $id_soc);
-                         $this->mfUpdateMetadataMaterial($user_ide, $dataSend["meta_data"], $id_soc);
+                         $id_material = $this->mfGetIdMaterialWithSku($sku, $id_soc);
+                         $this->mfUpdateMetadataMaterial($id_material, $dataSend["meta_data"], $id_soc);
                          $response = $this->mfUpdateMaterialWithSku($sku, $dataSend, $id_soc);
+                         // este procedure solo se ejecuta cambia la categoria segun el jprod
+                         if ($this->isPrecor($id_soc)) {
+                              try {
+                                   $wpdb = $this->getWPDB($id_soc);
+                                   $sql = "CALL producto_categoria($id_material,%s)";
+                                   $wpdb->query($wpdb->prepare($sql, $jprod));
+                                   $wpdb->flush();
+                              } catch (\Throwable $th) {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error: $th",
+                                   ];
+                              }
+                         }
                          return [
                               "value" => 2,
                               "message" => "Material con sku: $sku actualizado",
@@ -216,8 +245,8 @@ class MethodsWoo
                     if ($this->isPrecor($id_soc)) {
                          try {
                               $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL update_rol_precio($id_material)";
-                              $wpdb->query($wpdb->prepare($sql));
+                              $sql = "CALL update_rol_precio($id_material,%s)";
+                              $wpdb->query($wpdb->prepare($sql, $categ));
                               $wpdb->flush();
                          } catch (\Throwable $th) {
                               return [
@@ -411,6 +440,7 @@ class MethodsWoo
           $id_cli = $cliente["id_cli"];
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
+          $categ = $cliente["categ"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -508,8 +538,8 @@ class MethodsWoo
                     if ($this->isPrecor($id_soc)) {
                          try {
                               $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL user_role({$response->id})";
-                              $wpdb->query($wpdb->prepare($sql));
+                              $sql = "CALL user_role({$response->id},%s)";
+                              $wpdb->query($wpdb->prepare($sql, $categ));
                               $wpdb->flush();
                          } catch (\Throwable $th) {
                               return [
@@ -539,6 +569,7 @@ class MethodsWoo
           $id_cli = $cliente["id_cli"];
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
+          $categ = $cliente["categ"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -559,7 +590,7 @@ class MethodsWoo
                }
                $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
 
-
+               // actualiza o crea todos los campos pfx
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
                $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                // actualizo los nuevos campos
@@ -572,11 +603,11 @@ class MethodsWoo
                          "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
                     ];
                }
-               // llamado a call user_role($user_id)
+               // llamado a call user_role($user_id,$categ)
                if ($this->isPrecor($id_soc)) {
                     try {
                          $wpdb = $this->getWPDB($id_soc);
-                         $sql = "CALL user_role($user_id)";
+                         $sql = "CALL user_role($user_id,$categ)";
                          $wpdb->query($wpdb->prepare($sql));
                          $wpdb->flush();
                     } catch (\Throwable $th) {
