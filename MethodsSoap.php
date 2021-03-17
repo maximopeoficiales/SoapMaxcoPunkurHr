@@ -243,7 +243,7 @@ class MethodsSoap
           $validations = [
                'id_soc'                  => 'required|max:4',
                'id_mat'                  => 'required|numeric',
-               'nomb'              => 'required|max:40',
+               'nomb'              => 'required|max:60',
                'paq'              => 'max:1',
                'undpaq'              => 'max:3',
                'und'              => 'required|max:3',
