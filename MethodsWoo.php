@@ -347,6 +347,8 @@ class MethodsWoo
      }
      public function UpdateClientWoo($cliente)
      {
+          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
+          $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] == null ? "07001" : $cliente["dest_cod_postal"];
           $params = array(
                "id_dest" => $cliente["id_dest"],
                "first_name" => $cliente["nomb"],
@@ -443,7 +445,6 @@ class MethodsWoo
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $categ = $cliente["categ"];
-          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -574,8 +575,6 @@ class MethodsWoo
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $categ = $cliente["categ"];
-          // como es opcional si viene null le asignare codpostal de lima
-          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
