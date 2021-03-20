@@ -154,6 +154,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="1" maxOccurs="1" name="descrip_cond_pago" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="drcfisc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="cod_postal" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_eje" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="nombeje" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="telf_eje" type="s:string" />
@@ -165,6 +166,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                     <s:sequence>
                          <s:element minOccurs="0" maxOccurs="1" name="id_dest" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="drcdest" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="dest_cod_postal" type="s:string" />
                     </s:sequence>
                </s:complexType>
 

@@ -129,6 +129,7 @@ class WebServices
                     "descrip_cond_pago" => $request->descrip_cond_pago,
                     "email" => $request->email,
                     "drcfisc" => $request->drcfisc,
+                    "cod_postal" => $request->cod_postal,
                     "id_eje" => $request->id_eje,
                     "nombeje" => $request->nombeje,
                     "telf_eje" => $request->telf_eje,
@@ -136,6 +137,7 @@ class WebServices
                     "cod" => $request->cod,
                     "id_dest" => $cliente_detalle->id_dest,
                     "drcdest" => $cliente_detalle->drcdest,
+                    "dest_cod_postal" => $cliente_detalle->dest_cod_postal,
                ],
           ];
           return $m->createClients($data);

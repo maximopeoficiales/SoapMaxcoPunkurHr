@@ -293,13 +293,15 @@ class MethodsSoap
                'email'                  => 'max:45',
                'telfmov'                  => 'max:10|required',
                'drcfisc'                  => 'max:200|required',
+               'cod_postal'                  => 'numeric',
                'id_eje'                  => 'numeric|digits_between:1,10',
                'nombeje'                  => 'max:40',
                'telf_eje'                  => 'max:9',
-               // SE QUITO EMAIL PORQUE SOPORTABA EMAIL COORPORATIVOS
+               // SE QUITO EMAIL PORQUE no SOPORTABA EMAIL COORPORATIVOS
                'email_eje'                  => 'max:45',
                'id_dest'              => 'numeric|digits_between:1,10',
                'drcdest'              => 'max:250',
+               'dest_cod_postal'              => 'numeric',
                'cod'              => 'required|max:5|numeric',
 
           ];

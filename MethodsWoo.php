@@ -355,7 +355,7 @@ class MethodsWoo
                "country" => "PE",
                "address_1" => $cliente["drcdest"],
                "address_2" => "",
-               "postcode" => "07001",
+               "postcode" => $cliente["cod_postal"],
                "phone" => $cliente["telf"],
                "email" => $cliente["email"]
           );
@@ -378,6 +378,8 @@ class MethodsWoo
                               $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                          }
                          $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+                         // para solo la creacion de destinatarios usa el campo dest_cod_postal
+                         $params["postcode"] = $cliente["dest_cod_postal"];
                          if ($this->createAddressSoap($user_id, $params)) {
                               return [
                                    "value" => 1,
@@ -398,12 +400,12 @@ class MethodsWoo
                     }
                } else if ($cod == 3) {
                     // crea cliente y direccion
-                    if ($id_dest != "" || $cliente["drcdest"] != "") {
+                    if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
                          return $this->createCliente($cliente, true);
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
+                              "message" => "El id_dest o drcdest o dest_cod_postal  vacio por favor rellenelo",
                          ];
                     }
                     /*crea cliente y crea direccion  */
@@ -418,12 +420,12 @@ class MethodsWoo
                     // }
                } else if ($cod == 4) {
                     /*actualizar cliente y actualizar direccion  */
-                    if ($id_dest != "" || $cliente["drcdest"] != "") {
+                    if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
                          return $this->UpdateCliente($cliente, true);
                     } else {
                          return [
                               "value" => 0,
-                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
+                              "message" => "El id_dest o drcdest o dest_cod_postal vacio por favor rellenelo",
                          ];
                     }
                }
@@ -441,6 +443,7 @@ class MethodsWoo
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $categ = $cliente["categ"];
+          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -450,6 +453,7 @@ class MethodsWoo
                     "address_1" => $cliente["drcfisc"] == null ? "" : $cliente["drcfisc"],
                     'email' => $cliente["email"],
                     'phone' => $cliente["telfmov"] == null ? "" : $cliente["telfmov"],
+                    'postcode' => $cliente["cod_postal"],
                ],
           ];
           $email = $cliente["email"];
@@ -509,7 +513,7 @@ class MethodsWoo
                                    "country" => "PE",
                                    "address_1" => $copiarAddress ? $cliente["drcfisc"] : $cliente["drcdest"],
                                    "address_2" => "",
-                                   "postcode" => "07001",
+                                   "postcode" =>  $copiarAddress ? $cliente["cod_postal"] : $cliente["dest_cod_postal"],
                                    "phone" => $cliente["telfmov"],
                                    "email" => $cliente["email"]
                               );
@@ -570,6 +574,8 @@ class MethodsWoo
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $categ = $cliente["categ"];
+          // como es opcional si viene null le asignare codpostal de lima
+          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
           $dataSend = [
                'email' => $cliente["email"],
                'first_name' => $cliente["nomb"],
@@ -578,7 +584,7 @@ class MethodsWoo
                     'phone' => $cliente["telfmov"],
                     'address_1' => $cliente["drcfisc"],
                     // 'company' => $cliente["nrdoc"],
-                    'postcode' => "15000",
+                    'postcode' => $cliente["cod_postal"],
                     'country' => "PE",
                ],
           ];
@@ -608,7 +614,7 @@ class MethodsWoo
                     try {
                          $wpdb = $this->getWPDB($id_soc);
                          $sql = "CALL user_role($user_id,%s)";
-                         $wpdb->query($wpdb->prepare($sql,$categ));
+                         $wpdb->query($wpdb->prepare($sql, $categ));
                          $wpdb->flush();
                     } catch (\Throwable $th) {
                          return [
@@ -627,7 +633,7 @@ class MethodsWoo
                          "country" => "PE",
                          "address_1" => $cliente["drcdest"],
                          "address_2" => "",
-                         "postcode" => "07001",
+                         "postcode" => $cliente["dest_cod_postal"],
                          "phone" => $cliente["telfmov"],
                          "email" => $cliente["email"]
                     );
@@ -637,7 +643,6 @@ class MethodsWoo
                               "value" => 2,
                               "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
                               "data" => "cd_cli: $cd_cli",
-
                          ];
                     } else {
                          return [
