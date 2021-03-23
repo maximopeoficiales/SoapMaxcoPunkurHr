@@ -285,6 +285,7 @@ class MethodsWoo
           $response = $woo->put("products/" . $findMaterial[0]->id, $dataUpdated);
           return $response;
      }
+     // actualiza en bruto todo los campos enviados por parametro
      private function mfUpdateMetadataMaterial($id, $data, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
@@ -296,6 +297,7 @@ class MethodsWoo
                if (!$result) new Error("Error en la actualizacion de  datos");
           }
      }
+     // verifica si existe el campo en el metadata
      private function ExistsFieldMaterialMetadata($field, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
@@ -304,6 +306,7 @@ class MethodsWoo
           // $wpdb->flush();
           return (count($result) !== 0) ? true : false;
      }
+     // crea campo en el metadata
      private function createFieldMaterialMetadata($key, $value, $id_material, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
@@ -312,7 +315,30 @@ class MethodsWoo
           $wpdb->flush();
           return true;
      }
+     // actualiza el campo en el metadata
+     private function updateFieldMaterialMetadata($key, $value, $post_id, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "UPDATE wp_postmeta SET meta_value = %s WHERE post_id = $post_id AND meta_key = %s";
+          $wpdb->query($wpdb->prepare($sql, $value, $key));
+          $wpdb->flush();
+          return true;
+     }
      /* fin de materiales */
+
+
+     private function createOrUpdateWhenExistsMetaValue($key, $value, $post_id, $id_soc)
+     {
+          if ($this->ExistsFieldMaterialMetadata($key, $post_id, $id_soc)) {
+               // actualiza el meta valor
+               $this->updateFieldMaterialMetadata($key, $value, $post_id, $id_soc);
+          } else {
+               // crea el meta valor
+               $this->createFieldMaterialMetadata($key, $value, $post_id, $id_soc);
+          }
+          return true;
+     }
+
      /*  Clientes */
      public function GetClientsWoo($params)
      {
@@ -1258,6 +1284,7 @@ class MethodsWoo
           $pos = $params["pos"];
           $cod = $params["cod"];
           $id_order = $params["id_ctwb"];
+          $IDSAP = $params["id_ped"];
           $sku = strval(intval($params["id_mat"]));
           $quantity = $params["cant"];
           $prctot = $params["prctot"];
@@ -1329,6 +1356,8 @@ class MethodsWoo
                               "message" => "El id_ctwb: $id_order se ha actualizado",
                          ];
                     }
+                    // no importa en caso lo use yo siempre guarda su id_sap del pedido
+                    $this->createOrUpdateWhenExistsMetaValue("id_ped", $IDSAP, $id_order, $id_soc);
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
