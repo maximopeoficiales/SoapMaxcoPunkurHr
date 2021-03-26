@@ -1292,6 +1292,8 @@ class MethodsWoo
           if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                // $id_soc = 999;
                try {
+                    // no importa en caso lo use yo siempre guarda su id_sap del pedido
+                    $this->createOrUpdateWhenExistsMetaValue("id_ped", $IDSAP, $id_order, $id_soc);
                     $data = [];
                     if ($cod == 0) {
                          $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
@@ -1356,8 +1358,7 @@ class MethodsWoo
                               "message" => "El id_ctwb: $id_order se ha actualizado",
                          ];
                     }
-                    // no importa en caso lo use yo siempre guarda su id_sap del pedido
-                    $this->createOrUpdateWhenExistsMetaValue("id_ped", $IDSAP, $id_order, $id_soc);
+                    
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
