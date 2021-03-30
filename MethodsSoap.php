@@ -167,7 +167,7 @@ class MethodsSoap
      /* retornadores de respuestas */
      private function mfIsAuthorized($user, $password)
      {
-          if (true) {
+          if ($user=="PRECOR" && $password=="PRECOR2") {
                return true;
           } else {
                return false;
