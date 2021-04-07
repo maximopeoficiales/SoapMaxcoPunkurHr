@@ -27,6 +27,8 @@ $options = [
      'cache_wsdl' => WSDL_CACHE_NONE
 ];
 $urld=url_completa();
-$server = new SoapServer("$urld/webservices/wsdl.php", $options);
-$server->setClass('WebServices');
-$server->handle();
+// $server = new SoapServer("$urld/webservices/wsdl.php", $options);
+// $server->setClass('WebServices');
+// $server->handle();
+
+echo "$urld/webservices/wsdl.php";
