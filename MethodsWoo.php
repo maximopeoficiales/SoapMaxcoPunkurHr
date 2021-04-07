@@ -14,7 +14,7 @@ class MethodsWoo
 {
      /* constantes */
      private $PRECOR_URL = "https://precor.punkuhr.com";
-     private $MAXCO_URL = "https://maxco.punkuhr.com/";
+     private $MAXCO_URL = "https://maxco.punkuhr.com";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
