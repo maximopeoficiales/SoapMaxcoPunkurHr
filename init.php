@@ -1,6 +1,6 @@
 <?php
 
-// error_reporting(0);
+error_reporting(0);
 
 require_once(__DIR__ . '/webservices.php');
 function url_completa($forwarded_host = false)
