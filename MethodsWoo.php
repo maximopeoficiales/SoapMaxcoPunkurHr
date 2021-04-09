@@ -245,7 +245,7 @@ class MethodsWoo
                     if ($this->isPrecor($id_soc)) {
                          try {
                               $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL update_rol_precio($id_material,%s,$price)";
+                              $sql = "CALL procedure_update_rol_precio($id_material,%s,$price)";
                               $wpdb->query($wpdb->prepare($sql, $categ));
                               $wpdb->flush();
                          } catch (\Throwable $th) {
