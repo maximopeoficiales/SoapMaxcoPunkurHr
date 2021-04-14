@@ -15,6 +15,21 @@ class MethodsSoap
      {
           return new ResponseObject($response, $message, ($response == 0) ? 400 : 200, $data);
      }
+
+     public function updateTypeRate($data)
+     {
+          return  $this->mfValidationGeneralAuth($data, function ($data) {
+               $data_currency = $data["data_currency"];
+               $validate = $this->mfValidateTypeRateFields($data_currency); //validacion de security
+               if ($validate["validate"]) {
+                    $created = $this->m()->updateTypeRate($data_currency);
+                    return $this->mfSendResponse($created["value"], $created["message"], $created["data"]);
+                    // return $this->mfSendResponse(1, "Todo Correcto");
+               } else {
+                    return $this->mfSendResponse(0, $validate["message"]);
+               }
+          }, ["security" => "required", "type_rate" => "required"]);
+     }
      public function createMaterial($data)
      {
           return  $this->mfValidationGeneralAuth($data, function ($data) {
@@ -167,7 +182,7 @@ class MethodsSoap
      /* retornadores de respuestas */
      private function mfIsAuthorized($user, $password)
      {
-          if ($user=="PRECOR" && $password=="PRECOR2") {
+          if ($user == "PRECOR" && $password == "PRECOR2") {
                return true;
           } else {
                return false;
@@ -237,6 +252,14 @@ class MethodsSoap
                'fvenc'              => 'required|max:10|date:Y-m-d',
           ];
           return $this->mfUtilityValidator($credito, $validations);
+     }
+     private function mfValidateTypeRateFields($material)
+     {
+          $validations = [
+               'id_soc'                  => 'required|max:4',
+               'tipo_cambio'              => 'required|numeric',
+          ];
+          return $this->mfUtilityValidator($material, $validations);
      }
      private function mfValidateMaterialFields($material)
      {

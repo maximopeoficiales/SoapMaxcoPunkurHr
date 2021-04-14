@@ -1,4 +1,7 @@
 <?php
+
+use Rakit\Validation\Rules\Boolean;
+
 require "./WoocommerceClient.php";
 define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
@@ -14,7 +17,7 @@ class MethodsWoo
 {
      /* constantes */
      private $PRECOR_URL = "https://tiendaqa.precor.pe/";
-     private $MAXCO_URL = "https://maxco.punkuhr.com";
+     private $MAXCO_URL = "https://maxco.punkuhr.com/";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -54,6 +57,56 @@ class MethodsWoo
      {
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
+     }
+
+     public function updateTypeRate($data_currency)
+     {
+          $id_soc = $data_currency["id_soc"];
+          $tipo_cambio = $data_currency["tipo_cambio"];
+          $result = false;
+          if ($this->isPrecor($id_soc)) {
+               $result = $this->updateTypeRateWebservice($this->PRECOR_URL, $tipo_cambio);
+          } else if ($this->isMaxco($id_soc)) {
+               $result = $this->updateTypeRateWebservice($this->MAXCO_URL, $tipo_cambio);
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc $id_soc no es valido",
+               ];
+          }
+
+          if ($result) {
+               return [
+                    "value" => 2,
+                    "message" => "Tipo de Cambio Actualizado",
+               ];
+          }
+     }
+
+     private function updateTypeRateWebservice($urlDomain, $type_rate): bool
+     {
+          $curl = curl_init();
+
+          curl_setopt_array($curl, array(
+               CURLOPT_URL => $urlDomain . 'wp-json/webservices_precor/v1/update_currency_rate',
+               CURLOPT_RETURNTRANSFER => true,
+               CURLOPT_ENCODING => '',
+               CURLOPT_MAXREDIRS => 10,
+               CURLOPT_TIMEOUT => 0,
+               CURLOPT_FOLLOWLOCATION => true,
+               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+               CURLOPT_CUSTOMREQUEST => 'POST',
+               CURLOPT_POSTFIELDS => '{"user":"PRECOR","pass":"PRECOR2","rate":"' . $type_rate . '"}',
+               CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+               ),
+          ));
+          $response = curl_exec($curl);
+          curl_close($curl);
+          // echo $response;
+          $response = json_decode($response, true);
+          return $response["data"]["status"] == 200 ? true : false;
+          // return true;
      }
      /* Materiales */
      public function UpdateMaterialStockWoo($material)
@@ -1358,7 +1411,6 @@ class MethodsWoo
                               "message" => "El id_ctwb: $id_order se ha actualizado",
                          ];
                     }
-                    
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
