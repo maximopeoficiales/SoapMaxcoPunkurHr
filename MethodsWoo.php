@@ -79,6 +79,11 @@ class MethodsWoo
                     "value" => 2,
                     "message" => "Tipo de Cambio Actualizado",
                ];
+          }else{
+               return [
+                    "value" => 0,
+                    "message" => "Error en la Actualizacion de Tipo de Cambio",
+               ];
           }
      }
 
