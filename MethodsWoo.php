@@ -15,8 +15,8 @@ require "./responses/cotizacion/Niubiz.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR_URL = "https://tiendaenlinea.precor.pe/";
-     private $MAXCO_URL = "https://tiendaenlinea.maxco.pe/";
+     private $PRECOR_URL = "https://tiendaenlinenlinea.precor.pe/";
+     private $MAXCO_URL = "https://tiendaenlinenlinea.maxco.pe/";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -871,7 +871,7 @@ class MethodsWoo
           $curl = curl_init();
           //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
-               CURLOPT_URL => "https://tiendaqa.precor.pe/wp-json/max_functions/v1/address",
+               CURLOPT_URL => "https://tiendaenlinea.precor.pe/wp-json/max_functions/v1/address",
                // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
                CURLOPT_RETURNTRANSFER => true,
                CURLOPT_ENCODING => "",
