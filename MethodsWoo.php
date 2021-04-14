@@ -1,6 +1,5 @@
 <?php
 
-use Rakit\Validation\Rules\Boolean;
 
 require "./WoocommerceClient.php";
 define('WP_USE_THEMES', false);
