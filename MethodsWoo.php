@@ -15,8 +15,8 @@ require "./responses/cotizacion/Niubiz.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR_URL = "https://tiendaenlinenlinea.precor.pe/";
-     private $MAXCO_URL = "https://tiendaenlinenlinea.maxco.pe/";
+     private $PRECOR_URL = "https://tiendaenlinea.precor.pe/";
+     private $MAXCO_URL = "https://tiendaenlinea.maxco.pe/";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -78,6 +78,11 @@ class MethodsWoo
                return [
                     "value" => 2,
                     "message" => "Tipo de Cambio Actualizado",
+               ];
+          }else{
+               return [
+                    "value" => 0,
+                    "message" => "Error en la Actualizacion de Tipo de Cambio",
                ];
           }
      }
