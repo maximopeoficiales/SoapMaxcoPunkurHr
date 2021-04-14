@@ -7,6 +7,33 @@ class WebServices
      {
           return  new MethodsSoap();
      }
+
+     /* Tipo de Cambio */
+     /**
+      * Actualiza tipo de cambio 
+      *
+      * @param string $user Usuario
+      * @param string $pass Contraseña
+      * @param string $id_soc Id de sociedad
+      * @param string $tipo_cambio Tipo de Cambio
+      * @return array Respuesta del Servidor
+      */
+     public function POST_ACT_TYPE_RATE($request)
+     {
+          $request = $request->request;
+          $m = $this->getMethods();
+          $data = [
+               "security" => [
+                    "user" => $request->user,
+                    "pass" => $request->pass,
+               ],
+               "data_currency" => [
+                    "id_soc" => $request->id_soc,
+                    "tipo_cambio" => $request->tipo_cambio,
+               ],
+          ];
+          return $m->updateTypeRate($data);
+     }
      /* Materiales */
      /**
       * Crea Y Actualiza Material 
