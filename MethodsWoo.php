@@ -1610,7 +1610,7 @@ class MethodsWoo
      private function notifyUserAboutQuoteByIdOrder($id_order, $id_soc)
      {
           $domain = $this->isMaxco($id_soc) ? $this->MAXCO_URL : $this->PRECOR_URL;
-          $urlViewQuote = "$domain/mi-cuenta/view-quote/$id_order/";
+          $urlViewQuote = "{$domain}mi-cuenta/view-quote/$id_order/";
           $message = "Estimado usuario, su cotización $id_order ha sido mejorada. Puede entrar al portal <a href='$urlViewQuote'>Aqui</a> para visualizarla.";
           $this->sendEmailbyIdOrder($message, $id_order, $id_soc);
      }
