@@ -28,7 +28,7 @@ class MethodsSoap
                } else {
                     return $this->mfSendResponse(0, $validate["message"]);
                }
-          }, ["security" => "required", "type_rate" => "required"]);
+          }, ["security" => "required", "data_currency" => "required"]);
      }
      public function createMaterial($data)
      {
