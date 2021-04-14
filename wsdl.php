@@ -25,6 +25,37 @@ $urlsoap = url_completa() . "/webservices/init.php";
      <wsdl:types>
           <s:schema elementFormDefault="qualified" targetNamespace="<?= $urld ?>">
                <!-- datos a ingresar -->
+               <s:element name="POST_ACT_TYPE_RATE">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="0" maxOccurs="1" name="request" type="tns:POST_ACT_TYPE_RATERequestBody" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+               <s:complexType name="POST_ACT_TYPE_RATERequestBody">
+                    <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="tipo_cambio" type="s:string" />
+                    </s:sequence>
+               </s:complexType>
+               <!-- fin de datos a ingresar -->
+               <!-- estructura de respuesta de POST_ACT_TYPE_RATE  -->
+               <s:element name="POST_ACT_TYPE_RATEResponse">
+                    <s:complexType>
+                         <s:sequence>
+                              <s:element minOccurs="1" maxOccurs="1" name="RPTA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DETA" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="STUS" type="s:string" />
+                              <s:element minOccurs="1" maxOccurs="1" name="DATA" type="s:string" />
+                         </s:sequence>
+                    </s:complexType>
+               </s:element>
+
+               <!-- fin de estructura de respuesta -->
+
+               <!-- datos a ingresar -->
                <s:element name="POST_ACT_MAT">
                     <s:complexType>
                          <s:sequence>
@@ -63,6 +94,8 @@ $urlsoap = url_completa() . "/webservices/init.php";
                </s:element>
 
                <!-- fin de estructura de respuesta -->
+
+
                <!-- POST_ACT_STOCK -->
                <s:element name="POST_ACT_STOCK">
                     <s:complexType>
@@ -482,6 +515,17 @@ $urlsoap = url_completa() . "/webservices/init.php";
 
           </s:schema>
      </wsdl:types>
+
+     <!-- aqui se selecciona la estructura de entrada y salida -->
+     <wsdl:message name="POST_ACT_TYPE_RATESoapIn">
+          <wsdl:part name="parameters" element="tns:POST_ACT_TYPE_RATE" />
+     </wsdl:message>
+     <wsdl:message name="POST_ACT_TYPE_RATESoapOut">
+          <wsdl:part name="parameters" element="tns:POST_ACT_TYPE_RATEResponse" />
+     </wsdl:message>
+     <!-- fin de seleccion de estructura -->
+     
+
      <!-- aqui se selecciona la estructura de entrada y salida -->
      <wsdl:message name="POST_ACT_MATSoapIn">
           <wsdl:part name="parameters" element="tns:POST_ACT_MAT" />
@@ -490,6 +534,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_MATResponse" />
      </wsdl:message>
      <!-- fin de seleccion de estructura -->
+     
      <!-- POST_ACT_STOCK -->
      <wsdl:message name="POST_ACT_STOCKSoapIn">
           <wsdl:part name="parameters" element="tns:POST_ACT_STOCK" />
@@ -571,6 +616,15 @@ $urlsoap = url_completa() . "/webservices/init.php";
 
 
      <!-- se registrar la funciones de entrada y salida -->
+     <!-- POST_ACT_TYPE_RATE -->
+     <wsdl:portType name="POST_ACT_TYPE_RATESoap">
+          <wsdl:operation name="POST_ACT_TYPE_RATE">
+               <wsdl:input message="tns:POST_ACT_TYPE_RATESoapIn" />
+               <wsdl:output message="tns:POST_ACT_TYPE_RATESoapOut" />
+          </wsdl:operation>
+     </wsdl:portType>
+     <!-- fin POST_ACT_TYPE_RATE -->
+
      <wsdl:portType name="POST_ACT_MATSoap">
           <wsdl:operation name="POST_ACT_MAT">
                <wsdl:input message="tns:POST_ACT_MATSoapIn" />
@@ -660,6 +714,21 @@ $urlsoap = url_completa() . "/webservices/init.php";
 
 
      <!-- aqui se indica que estructura de entrada y salida  usara una funcion especifica -->
+     <wsdl:binding name="POST_ACT_TYPE_RATESoap" type="tns:POST_ACT_TYPE_RATESoap">
+          <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+          <wsdl:operation name="POST_ACT_TYPE_RATE">
+               <soap:operation soapAction="<?= $urlsoap ?>" style="document" />
+               <wsdl:input>
+                    <soap:body use="literal" />
+               </wsdl:input>
+               <wsdl:output>
+                    <soap:body use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+               </wsdl:output>
+          </wsdl:operation>
+     </wsdl:binding>
+     
+     
+     
      <wsdl:binding name="POST_ACT_MATSoap" type="tns:POST_ACT_MATSoap">
           <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
           <wsdl:operation name="POST_ACT_MAT">
@@ -805,6 +874,12 @@ $urlsoap = url_completa() . "/webservices/init.php";
      <!-- fin de estructura -->
 
      <!-- nombres de los servicios a exponer -->
+     <wsdl:service name="POST_ACT_TYPE_RATE">
+          <wsdl:port name="POST_ACT_TYPE_RATESoap" binding="tns:POST_ACT_TYPE_RATESoap">
+               <soap:address location="<?= $urlsoap ?>" />
+          </wsdl:port>
+     </wsdl:service>
+
      <wsdl:service name="POST_ACT_MAT">
           <wsdl:port name="POST_ACT_MATSoap" binding="tns:POST_ACT_MATSoap">
                <soap:address location="<?= $urlsoap ?>" />
