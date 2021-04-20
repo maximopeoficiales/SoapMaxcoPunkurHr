@@ -1,4 +1,6 @@
 <?php
+
+
 require "./WoocommerceClient.php";
 define('WP_USE_THEMES', false);
 require('../wp-blog-header.php');
@@ -13,8 +15,8 @@ require "./responses/cotizacion/Niubiz.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR_URL = "https://tiendaenlinea.precor.pe";
-     private $MAXCO_URL = "https://tiendaenlinea.maxco.pe";
+     private $PRECOR_URL = "https://tiendaenlinea.precor.pe/";
+     private $MAXCO_URL = "https://tiendaenlinea.maxco.pe/";
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -42,7 +44,7 @@ class MethodsWoo
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost'); 
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
-               return new wpdb('clg_wp1', 'Q.MRIXVwjzFHnq6jeRx60', 'clg_wp1', 'localhost');
+               return new wpdb('clg_wp_3oxdh', 'Iz3r_0!Pe4faK2d&', 'clg_wp_retpq', 'localhost:3306');
           } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
@@ -54,6 +56,61 @@ class MethodsWoo
      {
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
+     }
+
+     public function updateTypeRate($data_currency)
+     {
+          $id_soc = $data_currency["id_soc"];
+          $tipo_cambio = $data_currency["tipo_cambio"];
+          $result = false;
+          if ($this->isPrecor($id_soc)) {
+               $result = $this->updateTypeRateWebservice($this->PRECOR_URL, $tipo_cambio);
+          } else if ($this->isMaxco($id_soc)) {
+               $result = $this->updateTypeRateWebservice($this->MAXCO_URL, $tipo_cambio);
+          } else {
+               return [
+                    "value" => 0,
+                    "message" => "El id_soc $id_soc no es valido",
+               ];
+          }
+
+          if ($result) {
+               return [
+                    "value" => 2,
+                    "message" => "Tipo de Cambio Actualizado",
+               ];
+          }else{
+               return [
+                    "value" => 0,
+                    "message" => "Error en la Actualizacion de Tipo de Cambio",
+               ];
+          }
+     }
+
+     private function updateTypeRateWebservice($urlDomain, $type_rate): bool
+     {
+          $curl = curl_init();
+
+          curl_setopt_array($curl, array(
+               CURLOPT_URL => $urlDomain . 'wp-json/webservices_precor/v1/update_currency_rate',
+               CURLOPT_RETURNTRANSFER => true,
+               CURLOPT_ENCODING => '',
+               CURLOPT_MAXREDIRS => 10,
+               CURLOPT_TIMEOUT => 0,
+               CURLOPT_FOLLOWLOCATION => true,
+               CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+               CURLOPT_CUSTOMREQUEST => 'POST',
+               CURLOPT_POSTFIELDS => '{"user":"PRECOR","pass":"PRECOR2","rate":"' . $type_rate . '"}',
+               CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+               ),
+          ));
+          $response = curl_exec($curl);
+          curl_close($curl);
+          // echo $response;
+          $response = json_decode($response, true);
+          return $response["data"]["status"] == 200 ? true : false;
+          // return true;
      }
      /* Materiales */
      public function UpdateMaterialStockWoo($material)
@@ -1358,7 +1415,6 @@ class MethodsWoo
                               "message" => "El id_ctwb: $id_order se ha actualizado",
                          ];
                     }
-                    
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
@@ -1558,7 +1614,7 @@ class MethodsWoo
      private function notifyUserAboutQuoteByIdOrder($id_order, $id_soc)
      {
           $domain = $this->isMaxco($id_soc) ? $this->MAXCO_URL : $this->PRECOR_URL;
-          $urlViewQuote = "$domain/mi-cuenta/view-quote/$id_order/";
+          $urlViewQuote = "{$domain}mi-cuenta/view-quote/$id_order/";
           $message = "Estimado usuario, su cotización $id_order ha sido mejorada. Puede entrar al portal <a href='$urlViewQuote'>Aqui</a> para visualizarla.";
           $this->sendEmailbyIdOrder($message, $id_order, $id_soc);
      }
