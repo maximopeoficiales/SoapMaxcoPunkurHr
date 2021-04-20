@@ -44,7 +44,7 @@ class MethodsWoo
                return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost'); 
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
-               return new wpdb('clg_wp_3oxdh', 'Iz3r_0!Pe4faK2d&', 'clg_wp_retpq', 'localhost:3306');
+               return new wpdb('clg_wp_3oxdh', 'Iz3r_0!Pe4faK2d&', 'clg_wp1', 'localhost:3306');
           } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
