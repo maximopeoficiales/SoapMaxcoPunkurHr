@@ -39,7 +39,7 @@ class MethodsWoo
      {
           if ($this->isMaxco($id_soc)) {
                /* maxco */
-               return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
+               return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost'); 
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
                return new wpdb('clg_wp1', 'Q.MRIXVwjzFHnq6jeRx60', 'clg_wp1', 'localhost');
