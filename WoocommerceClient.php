@@ -43,8 +43,8 @@ class WoocommerceClient
                /* precor */
                return new Client(
                     "https://tiendaqa.precor.pe/",
-                    "ck_952cea875bbbb8bf80821580690da8679481e1d8",
-                    "cs_be07378fc861abe7781d8c4a355e1ada70a88c13",
+                    "ck_82458af7253f4bbd4bd0941f5487323f31b23cdf",
+                    "cs_b0aa70d51f7757485699c97342568b85e9922af2",
                     [
                          'version' => 'wc/v3',
                     ]
