@@ -676,7 +676,8 @@ class MethodsWoo
                if ($user_id == null) {
                     $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                }
-               $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+               if ($user_id!= null) {
+                    $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
 
                // actualiza o crea todos los campos pfx
                $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
@@ -739,6 +740,13 @@ class MethodsWoo
                     "message" => "Cliente con id_cli: $id_cli actualizado",
                     "data" => "cd_cli: $cd_cli",
                ];
+               }else{
+                    return [
+                         "value" => 0,
+                         "message" => "Error el usuario con $id_cli no existe",
+                    ];  
+               }
+               
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
