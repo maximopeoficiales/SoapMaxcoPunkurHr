@@ -676,77 +676,76 @@ class MethodsWoo
                if ($user_id == null) {
                     $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                }
-               if ($user_id!= null) {
+               if ($user_id != null) {
                     $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
 
-               // actualiza o crea todos los campos pfx
-               $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-               $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-               // actualizo los nuevos campos
-               try {
-                    $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
-                    $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
-               } catch (\Throwable $th) {
-                    return [
-                         "value" => 0,
-                         "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
-                    ];
-               }
-               // llamado a call user_role($user_id,$categ)
-               if ($this->isPrecor($id_soc)) {
+                    // actualiza o crea todos los campos pfx
+                    $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
+                    $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+                    // actualizo los nuevos campos
                     try {
-                         $wpdb = $this->getWPDB($id_soc);
-                         $sql = "CALL user_role($user_id,%s)";
-                         $wpdb->query($wpdb->prepare($sql, $categ));
-                         $wpdb->flush();
+                         $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
+                         $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
                     } catch (\Throwable $th) {
                          return [
                               "value" => 0,
-                              "message" => "Error: $th",
+                              "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
                          ];
                     }
-               }
-               if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
-                    $id_dest = $cliente["id_dest"];
-                    $params = array(
-                         "id_dest" => $cliente["id_dest"],
-                         "first_name" => $cliente["nomb"],
-                         "last_name" => "",
-                         "company" => $cliente["nrdoc"],
-                         "country" => "PE",
-                         "address_1" => $cliente["drcdest"],
-                         "address_2" => "",
-                         "postcode" => $cliente["dest_cod_postal"],
-                         "phone" => $cliente["telfmov"],
-                         "email" => $cliente["email"]
-                    );
-                    // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    if ($this->createAddressSoap($user_id, $params, true)) {
-                         return [
-                              "value" => 2,
-                              "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
-                              "data" => "cd_cli: $cd_cli",
-                         ];
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "Se actualizo el cliente, pero  no se creo direccion. El id_dest : $id_dest no existe, por favor creelo",
-                         ];
+                    // llamado a call user_role($user_id,$categ)
+                    if ($this->isPrecor($id_soc)) {
+                         try {
+                              $wpdb = $this->getWPDB($id_soc);
+                              $sql = "CALL user_role($user_id,%s)";
+                              $wpdb->query($wpdb->prepare($sql, $categ));
+                              $wpdb->flush();
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error: $th",
+                              ];
+                         }
                     }
-               }
+                    if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
+                         $id_dest = $cliente["id_dest"];
+                         $params = array(
+                              "id_dest" => $cliente["id_dest"],
+                              "first_name" => $cliente["nomb"],
+                              "last_name" => "",
+                              "company" => $cliente["nrdoc"],
+                              "country" => "PE",
+                              "address_1" => $cliente["drcdest"],
+                              "address_2" => "",
+                              "postcode" => $cliente["dest_cod_postal"],
+                              "phone" => $cliente["telfmov"],
+                              "email" => $cliente["email"]
+                         );
+                         // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                         if ($this->createAddressSoap($user_id, $params, true)) {
+                              return [
+                                   "value" => 2,
+                                   "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
+                                   "data" => "cd_cli: $cd_cli",
+                              ];
+                         } else {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Se actualizo el cliente, pero  no se creo direccion. El id_dest : $id_dest no existe, por favor creelo",
+                              ];
+                         }
+                    }
 
-               return [
-                    "value" => 2,
-                    "message" => "Cliente con id_cli: $id_cli actualizado",
-                    "data" => "cd_cli: $cd_cli",
-               ];
-               }else{
+                    return [
+                         "value" => 2,
+                         "message" => "Cliente con id_cli: $id_cli actualizado",
+                         "data" => "cd_cli: $cd_cli",
+                    ];
+               } else {
                     return [
                          "value" => 0,
                          "message" => "Error el usuario con $id_cli no existe",
-                    ];  
+                    ];
                }
-               
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
