@@ -11,7 +11,7 @@ require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
 require "./responses/cotizacion/Niubiz.php";
-require "./webservicesCredentials.php";
+// require "./webservicesCredentials.php";
 class MethodsWoo
 {
      /* constantes */

@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
-require("./webservicesCredentials.php");
+require("./WebservicesCredentials.php");
 
 use Automattic\WooCommerce\Client;
 
