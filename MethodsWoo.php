@@ -743,7 +743,7 @@ class MethodsWoo
                } else {
                     return [
                          "value" => 0,
-                         "message" => "Error el usuario con id_cli $id_cli no existe",
+                         "message" => "Error el usuario con $id_cli no existe",
                     ];
                }
           } catch (\Throwable $th) {
