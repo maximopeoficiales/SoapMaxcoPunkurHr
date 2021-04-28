@@ -365,7 +365,7 @@ class MethodsWoo
                } catch (\Throwable $th) {
                     return [
                          "value" => 0,
-                         "message" => "Error: $th",
+                         "message" => "No existe el producto, Error:  $th",
                     ];
                }
           } else {
