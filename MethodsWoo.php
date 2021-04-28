@@ -53,10 +53,10 @@ class MethodsWoo
           $credenciales = $this->getCredentials();
           if ($this->isMaxco($id_soc)) {
                /* maxco */
-               return new wpdb($credenciales->MAXCO_URL, $credenciales->DB_MAXCO_PASS, $credenciales->DB_MAXCO_DBNAME, $credenciales->HOST_DB);
+               return new wpdb($credenciales->DB_MAXCO_USER, $credenciales->DB_MAXCO_PASS, $credenciales->DB_MAXCO_DBNAME, $credenciales->HOST_DB);
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
-               return new wpdb($credenciales->PRECOR_URL, $credenciales->DB_PRECOR_PASS, $credenciales->DB_PRECOR_DBNAME, $credenciales->HOST_DB);
+               return new wpdb($credenciales->DB_PRECOR_USER, $credenciales->DB_PRECOR_PASS, $credenciales->DB_PRECOR_DBNAME, $credenciales->HOST_DB);
           } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
