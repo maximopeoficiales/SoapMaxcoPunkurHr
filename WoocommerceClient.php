@@ -1,12 +1,20 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+require("./WebservicesCredentials.php");
 
 use Automattic\WooCommerce\Client;
 
 class WoocommerceClient
 {
+
      private $PRECOR = "PR01";
      private $MAXCO = "EM01";
+
+     private function getCredentials()
+     {
+          return new WebservicesCredentials();
+     }
+
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -29,12 +37,13 @@ class WoocommerceClient
 
      public function getWoocommerce($id_soc)
      {
+          $credenciales = $this->getCredentials();
           if ($this->isMaxco($id_soc)) {
                /* maxco */
                return new Client(
-                    "https://maxco.punkuhr.com/",
-                    "ck_0157c4f5fbc72b4a71161b929dea276a81006fd9",
-                    "cs_b575ce513cbaf2478ca0d06c2d0dd64699ec642d",
+                    $credenciales->MAXCO_URL,
+                    $credenciales->WOO_MAXCO_CK,
+                    $credenciales->WOO_MAXCO_CS,
                     [
                          'version' => 'wc/v3',
                     ]
@@ -42,9 +51,9 @@ class WoocommerceClient
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
                return new Client(
-                    "https://tiendaqa.precor.pe/",
-                    "ck_82458af7253f4bbd4bd0941f5487323f31b23cdf",
-                    "cs_b0aa70d51f7757485699c97342568b85e9922af2",
+                    $credenciales->PRECOR_URL,
+                    $credenciales->WOO_PRECOR_CK,
+                    $credenciales->WOO_PRECOR_CS,
                     [
                          'version' => 'wc/v3',
                     ]

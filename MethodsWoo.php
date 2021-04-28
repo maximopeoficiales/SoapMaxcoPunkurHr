@@ -11,12 +11,23 @@ require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
 require "./responses/cotizacion/Niubiz.php";
-
+require "./WebservicesCredentials.php";
 class MethodsWoo
 {
      /* constantes */
-     private $PRECOR_URL = "https://tiendaqa.precor.pe/";
-     private $MAXCO_URL = "https://maxco.punkuhr.com/";
+     private $PRECOR_URL;
+     private $MAXCO_URL;
+     public function __construct()
+     {
+          $this->PRECOR_URL = $this->getCredentials()->PRECOR_URL;
+          $this->MAXCO_URL = $this->getCredentials()->MAXCO_URL;
+     }
+
+     private function getCredentials()
+     {
+          return new WebservicesCredentials();
+     }
+
      private function isMaxco($id_soc)
      {
           if ($id_soc == "EM01") {
@@ -39,12 +50,13 @@ class MethodsWoo
 
      private function getWPDB($id_soc)
      {
+          $credenciales = $this->getCredentials();
           if ($this->isMaxco($id_soc)) {
                /* maxco */
-               return new wpdb('i5142852_wp4', 'F.L7tJxfhTbrfbpP7Oe41', 'i5142852_wp4', 'localhost');
+               return new wpdb($credenciales->MAXCO_URL, $credenciales->DB_MAXCO_PASS, $credenciales->DB_MAXCO_DBNAME, $credenciales->HOST_DB);
           } else if ($this->isPrecor($id_soc)) {
                /* precor */
-               return new wpdb('clg_wp_3oxdh', 'Iz3r_0!Pe4faK2d&', 'clg_wp_retpq', 'localhost:3306');
+               return new wpdb($credenciales->PRECOR_URL, $credenciales->DB_PRECOR_PASS, $credenciales->DB_PRECOR_DBNAME, $credenciales->HOST_DB);
           } else if (999) {
                /* mi localhost */
                return new wpdb('root', '', 'maxcopunkuhr', 'localhost:3307');
@@ -57,7 +69,7 @@ class MethodsWoo
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
      }
-     
+
      // tipo de cambio
      public function updateTypeRate($data_currency)
      {
@@ -917,7 +929,7 @@ class MethodsWoo
           $curl = curl_init();
           //este endpoint esta en maxwoocommerce (plugin) en precor
           curl_setopt_array($curl, array(
-               CURLOPT_URL => "https://tiendaqa.precor.pe/wp-json/max_functions/v1/address",
+               CURLOPT_URL => "{$this->PRECOR_URL}/wp-json/max_functions/v1/address",
                // CURLOPT_URL => "http://precor.punkurhr.test/wp-json/max_functions/v1/address",
                CURLOPT_RETURNTRANSFER => true,
                CURLOPT_ENCODING => "",
