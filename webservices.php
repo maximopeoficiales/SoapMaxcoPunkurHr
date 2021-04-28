@@ -30,6 +30,7 @@ class WebServices
                "data_currency" => [
                     "id_soc" => $request->id_soc,
                     "tipo_cambio" => $request->tipo_cambio,
+                    "fecha_cambio" => $request->fecha_cambio,
                ],
           ];
           return $m->updateTypeRate($data);

@@ -38,6 +38,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_soc" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="tipo_cambio" type="s:string" />
+                         <s:element minOccurs="0" maxOccurs="1" name="fecha_cambio" type="s:string" />
                     </s:sequence>
                </s:complexType>
                <!-- fin de datos a ingresar -->

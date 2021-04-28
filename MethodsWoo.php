@@ -57,36 +57,57 @@ class MethodsWoo
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
      }
-
+     
+     // tipo de cambio
      public function updateTypeRate($data_currency)
      {
           $id_soc = $data_currency["id_soc"];
           $tipo_cambio = $data_currency["tipo_cambio"];
-          $result = false;
-          if ($this->isPrecor($id_soc)) {
-               $result = $this->updateTypeRateWebservice($this->PRECOR_URL, $tipo_cambio);
-          } else if ($this->isMaxco($id_soc)) {
-               $result = $this->updateTypeRateWebservice($this->MAXCO_URL, $tipo_cambio);
+          $fecha_cambio = $data_currency["fecha_cambio"];
+
+          if ($this->isPrecor($id_soc) || $this->isMaxco($id_soc)) {
+               if ($this->saveTipoCambio($tipo_cambio, $fecha_cambio, $id_soc)) {
+                    // se inserto correctamente el registro
+                    if ($this->executeJobUpdateTypeRate($id_soc)) {
+                         return [
+                              "value" => 2,
+                              "message" => "Se guardo y se actualizo el tipo de cambio",
+                         ];
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "Error en la actualizacion de tipo de cambio, pero tipo de cambio fue guardado",
+                         ];
+                    };
+               } else {
+                    return [
+                         "value" => 0,
+                         "message" => "Error en el registro tipo de cambio",
+                    ];
+               }
           } else {
                return [
                     "value" => 0,
                     "message" => "El id_soc $id_soc no es valido",
                ];
           }
-
-          if ($result) {
-               return [
-                    "value" => 2,
-                    "message" => "Tipo de Cambio Actualizado",
-               ];
-          } else {
-               return [
-                    "value" => 0,
-                    "message" => "Error en la Actualizacion de Tipo de Cambio",
-               ];
-          }
      }
-
+     private function saveTipoCambio($tipo_cambio, $fecha_cambio, $id_soc): bool
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "INSERT INTO wp_tipo_cambio (tipo_cambio,created_at)  VALUES (%s,%s) ";
+          $result = $wpdb->query($wpdb->prepare($sql, $tipo_cambio, $fecha_cambio));
+          $wpdb->flush();
+          return $result;
+     }
+     private function getTiposCambioMaxcoPrecor($id_soc): string
+     {
+          $fecha_actual = date("Y-m-d");
+          $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY created_at DESC LIMIT 1";
+          $wdpbPrecor = $this->getWPDB($id_soc);
+          $resultPrecor = $wdpbPrecor->get_results($sql)[0];
+          return $resultPrecor->tipo_cambio;
+     }
      private function updateTypeRateWebservice($urlDomain, $type_rate): bool
      {
           $curl = curl_init();
@@ -112,6 +133,19 @@ class MethodsWoo
           return $response["data"]["status"] == 200 ? true : false;
           // return true;
      }
+     private function executeJobUpdateTypeRate($id_soc): bool
+     {
+          $tipoCambio = $this->getTiposCambioMaxcoPrecor($id_soc);
+          if ($tipoCambio != null) {
+               if ($this->isPrecor($id_soc)) {
+                    return $this->updateTypeRateWebservice($this->PRECOR_URL, $tipoCambio);
+               } else if ($this->isMaxco($id_soc)) {
+                    return $this->updateTypeRateWebservice($this->MAXCO_URL, $tipoCambio);
+               }
+          }
+     }
+     // fin de tipo de cambio
+
      /* Materiales */
      public function UpdateMaterialStockWoo($material)
      {

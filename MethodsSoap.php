@@ -258,6 +258,7 @@ class MethodsSoap
           $validations = [
                'id_soc'                  => 'required|max:4',
                'tipo_cambio'              => 'required|numeric',
+               'fecha_cambio'              => 'required|max:10|date:Y-m-d',
           ];
           return $this->mfUtilityValidator($material, $validations);
      }
