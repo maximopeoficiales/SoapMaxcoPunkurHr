@@ -315,7 +315,7 @@ class MethodsWoo
           $id_soc = $material["id_soc"];
           $id_mat = strval(intval($material["id_mat"]));
           $price = $material["prec"];
-          $categ = $material["categ"];
+          $categ = strtoupper($material["categ"]);
           $dataSend = [
                "price" => $price,
                "regular_price" => $price,
