@@ -359,7 +359,7 @@ class MethodsSoap
                'id_ctwb'                  => 'required|numeric|digits_between:1,10',
                'id_ped'                  => 'required|numeric|digits_between:1,10',
 
-               'pos'                  => 'required|max:3',
+               'pos'                  => 'required',
                'id_mat'                  => 'required|numeric',
                'nomb'                  => 'required|max:40',
                'cant'                  => 'required|max:4',
