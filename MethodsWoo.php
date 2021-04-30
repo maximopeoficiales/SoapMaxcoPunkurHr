@@ -1612,7 +1612,9 @@ class MethodsWoo
                          }
                     }
                }
-
+               if ($quote->status=="ywraq-pending") {
+                    $quote->status="pending";
+               }
                // fin de busqueda
                array_push(
                     $arrayQuotes,
