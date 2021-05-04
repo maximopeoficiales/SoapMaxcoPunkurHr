@@ -1434,7 +1434,7 @@ class MethodsWoo
                               // actualiza el estado de una cotizacion a presupuesto pendiente
                               $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
                               // envio email al cliente notificando la cotizacion
-                              $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
+                              // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
                               return [
                                    "value" => 1,
                                    "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
@@ -1462,7 +1462,7 @@ class MethodsWoo
                          // actualiza el estado de una cotizacion a presupuesto pendiente
                          $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
                          // envio email al cliente notificando la cotizacion
-                         $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
+                         // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
                          return [
                               "value" => 2,
                               "message" => "El id_ctwb: $id_order se ha actualizado",
@@ -1657,7 +1657,7 @@ class MethodsWoo
           // convierto a json el obsniubiz
           $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
           $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
-
+          
           return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
