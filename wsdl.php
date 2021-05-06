@@ -413,6 +413,12 @@ $urlsoap = url_completa() . "/webservices/init.php";
 
                <s:complexType name="DetalleCotizacion">
                     <s:sequence>
+                         <s:element minOccurs="0" maxOccurs="unbounded" name="ArrayMaterialPost" nillable="true" type="tns:ArrayMaterialPost" />
+                    </s:sequence>
+               </s:complexType>
+
+               <s:complexType name="ArrayMaterialPost">
+                    <s:sequence>
                          <s:element minOccurs="0" maxOccurs="1" name="pos" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="id_mat" type="s:string" />
                          <s:element minOccurs="0" maxOccurs="1" name="nomb" type="s:string" />
@@ -424,6 +430,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
                          <s:element minOccurs="0" maxOccurs="1" name="cod" type="s:string" />
                     </s:sequence>
                </s:complexType>
+
                <s:element name="POST_CTZ_ENV_COTZResponse">
                     <s:complexType>
                          <s:sequence>
@@ -525,7 +532,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_TYPE_RATEResponse" />
      </wsdl:message>
      <!-- fin de seleccion de estructura -->
-     
+
 
      <!-- aqui se selecciona la estructura de entrada y salida -->
      <wsdl:message name="POST_ACT_MATSoapIn">
@@ -535,7 +542,7 @@ $urlsoap = url_completa() . "/webservices/init.php";
           <wsdl:part name="parameters" element="tns:POST_ACT_MATResponse" />
      </wsdl:message>
      <!-- fin de seleccion de estructura -->
-     
+
      <!-- POST_ACT_STOCK -->
      <wsdl:message name="POST_ACT_STOCKSoapIn">
           <wsdl:part name="parameters" element="tns:POST_ACT_STOCK" />
@@ -727,9 +734,9 @@ $urlsoap = url_completa() . "/webservices/init.php";
                </wsdl:output>
           </wsdl:operation>
      </wsdl:binding>
-     
-     
-     
+
+
+
      <wsdl:binding name="POST_ACT_MATSoap" type="tns:POST_ACT_MATSoap">
           <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
           <wsdl:operation name="POST_ACT_MAT">
