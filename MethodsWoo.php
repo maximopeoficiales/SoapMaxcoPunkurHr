@@ -1615,6 +1615,15 @@ class MethodsWoo
                if ($quote->status == "ywraq-pending") {
                     $quote->status = "pending";
                }
+               if ($quote->payment_method == "fsww") {
+                    $quote->payment_method = "Mi Credito Precor";
+               } else if ($quote->payment_method == "yith-request-a-quote") {
+                    $quote->payment_method = "Cotizacion Nueva";
+               }
+
+               if ($quote->payment_method_title == "YITH Request a Quote") {
+                    $quote->payment_method_title = "Cotizacion Nueva";
+               }
                // fin de busqueda
                array_push(
                     $arrayQuotes,
