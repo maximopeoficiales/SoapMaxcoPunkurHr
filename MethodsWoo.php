@@ -12,6 +12,7 @@ require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
 require "./responses/cotizacion/Niubiz.php";
 require "./translate/Translate.php";
+require "./utilities/Utilities.php";
 
 // require "./webservicesCredentials.php";
 class MethodsWoo
@@ -1632,7 +1633,7 @@ class MethodsWoo
                // fin de busqueda
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), $quote->status, number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
@@ -1642,34 +1643,7 @@ class MethodsWoo
      {
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
-          $statusCode = 0;
-          $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
-          $vencido = ["ywraq-expired", "cancelled", "failed"];
-          // evalucion de estado por grupo
-          foreach ($pendiente as $v2) {
-               if ($v2 == $quote->status) {
-                    $statusCode = 1;
-                    break;
-               }
-          }
-          // evaludacion de estado simple
-          switch ($quote->status) {
-               case 'ywraq-accepted':
-                    $statusCode = 2;
-                    break;
-               case 'ywraq-rejected':
-                    $statusCode = 3;
-                    break;
-               case 'completed':
-                    $statusCode = 4;
-                    break;
-          }
-          foreach ($vencido as $v3) {
-               if ($v3 == $quote->status) {
-                    $statusCode = 5;
-                    break;
-               }
-          }
+          $statusCode = Utilities::getStatusCode($quote->status);
           // obtencion de objeto niubiz
           $obs_niubiz = null;
           foreach ($quote->meta_data as $m) {
