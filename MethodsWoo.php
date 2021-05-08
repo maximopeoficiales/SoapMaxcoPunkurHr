@@ -1599,7 +1599,6 @@ class MethodsWoo
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
                          array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
-                         break;
                     }
                }
 
@@ -1633,13 +1632,11 @@ class MethodsWoo
                     foreach ($user->meta_data as $meta) {
                          if ($meta->key == "fabfw_address") {
                               array_push($direcciones, $meta);
-                              break;
                          }
                     }
                     foreach ($direcciones as $direccion) {
                          if ($direccion->value->address_1 === $quote->billing->address_1) {
                               $codDest = $direccion->value->id_dest == null  ? 0 : $direccion->value->id_dest;
-                              break;
                          }
                     }
                }
@@ -1684,7 +1681,6 @@ class MethodsWoo
           foreach ($quote->meta_data as $m) {
                if ($m->key == "_visanetRetorno") {
                     $obs_niubiz = $m->value;
-                    break;
                }
           }
           // convierto a json el obsniubiz
