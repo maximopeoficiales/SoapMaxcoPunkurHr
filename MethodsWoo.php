@@ -1279,35 +1279,46 @@ class MethodsWoo
           $cod = $params["cod"];
 
           if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
-               // $id_soc = 999;
+
+               $idOrders = null;
+               $user_id = null;
                $user_id = $this->getUserIDbyCdCli($cd_cli, $id_soc);
+               // esta funcion ejecutara un query a wp_cotizciones dependiendo si el usuario fue enviado
                $idOrders = $this->existingUserQuotes($user_id, $fcre, $cod, $id_soc);
-               if (!$idOrders == null) {
+               if ($idOrders != null) {
+                    // // actualiza a enviado (send = 1 )las cotizaciones recibidas
+                    foreach ($idOrders as $idOrder) {
+                         // a cada cotizacion la pongo ya enviada
+                         $this->changeSendQuote($idOrder->id_order, $id_soc);
+                    }
+
                     $quotes = $this->GetFormattedQuotes($idOrders, $cd_cli, $cod, $id_soc);
-                    // if (count($quotes) == 0) {
-                    //      return [
-                    //           "value" => 0,
-                    //           "message" => "No hay cotizaciones  del ID_CLI: $id_cli en la fecha: $fcre"
-                    //      ];
-                    // } else {
                     //todo positivo
-                    $tipoOrden = $cod == 0 ? "Cotizaciones" : "Ordenes";
-                    return [
-                         "value" => 1,
-                         "message" => "$tipoOrden del ID_CLI: $id_cli en la fecha: $fcre",
-                         "data" => $quotes
-                    ];
-                    // }
-               } else if ($idOrders == null && $cod == 0) {
-                    return [
-                         "value" => 0,
-                         "message" => "No hay cotizaciones del ID_CLI: $id_cli en la fecha: $fcre, no hay idOrders",
-                    ];
-               } else if ($idOrders == null && $cod == 1) {
-                    return [
-                         "value" => 0,
-                         "message" => "No hay ordenes del ID_CLI: $id_cli en la fecha: $fcre",
-                    ];
+                    if ($id_cli != null) {
+                         return [
+                              "value" => 1,
+                              "message" => "Cotizaciones con $id_cli en la fecha: $fcre",
+                              "data" => $quotes
+                         ];
+                    } else {
+                         return [
+                              "value" => 1,
+                              "message" => "Cotizaciones en la fecha: $fcre",
+                              "data" => $quotes
+                         ];
+                    }
+               } else {
+                    if ($id_cli != null) {
+                         return [
+                              "value" => 0,
+                              "message" => "No hay cotizaciones nuevas sin leer del ID_CLI: $id_cli en la fecha: $fcre, no hay idOrders",
+                         ];
+                    } else {
+                         return [
+                              "value" => 0,
+                              "message" => "No hay cotizaciones nuevas sin leer en la fecha: $fcre, no hay idOrders",
+                         ];
+                    }
                }
           } else {
                return [
@@ -1491,11 +1502,26 @@ class MethodsWoo
           $sql = "UPDATE wp_cotizaciones SET cod = 1 WHERE id_order = $id_order";
           $wpdb->query($sql);
      }
+     private function changeSendQuote($id_order, $id_soc)
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "UPDATE wp_cotizaciones SET send = 1 WHERE id_order = $id_order";
+          $wpdb->query($sql);
+     }
 
      private function existingUserQuotes($user_id, $fcre, $cod, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT * FROM wp_cotizaciones WHERE customer_id = $user_id AND DATE_FORMAT(date_created,'%Y-%m-%d') = '$fcre' AND cod=$cod";
+          $partialSQL = $cod == 0 ? " AND send = 0" : "";
+          $sql = "";
+          // si envio el cd_cli
+          if ($user_id != null) {
+               // si cod = 0 envia los no enviados previamente
+               $sql = "SELECT * FROM wp_cotizaciones WHERE customer_id = $user_id AND DATE_FORMAT(date_created,'%Y-%m-%d') = '$fcre'  $partialSQL";
+          } else {
+               // no enviaron un usuario
+               $sql = "SELECT * FROM wp_cotizaciones WHERE DATE_FORMAT(date_created,'%Y-%m-%d') = '$fcre'  $partialSQL";
+          }
           $results = $wpdb->get_results($sql);
           return count($results) == 0 ? null : $results;
      }
@@ -1562,7 +1588,7 @@ class MethodsWoo
 
           $arrayQuotes = [];
           foreach ($orders as  $order) {
-               $quote = (object) $woo->get("orders/$order->id_order");
+               $quote = (object) $woo->get("orders/{$order->id_order}");
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
@@ -1630,10 +1656,19 @@ class MethodsWoo
                if ($quote->payment_method_title == "YITH Request a Quote") {
                     $quote->payment_method_title = "Cotizacion Nueva";
                }
+
+               // cuando no envia cd_cli busco cd_cli por customer_id del quote
+
+               if ($cd_cli == null) {
+                    $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
+               }
+               if ($quote->status == "completed") {
+                    $tpcotz = 1;
+               }
                // fin de busqueda
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, getCodStatusByDescription($tpcotz, $quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, Utilities::getStatusCode($quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }

@@ -345,8 +345,8 @@ class MethodsSoap
      {
           $validations = [
                'id_soc'                  =>  'required|max:4',
-               'cd_cli'                  => 'required|numeric|digits_between:1,10',
-               'id_cli'                  => 'required|numeric|digits_between:1,10',
+               'cd_cli'                  => 'numeric|digits_between:1,10',
+               'id_cli'                  => 'numeric|digits_between:1,10',
                'fcre'                  => 'required|max:10|date:Y-m-d',
                'cod'                  => 'required|max:1|numeric|in:0,1',
           ];
