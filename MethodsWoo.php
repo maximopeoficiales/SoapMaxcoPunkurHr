@@ -11,6 +11,8 @@ require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
 require "./responses/cotizacion/Niubiz.php";
+require "./translate/Translate.php";
+
 // require "./webservicesCredentials.php";
 class MethodsWoo
 {
@@ -1570,6 +1572,7 @@ class MethodsWoo
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
                          array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                         break;
                     }
                }
 
@@ -1603,6 +1606,7 @@ class MethodsWoo
                     foreach ($user->meta_data as $meta) {
                          if ($meta->key == "fabfw_address") {
                               array_push($direcciones, $meta);
+                              break;
                          }
                     }
                     foreach ($direcciones as $direccion) {
@@ -1612,6 +1616,7 @@ class MethodsWoo
                          }
                     }
                }
+               // algunas modificaciones de string
                if ($quote->status == "ywraq-pending") {
                     $quote->status = "pending";
                }
@@ -1638,22 +1643,31 @@ class MethodsWoo
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
           $statusCode = 0;
-          $pagado = ["completed"];
           $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
           $vencido = ["ywraq-expired", "cancelled", "failed"];
-          foreach ($pagado as $v1) {
-               if ($v1 == $quote->status) {
-                    $statusCode = 1;
-               }
-          }
+          // evalucion de estado por grupo
           foreach ($pendiente as $v2) {
                if ($v2 == $quote->status) {
-                    $statusCode = 2;
+                    $statusCode = 1;
+                    break;
                }
+          }
+          // evaludacion de estado simple
+          switch ($quote->status) {
+               case 'ywraq-accepted':
+                    $statusCode = 2;
+                    break;
+               case 'ywraq-rejected':
+                    $statusCode = 3;
+                    break;
+               case 'completed':
+                    $statusCode = 4;
+                    break;
           }
           foreach ($vencido as $v3) {
                if ($v3 == $quote->status) {
-                    $statusCode = 3;
+                    $statusCode = 5;
+                    break;
                }
           }
           // obtencion de objeto niubiz
@@ -1661,6 +1675,7 @@ class MethodsWoo
           foreach ($quote->meta_data as $m) {
                if ($m->key == "_visanetRetorno") {
                     $obs_niubiz = $m->value;
+                    break;
                }
           }
           // convierto a json el obsniubiz
@@ -1671,7 +1686,7 @@ class MethodsWoo
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
           }
-          return [new CotizacionStatus($statusCode, $quote->status, ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
+          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote->status), ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
      {
