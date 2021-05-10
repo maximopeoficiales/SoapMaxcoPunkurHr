@@ -1421,6 +1421,15 @@ class MethodsWoo
                }
                return $arrayMaterials;
           }
+          function existsMaterialByQuote($sku, $quote)
+          {
+               $result = array_search($sku, array_column($quote->line_items, 'sku'));
+               return  $result === 0 || $result != false    ? true : false;
+               return $result;
+          }
+          function addMaterialsQuote($quoteMateriales, $materiales)
+          {
+          }
           $id_soc = $params["id_soc"];
           $pos = $params["pos"];
           $id_order = $params["id_ctwb"];
@@ -1432,12 +1441,14 @@ class MethodsWoo
 
           if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                try {
-                    // $quote = (object) $this->getWoocommerce($id_soc)->get("orders/{$id_order}");
+                    $quote = (object) $this->getWoocommerce($id_soc)->get("orders/{$id_order}");
                     // getPosBySkuQuote($quote,"428420")
                     return [
                          "value" => 0,
                          // "message" => is_null($materiales[2]) ? "si" : "no",
-                         "message" => count($materiales),
+                         "message" => existsMaterialByQuote("443190333", $quote) ? "exite" : "no existe"
+                         // "message" => existsMaterialByQuote("443190", $quote) 
+                         // "message" => existsMaterialByQuote("428420", $quote) 
                     ];
 
                     // no importa en caso lo use yo siempre guarda su id_sap del pedido
