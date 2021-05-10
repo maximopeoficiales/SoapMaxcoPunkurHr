@@ -358,16 +358,15 @@ class MethodsSoap
                'id_soc'                  =>  'required|max:4',
                'id_ctwb'                  => 'required|numeric|digits_between:1,10',
                'id_ped'                  => 'required|numeric|digits_between:1,10',
-
-               'pos'                  => 'required',
-               'id_mat'                  => 'required|numeric',
-               'nomb'                  => 'required|max:40',
-               'cant'                  => 'required|max:4',
-               'und'                  => 'required|max:3',
-               'prec'                  => 'required',
-               'dsct'                  => 'required',
-               'prctot'                  => 'required',
-               'cod'                  => 'max:1',
+               // 'materiales'                  => 'array',
+               // 'materiales.*.pos'                  => 'required',
+               // 'materiales.*.id_mat'                  => 'required|numeric',
+               // 'materiales.*.nomb'                  => 'required|max:40',
+               // 'materiales.*.cant'                  => 'required|max:4',
+               // 'materiales.*.und'                  => 'required|max:3',
+               // 'materiales.*.prec'                  => 'required',
+               // 'materiales.*.dsct'                  => 'required',
+               // 'materiales.*.prctot'                  => 'required',
           ];
           return $this->mfUtilityValidator($params, $validations);
      }
