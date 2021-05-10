@@ -1424,16 +1424,20 @@ class MethodsWoo
           }
           function existsMaterialByQuote($sku, $quote): bool
           {
-               $result = array_search($sku, array_column($quote->line_items, 'sku'));
-               return  $result === 0 || $result != false    ? true : false;
-               return $result;
+               $validation = false;
+               foreach ($quote->line_items as $material) {
+                    if ($material->sku == $sku) {
+                         $validation = true;
+                    }
+               }
+               return $validation;
           }
           function addMaterialQuote($material, $order, $woo): void
           {
                $data = array(
                     'line_items' => array(array(
                          'quantity' => $material->cant,
-                         'sku' => $material->id_mat,
+                         'sku' =>  strval(intval($material->id_mat)),
                          'total' => number_format($material->prctot / 1.18, 2, ".", ""),
                     ))
                );
@@ -1444,9 +1448,9 @@ class MethodsWoo
                //actualiza producto
                $data = array(
                     'line_items' => array(array(
-                         'id' => getPosBySkuQuote($order, $material->id_mat),
+                         'id' => intval(getPosBySkuQuote($order, $material->id_mat)),
                          'quantity' => $material->cant,
-                         'sku' => $material->id_mat,
+                         'sku' => strval(intval($material->id_mat)),
                          'total' => number_format($material->prctot / 1.18, 2, ".", ""),
                     ))
                );
@@ -1470,20 +1474,18 @@ class MethodsWoo
           $id_order = $params["id_ctwb"];
           $IDSAP = $params["id_ped"];
           $materiales = removeMaterialDelivery($params["materiales"]);
-
-
           if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
                $woo = $this->getWoocommerce($id_soc);
                try {
                     // guardo el id_ped
                     $this->createOrUpdateWhenExistsMetaValue("id_ped", $IDSAP, $id_order, $id_soc);
                     $quote = (object) $woo->get("orders/{$id_order}");
-                    // // creo o actualizo los materiales de la cotizacion
-                    // addOrUpdateMaterialsQuote($quote, $materiales, $woo);
-                    // // // actualizo el estado a pendiente 
-                    // $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
-                    // // // envio email
-                    // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
+                    // creo o actualizo los materiales de la cotizacion
+                    addOrUpdateMaterialsQuote($quote, $materiales, $woo);
+                    // // actualizo el estado a pendiente 
+                    $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
+                    // // envio email
+                    $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
 
                     return [
                          "value" => 2,
@@ -1597,14 +1599,18 @@ class MethodsWoo
 
 
           $arrayQuotes = [];
-          foreach ($orders as  $order) {
+          $contador = 0;
+          foreach ($orders as $order) {
                $quote = (object) $woo->get("orders/{$order->id_order}");
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
+                    $contador++;
+
                     $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
                     $und = ($unidad == null) ? "kg" : $unidad;
-                    array_push($arraymaterials, new Material($m->id, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+                    // $m->id
+                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
