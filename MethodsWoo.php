@@ -1403,6 +1403,7 @@ class MethodsWoo
 
      public function PostQuoteWoo($params)
      {
+
           function getPosBySkuQuote($order, $sku): string
           {
                foreach ($order->line_items as $item) {
@@ -1421,97 +1422,75 @@ class MethodsWoo
                }
                return $arrayMaterials;
           }
-          function existsMaterialByQuote($sku, $quote)
+          function existsMaterialByQuote($sku, $quote): bool
           {
                $result = array_search($sku, array_column($quote->line_items, 'sku'));
                return  $result === 0 || $result != false    ? true : false;
                return $result;
           }
-          function addMaterialsQuote($quoteMateriales, $materiales)
+          function addMaterialQuote($material, $order, $woo): void
           {
+               $data = array(
+                    'line_items' => array(array(
+                         'quantity' => $material->cant,
+                         'sku' => $material->id_mat,
+                         'total' => number_format($material->prctot / 1.18, 2, ".", ""),
+                    ))
+               );
+               $woo->put("orders/{$order->id}", $data);
           }
+          function updateMaterialQuote($material, $order, $woo): void
+          {
+               //actualiza producto
+               $data = array(
+                    'line_items' => array(array(
+                         'id' => getPosBySkuQuote($order, $material->id_mat),
+                         'quantity' => $material->cant,
+                         'sku' => $material->id_mat,
+                         'total' => number_format($material->prctot / 1.18, 2, ".", ""),
+                    ))
+               );
+               $woo->put("orders/{$order->id}", $data);
+          }
+          function addOrUpdateMaterialsQuote($order, $materiales, $woo): void
+          {
+               // materiales del array
+               foreach ($materiales as $material) {
+                    if (existsMaterialByQuote($material->id_mat, $order)) {
+                         // actualiza materiales
+                         updateMaterialQuote($material, $order, $woo);
+                    } else {
+                         // no existen agrego  material
+                         addMaterialQuote($material, $order, $woo);
+                    }
+               }
+          }
+          // variables necesaria
           $id_soc = $params["id_soc"];
-          $pos = $params["pos"];
           $id_order = $params["id_ctwb"];
           $IDSAP = $params["id_ped"];
-          $sku = strval(intval($params["id_mat"]));
-          $quantity = $params["cant"];
-          $prctot = $params["prctot"];
           $materiales = removeMaterialDelivery($params["materiales"]);
 
-          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
-               try {
-                    $quote = (object) $this->getWoocommerce($id_soc)->get("orders/{$id_order}");
-                    // getPosBySkuQuote($quote,"428420")
-                    return [
-                         "value" => 0,
-                         // "message" => is_null($materiales[2]) ? "si" : "no",
-                         "message" => existsMaterialByQuote("443190333", $quote) ? "exite" : "no existe"
-                         // "message" => existsMaterialByQuote("443190", $quote) 
-                         // "message" => existsMaterialByQuote("428420", $quote) 
-                    ];
 
-                    // no importa en caso lo use yo siempre guarda su id_sap del pedido
+          if ($id_soc == $this->isMaxco($id_soc) || $id_soc == $this->isPrecor($id_soc)) {
+               $woo = $this->getWoocommerce($id_soc);
+               try {
+                    // guardo el id_ped
                     $this->createOrUpdateWhenExistsMetaValue("id_ped", $IDSAP, $id_order, $id_soc);
-                    $data = [];
+                    $quote = (object) $woo->get("orders/{$id_order}");
+                    // // creo o actualizo los materiales de la cotizacion
+                    // addOrUpdateMaterialsQuote($quote, $materiales, $woo);
+                    // // // actualizo el estado a pendiente 
                     // $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
+                    // // // envio email
                     // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
-                    // return [
-                    //      "value" => 1,
-                    //      "message" => "La cotizacion no tiene ninguna modificacion",
-                    // ];
-                    // agrega un nuevo producto
-                    $pos = "";
-                    if ($this->verifyMaterialSku($sku, $id_soc)) {
-                         $data = array(
-                              'line_items' => array(array(
-                                   'quantity' => $quantity,
-                                   'sku' => $sku,
-                                   'total' => number_format($prctot / 1.18, 2, ".", ""),
-                              ))
-                         );
-                         $order = (object) $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                         // $this->changeCodQuote($id_order, $id_soc);
-                         foreach ($order->line_items as  $value) {
-                              if ($value->sku == $sku) {
-                                   $pos = $value->id;
-                              }
-                         }
-                         // $id_soc = "EM01";
-                         // actualiza el estado de una cotizacion a presupuesto pendiente
-                         $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
-                         // envio email al cliente notificando la cotizacion
-                         // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
-                         return [
-                              "value" => 1,
-                              "message" => "Se agrego el id_mat:$sku al id_ctwb: $id_order correctamente",
-                              "data" => "POS: $pos",
-                         ];
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "El material con sku: $sku no existe",
-                         ];
-                    }
-                    //actualiza producto
-                    $data = array(
-                         'line_items' => array(array(
-                              'id' => $pos,
-                              'quantity' => $quantity,
-                              'sku' => $sku,
-                              'total' => number_format($prctot / 1.18, 2, ".", ""),
-                         ))
-                    );
-                    $this->getWoocommerce($id_soc)->put("orders/$id_order", $data);
-                    // $this->changeCodQuote($id_order, $id_soc);
-                    // $id_soc = "EM01";
-                    // actualiza el estado de una cotizacion a presupuesto pendiente
-                    $this->UpdateQuoteStatusWoo(["id_soc" => $id_soc, "id_ctwb" => $id_order, "stat" => "1-En Cotizacion"]);
-                    // envio email al cliente notificando la cotizacion
-                    // $this->notifyUserAboutQuoteByIdOrder($id_order, $id_soc);
+
                     return [
                          "value" => 2,
-                         "message" => "El id_ctwb: $id_order se ha actualizado",
+                         // "message" => "La cotizacion {$id_order} ha sido actualizada correctamente",
+                         "message" => "La cotizacion {$id_order} ha sido actualizada correctamente",
+                         // "message" => existsMaterialByQuote(403081, $quote) ? "existe" :  "no existe",
+
                     ];
                } catch (\Throwable $th) {
                     return [
