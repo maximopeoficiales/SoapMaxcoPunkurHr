@@ -1679,9 +1679,10 @@ class MethodsWoo
                     $tpcotz = 1;
                }
                // fin de busqueda
+               // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tpcotz, Utilities::getStatusCode($quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, Utilities::getStatusCode($quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
