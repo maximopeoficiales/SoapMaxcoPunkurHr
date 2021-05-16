@@ -1599,8 +1599,8 @@ class MethodsWoo
 
 
           $arrayQuotes = [];
-          $contador = 0;
           foreach ($orders as $order) {
+               $contador = 0;
                $quote = (object) $woo->get("orders/{$order->id_order}");
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
