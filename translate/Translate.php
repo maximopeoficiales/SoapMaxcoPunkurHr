@@ -7,11 +7,11 @@ class Translate
           $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
           $vencido = ["ywraq-expired", "cancelled", "failed"]; */
 
-    public static function translateStatus($string): string
+    public static function translateStatus($status, $statusCode = null): string
     {
-        $string = str_replace("ywraq-", "", $string);
+        $status = str_replace("ywraq-", "", $status);
         $spanish = "";
-        switch ($string) {
+        switch ($status) {
             case 'completed':
                 $spanish = "completado";
                 break;
@@ -43,8 +43,12 @@ class Translate
                 $spanish = "fallado";
                 break;
             default:
-                $spanish = $string;
+                $spanish = $status;
                 break;
+        }
+        // si es recaudacion
+        if ($statusCode == 4) {
+            $spanish = "recaudacion";
         }
         return $spanish;
     }
