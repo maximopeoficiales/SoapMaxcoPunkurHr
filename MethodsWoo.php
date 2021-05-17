@@ -1682,7 +1682,7 @@ class MethodsWoo
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, Utilities::getStatusCode($quote->status), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, Utilities::getStatusCode($quote), Translate::translateStatus($quote->status), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
@@ -1692,7 +1692,7 @@ class MethodsWoo
      {
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
-          $statusCode = Utilities::getStatusCode($quote->status);
+          $statusCode = Utilities::getStatusCode($quote);
           // obtencion de objeto niubiz
           $obs_niubiz = null;
           foreach ($quote->meta_data as $m) {

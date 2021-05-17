@@ -3,8 +3,12 @@ class Utilities
 {
 
     // evalucion de estado por grupo
-    public static function getStatusCode($status)
+    public static function getStatusCode($quote)
+
     {
+        $status = $quote->status;
+        $paymentMethodTitle = $quote->payment_method_title;
+        // $status = $quote->status;
         // data
         $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
         $vencido = ["ywraq-expired", "cancelled", "failed"];
@@ -24,13 +28,19 @@ class Utilities
                 $statusCode = 3;
                 break;
             case 'completed':
-                $statusCode = 4;
+                $statusCode = 5;
                 break;
         }
         foreach ($vencido as $v3) {
             if ($v3 == $status) {
-                $statusCode = 5;
+                $statusCode = 6;
                 break;
+            }
+        }
+
+        if ($statusCode == 1) {
+            if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
+                $statusCode = 4;
             }
         }
 
