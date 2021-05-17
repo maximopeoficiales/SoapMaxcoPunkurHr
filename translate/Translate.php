@@ -50,6 +50,7 @@ class Translate
         // si es recaudacion
         if ($statusCode == 4) {
             $spanish = "recaudacion";
+            // pendiente
         } else if ($statusCode == 1) {
             // caso especial cuando es pendiente buscas en el metadata si es aceptado
             foreach ($quote->meta_data as $m) {
@@ -65,6 +66,7 @@ class Translate
                     }
                 }
             }
+            // llega correctamente entonces trae el codigo correcto
         } else if ($statusCode == 2) {
             foreach ($quote->meta_data as $m) {
                 // esto solo pasa cuando es aceptado se guarda en el metadata

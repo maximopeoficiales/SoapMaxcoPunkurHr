@@ -1633,6 +1633,10 @@ class MethodsWoo
                          $obs_niubiz = $m->value;
                     }
                }
+
+               // status code
+               $statusCode = Utilities::getStatusCode($quote);
+
                // convierto a json el obsniubiz
                $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
                $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
@@ -1664,10 +1668,16 @@ class MethodsWoo
                     $quote->payment_method = "Mi Credito Precor";
                } else if ($quote->payment_method == "yith-request-a-quote") {
                     $quote->payment_method = "Cotizacion Nueva";
+                    if ($statusCode == 2 || $statusCode == 4) {
+                         $quote->payment_method = "";
+                    }
                }
 
                if ($quote->payment_method_title == "YITH Request a Quote") {
                     $quote->payment_method_title = "Cotizacion Nueva";
+                    if ($statusCode == 2 || $statusCode == 4) {
+                         $quote->payment_method_title = "";
+                    }
                }
 
                // cuando no envia cd_cli busco cd_cli por customer_id del quote
@@ -1678,7 +1688,6 @@ class MethodsWoo
                if ($quote->status == "completed") {
                     $tpcotz = 1;
                }
-               $statusCode = Utilities::getStatusCode($quote);
                // fin de busqueda
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
