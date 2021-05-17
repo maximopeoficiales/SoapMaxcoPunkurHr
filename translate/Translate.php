@@ -65,6 +65,20 @@ class Translate
                     }
                 }
             }
+        } else if ($statusCode == 2) {
+            foreach ($quote->meta_data as $m) {
+                // esto solo pasa cuando es aceptado se guarda en el metadata
+                if ($m->key == "ywraq_raq_status") {
+                    if ($m->value == "accepted") {
+                        $spanish = "aceptado";
+                        // break;
+                    }
+                    if ($m->value == "expired") {
+                        $spanish = "vencido";
+                        // break;
+                    }
+                }
+            }
         }
         return $spanish;
     }
