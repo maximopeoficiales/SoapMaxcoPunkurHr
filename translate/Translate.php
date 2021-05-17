@@ -57,7 +57,7 @@ class Translate
                 if ($m->key == "ywraq_raq_status") {
                     if ($m->value == "accepted") {
                         $spanish = "aceptado";
-                        // break;
+                        break;
                     }
                 }
             }

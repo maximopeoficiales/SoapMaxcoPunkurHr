@@ -49,7 +49,7 @@ class Utilities
                 if ($m->key == "ywraq_raq_status") {
                     if ($m->value == "accepted") {
                         $statusCode = 2;
-                        // break;
+                        break;
                     }
                 }
             }
