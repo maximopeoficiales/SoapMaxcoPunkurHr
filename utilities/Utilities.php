@@ -37,11 +37,8 @@ class Utilities
                 break;
             }
         }
-
+        // esta en pendiente
         if ($statusCode == 1) {
-            if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
-                $statusCode = 4;
-            }
 
             // caso especial en woo esta como pending pero en el metdata esta como aceptado
             foreach ($quote->meta_data as $m) {
@@ -52,6 +49,13 @@ class Utilities
                         break;
                     }
                 }
+            }
+            // si el estatus es aceptado y elegia tales metodos de pago es recaudacion
+            if ($statusCode == 2) {
+                if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
+                    $statusCode = 4;
+                }
+
             }
         }
 

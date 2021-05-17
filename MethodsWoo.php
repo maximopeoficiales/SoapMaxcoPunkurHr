@@ -1708,6 +1708,10 @@ class MethodsWoo
           $quote->status = str_replace("ywraq-", "", $quote->status);
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
+               // caso particular cuando es aceptado o aceptado (reacaudacion)
+               if ($statusCode == 4 || $statusCode = 2) {
+                    $quote->payment_method_title = "";
+               }
           }
           return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
      }
