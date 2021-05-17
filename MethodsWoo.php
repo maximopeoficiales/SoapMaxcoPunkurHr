@@ -1715,6 +1715,16 @@ class MethodsWoo
           $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
 
           $quote->status = str_replace("ywraq-", "", $quote->status);
+
+          // if ($quote->payment_method == "fsww") {
+          //      $quote->payment_method = "Mi Credito Precor";
+          // } else if ($quote->payment_method == "yith-request-a-quote") {
+          //      $quote->payment_method = "Cotizacion Nueva";
+          //      if ($statusCode == 2 || $statusCode == 4) {
+          //           $quote->payment_method = "";
+          //      }
+          // }
+
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
                // caso particular cuando es aceptado o aceptado (reacaudacion)
@@ -1722,7 +1732,7 @@ class MethodsWoo
                     $quote->payment_method_title = "";
                }
           }
-          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
+          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
      {
