@@ -1683,7 +1683,7 @@ class MethodsWoo
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, $statusCode, Translate::translateStatus($quote->status, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
@@ -1709,7 +1709,7 @@ class MethodsWoo
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
           }
-          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote->status, $statusCode), ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
+          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "Sin registrar" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
      {

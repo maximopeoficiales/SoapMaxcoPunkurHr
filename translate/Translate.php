@@ -7,9 +7,10 @@ class Translate
           $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
           $vencido = ["ywraq-expired", "cancelled", "failed"]; */
 
-    public static function translateStatus($status, $statusCode = null): string
+    public static function translateStatus($quote, $statusCode = null): string
     {
-        $status = str_replace("ywraq-", "", $status);
+
+        $status = str_replace("ywraq-", "", $quote->status);
         $spanish = "";
         switch ($status) {
             case 'completed':
@@ -49,6 +50,17 @@ class Translate
         // si es recaudacion
         if ($statusCode == 4) {
             $spanish = "recaudacion";
+        } else if ($statusCode == 1) {
+            // caso especial cuando es pendiente buscas en el metadata si es aceptado
+            foreach ($quote->meta_data as $m) {
+                // esto solo pasa cuando es aceptado se guarda en el metadata
+                if ($m->key == "ywraq_raq_status") {
+                    if ($m->value == "accepted") {
+                        $spanish = "aceptado";
+                        // break;
+                    }
+                }
+            }
         }
         return $spanish;
     }

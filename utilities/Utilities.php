@@ -42,6 +42,17 @@ class Utilities
             if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
                 $statusCode = 4;
             }
+
+            // caso especial en woo esta como pending pero en el metdata esta como aceptado
+            foreach ($quote->meta_data as $m) {
+                // esto solo pasa cuando es aceptado se guarda en el metadata
+                if ($m->key == "ywraq_raq_status") {
+                    if ($m->value == "accepted") {
+                        $statusCode = 2;
+                        // break;
+                    }
+                }
+            }
         }
 
         return $statusCode;
