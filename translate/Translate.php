@@ -35,7 +35,7 @@ class Translate
                 $spanish = "aceptado";
                 break;
             case 'expired':
-                $spanish = "expirado";
+                $spanish = "vencido";
                 break;
             case 'cancelled':
                 $spanish = "cancelado";
@@ -57,6 +57,10 @@ class Translate
                 if ($m->key == "ywraq_raq_status") {
                     if ($m->value == "accepted") {
                         $spanish = "aceptado";
+                        break;
+                    }
+                    if ($m->value == "expired") {
+                        $spanish = "vencido";
                         break;
                     }
                 }
