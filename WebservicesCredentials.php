@@ -1,7 +1,7 @@
 <?php
 class WebservicesCredentials
 {
-    public $PRODUDCTION = TRUE;
+    public $PRODUDCTION = false;
     public $HOST_DB = "localhost";
 
     public $PRECOR_URL = $PRODUDCTION ? "https://tiendaqa.precor.pe/" : "http://tiendaqa.test/";
