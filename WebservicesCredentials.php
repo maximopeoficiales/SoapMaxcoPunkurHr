@@ -1,15 +1,14 @@
 <?php
 class WebservicesCredentials
 {
+    public $HOST_DB = "localhost";
 
-    public $HOST_DB = "localhost:3307";
-
-    public $PRECOR_URL =   "http://tiendaqa.test/";
+    public $PRECOR_URL = "https://tiendaqa.precor.pe/";
     public $MAXCO_URL = "https://maxco.punkuhr.com/";
 
-    public $DB_PRECOR_USER =    "root";
-    public $DB_PRECOR_PASS =   "";
-    public $DB_PRECOR_DBNAME =  "tiendaqa_precor";
+    public $DB_PRECOR_USER = "clg_wp_3oxdh";
+    public $DB_PRECOR_PASS = "Iz3r_0!Pe4faK2d&";
+    public $DB_PRECOR_DBNAME = "clg_wp_retpq";
 
     public $DB_MAXCO_USER = "i5142852_wp4";
     public $DB_MAXCO_PASS = "F.L7tJxfhTbrfbpP7Oe41";
