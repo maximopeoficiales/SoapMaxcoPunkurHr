@@ -479,8 +479,13 @@ class MethodsWoo
      }
      public function UpdateClientWoo($cliente)
      {
-          $cliente["cod_postal"] = $cliente["cod_postal"] == null ? "07001" : $cliente["cod_postal"];
-          $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] == null ? "07001" : $cliente["dest_cod_postal"];
+          // solo dos codigos 0 usa la cabecera si existe un cliente lo actualiza, sino lo crea
+          // el primer envio de cliente usara el id_cli como id_dest para indentificarlo
+          // cuando envie 1 actualiza la direccion destinatario
+
+
+          $cliente["cod_postal"] = $cliente["cod_postal"] ?? "07001";
+          $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] ?? "07001";
           $params = array(
                "id_dest" => $cliente["id_dest"],
                "first_name" => $cliente["nomb"],
@@ -500,8 +505,10 @@ class MethodsWoo
                // $cliente["id_soc"] = 999;
                /* creacion */
                if ($cod == 0) {
-                    return $this->createCliente($cliente, true, true);
+                    // crea o actualiza datos del cliente
+                    return $this->createUpdateCliente($cliente, true, true);
                } else if ($cod == 1) {
+                    // crea destinarios y actualiza si hay algun cambio
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
                     //solo crea destinatarios
@@ -511,6 +518,7 @@ class MethodsWoo
                          if ($user_id == null) {
                               $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
                          }
+
                          $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
                          // para solo la creacion de destinatarios usa el campo dest_cod_postal
                          $params["postcode"] = $cliente["dest_cod_postal"];
@@ -534,14 +542,14 @@ class MethodsWoo
                     }
                } else if ($cod == 3) {
                     // crea cliente y direccion
-                    if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
-                         return $this->createCliente($cliente, true);
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "El id_dest o drcdest o dest_cod_postal  vacio por favor rellenelo",
-                         ];
-                    }
+                    // if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
+                    //      return $this->createCliente($cliente, true);
+                    // } else {
+                    //      return [
+                    //           "value" => 0,
+                    //           "message" => "El id_dest o drcdest o dest_cod_postal  vacio por favor rellenelo",
+                    //      ];
+                    // }
                     /*crea cliente y crea direccion  */
                     /* actualiza destinatarios */
                     // $this->createRecipientAddress($cliente, 1);
@@ -554,14 +562,14 @@ class MethodsWoo
                     // }
                } else if ($cod == 4) {
                     /*actualizar cliente y actualizar direccion  */
-                    if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
-                         return $this->UpdateCliente($cliente, true);
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "El id_dest o drcdest o dest_cod_postal vacio por favor rellenelo",
-                         ];
-                    }
+                    // if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
+                    //      return $this->UpdateCliente($cliente, true);
+                    // } else {
+                    //      return [
+                    //           "value" => 0,
+                    //           "message" => "El id_dest o drcdest o dest_cod_postal vacio por favor rellenelo",
+                    //      ];
+                    // }
                }
           } else {
                return [
@@ -570,133 +578,166 @@ class MethodsWoo
                ];
           }
      }
-     private function createCliente($cliente, $activeDest = false, $copiarAddress = false)
+     private function createUpdateCliente($cliente, $activeDest = false, $copiarAddress = false)
      {
+          // obtengo variables importantes
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
           $cond_pago = $cliente["cond_pago"];
           $descrip_cond_pago = $cliente["descrip_cond_pago"];
           $categ = $cliente["categ"];
+          $email = $cliente["email"];
+          // en los dos casos ya sea en precor maxco la direccion principal de woo siempre se actualiza
           $dataSend = [
-               'email' => $cliente["email"],
+               'email' => $email,
                'first_name' => $cliente["nomb"],
-               'username' => $cliente["email"],
+               'username' => $email,
                'password' => "123456789",
                'billing' => [
-                    "address_1" => $cliente["drcfisc"] == null ? "" : $cliente["drcfisc"],
-                    'email' => $cliente["email"],
-                    'phone' => $cliente["telfmov"] == null ? "" : $cliente["telfmov"],
+                    "address_1" => $cliente["drcfisc"] ?? "",
+                    'email' => $email,
+                    'phone' => $cliente["telfmov"] ?? "",
                     'postcode' => $cliente["cod_postal"],
                ],
           ];
-          $email = $cliente["email"];
-          if (!$this->verifyEmail($email, $id_soc)) {
-               return [
-                    "value" => 0,
-                    "message" => "El email: $email ya existe",
-               ];
-          }
-          if (!$this->verifyId_cli($id_cli, $id_soc)) {
-               return [
-                    "value" => 0,
-                    "message" => "El id_cli: $id_cli ya existe en nuestra base de datos",
-               ];
-          }
 
-          try {
-               // este metodo crea el cliente si no devuelve null sigue con los demas metodos
-               $response = (object)$this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
-               if ($response->id !== null) {
+          // actualiza el cliente porque existe el email o id_cli
+          if ($this->existsEmail($email, $id_soc) || $this->existsId_cli($id_cli, $id_soc)) {
+               // obtengo el id con el id_cli o el email
+               $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+               if ($user_id == null) {
+                    $user_id = $this->getUserIDByEmail($email, $id_soc);
+               }
+               // si el usuario si existe
+               if ($user_id != null) {
                     try {
-                         $cd_cli = $this->getCd_CliSap($response->id, ["date_created" => $response->date_created], $id_soc);
+                         $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+                         // actualiza o crea todos los campos pfx
+                         $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
+                         // obtengo el cd_cli (correlativo entre sap y portal)
+                         $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+                         // actualizo los nuevos campos, no hay preocupacion por su creacion porque si o si se crean
+                         $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
+                         $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
+
+                         // llamado a call user_role($user_id,$categ)
+                         if ($this->isPrecor($id_soc)) {
+                              try {
+                                   $wpdb = $this->getWPDB($id_soc);
+                                   $sql = "CALL user_role($user_id,%s)";
+                                   $wpdb->query($wpdb->prepare($sql, $categ));
+                                   $wpdb->flush();
+                              } catch (\Throwable $th) {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error en proceso de cambio de rol del cliente : $th",
+                                   ];
+                              }
+                         }
+                         return [
+                              "value" => 2,
+                              "message" => "Cliente con id_cli: $id_cli actualizado",
+                              "data" => "cd_cli: $cd_cli",
+                         ];
                     } catch (\Throwable $th) {
                          return [
                               "value" => 0,
-                              "message" => "Error al generar el cd_cli",
+                              "message" => "Error en la actualizacion,
+                              los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . ",error: $th",
                          ];
                     }
+               }
+          } else {
+               // crea cliente
+               try {
+                    // este metodo crea el cliente si no devuelve null sigue con los demas metodos
+                    $response = (object) $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
+                    if ($response->id !== null) {
+                         $cd_cli = null;
+                         try {
+                              $cd_cli = $this->createCdCliSap($response->id, $id_soc);
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error al generar el cd_cli",
+                              ];
+                         }
+                         // creacion de cond_pago y descripcion_cond_pago en el metadata
+                         try {
+                              $this->createMetaValueByKey("cond_pago", $cond_pago, $response->id, $id_soc);
+                              $this->createMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $response->id, $id_soc);
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error al crear los campos en cond_pago y status_desc Error: $th",
+                              ];
+                         }
+                         // creacion de campos en el extra profile
+                         try {
+                              $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
+                         } catch (\Throwable $th) {
+                              return [
+                                   "value" => 0,
+                                   "message" => "Error al crear los campos en PFX",
+                              ];
+                         }
+                         if ($this->isPrecor($id_soc)) {
+                              // llamado a call user_role($user_id)
+                              try {
+                                   $wpdb = $this->getWPDB($id_soc);
+                                   $sql = "CALL user_role({$response->id},%s)";
+                                   $wpdb->query($wpdb->prepare($sql, $categ));
+                                   $wpdb->flush();
+                              } catch (\Throwable $th) {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error en la actualizacion de rol del cliente: $th",
+                                   ];
+                              }
 
-                    // creacion de cond_pago y descripcion_cond_pago
-                    try {
-                         $this->createMetaValueByKey("cond_pago", $cond_pago, $response->id, $id_soc);
-                         $this->createMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $response->id, $id_soc);
-                    } catch (\Throwable $th) {
-                         return [
-                              "value" => 0,
-                              "message" => "Error al crear los campos en cond_pago y status_desc Error: $th",
-                         ];
-                    }
-                    try {
-                         $this->createPFXFieldsClient($response->id,  $cliente, $id_soc);
-                    } catch (\Throwable $th) {
-                         return [
-                              "value" => 0,
-                              "message" => "Error al crear los campos en PFX",
-                         ];
-                    }
-
-                    try {
-                         if ($activeDest  && $id_soc == $this->isPrecor($id_soc)) {
-                              $id_dest = $copiarAddress ? 1 : $cliente["id_dest"];
+                              // la creacion solo pasara una vez, por lo que usare el id_cli como identificador
+                              // la creacion solo ocurre una vez
                               $params = array(
-                                   "id_dest" => $copiarAddress ? 1 : $id_dest,
+                                   "id_dest" => $id_cli,
                                    "first_name" => $cliente["nomb"],
                                    "last_name" => "",
                                    "company" => $cliente["nrdoc"],
                                    "country" => "PE",
-                                   "address_1" => $copiarAddress ? $cliente["drcfisc"] : $cliente["drcdest"],
+                                   "address_1" => $cliente["drcfisc"],
                                    "address_2" => "",
-                                   "postcode" =>  $copiarAddress ? $cliente["cod_postal"] : $cliente["dest_cod_postal"],
+                                   "postcode" =>   $cliente["cod_postal"],
                                    "phone" => $cliente["telfmov"],
                                    "email" => $cliente["email"]
                               );
-                              // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+
+
                               if ($this->createAddressSoap($response->id, $params)) {
                                    return [
                                         "value" => 1,
-                                        "data" => "cd_cli: $cd_cli|id_dest: $id_dest",
+                                        "data" => "cd_cli: $cd_cli",
                                         "message" => "Registro de Cliente y direccion Exitosa",
                                    ];
                               } else {
                                    return [
                                         "value" => 0,
                                         "data" => "cd_cli: " .  $cd_cli,
-                                        "message" => "Se creo cliente pero hubo error en creacion de direccion id_dest: $id_dest ya registrado",
+                                        "message" => "Se creo cliente pero hubo error en creacion de direccion id_dest: $id_cli registrado",
                                    ];
                               }
                          }
-                    } catch (\Throwable $th) {
                          return [
-                              "value" => 0,
-                              "message" => "Error en la creacion de destinatarios",
+                              "value" => 1,
+                              "data" => "cd_cli:" .  $cd_cli,
+                              "message" => "Registro de Cliente Exitoso",
                          ];
                     }
-                    // llamado a call user_role($user_id)
-                    if ($this->isPrecor($id_soc)) {
-                         try {
-                              $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL user_role({$response->id},%s)";
-                              $wpdb->query($wpdb->prepare($sql, $categ));
-                              $wpdb->flush();
-                         } catch (\Throwable $th) {
-                              return [
-                                   "value" => 0,
-                                   "message" => "Error: $th",
-                              ];
-                         }
-                    }
+               } catch (\Throwable $th) {
                     return [
-                         "value" => 1,
-                         "data" => "cd_cli: " .  $cd_cli,
-                         "message" => "Registro de Cliente Exitoso",
+                         "value" => 0,
+                         "message" => "Error en la creacion de cliente,
+                         los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . ",error: $th",
                     ];
                }
-          } catch (\Throwable $th) {
-               return [
-                    "value" => 0,
-                    "message" => "Error en la creacion de cliente,
-                    los datos ingresados son id_soc: $id_soc" . " email: " . $cliente["email"] . " nomb: " . $cliente["nomb"] . " drcfisc: " . $cliente["drcfisc"] . " telfmov: " . $cliente["telfmov"] . ",error: $th",
-               ];
           }
      }
      private function UpdateCliente($cliente, $activeDest = false)
@@ -808,17 +849,17 @@ class MethodsWoo
           $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
           return $results[0]->cd_cli;
      }
-     private function getCd_CliSap($user_id, $data = [], $id_soc)
+     private function createCdCliSap($user_id, $id_soc)
      {
           // $wpdb = $this->getWPDB($data["id_soc"]);
           $wpdb = $this->getWPDB($id_soc);
-          $fecha_actual = date("Y-m-d H:i:s");;
+          $fecha_actual = date("Y-m-d H:i:s");
           /* creacion */
           $sql = "INSERT INTO wp_userssap (user_id , cod , date_created) VALUES ($user_id,0,%s)";
           $wpdb->query($wpdb->prepare($sql, $fecha_actual));
+          $cd_cli = $wpdb->insert_id;
           $wpdb->flush();
-          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
-          return $results[0]->cd_cli;
+          return $cd_cli;
      }
      private function updatePFXFieldsClient($user_id, $data, $id_soc)
      {
@@ -889,21 +930,21 @@ class MethodsWoo
           return $data[0]->ID;
      }
 
-     private function verifyEmail($email, $id_soc)
+     private function existsEmail($email, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
           $results = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM wp_users WHERE user_email= %s LIMIT 1", $email));
-          return count($results) == 0 ? true : false;
+          return count($results) == 0 ? false : true;
      }
 
-     private function verifyId_cli($id_cli, $id_soc)
+     private function existsId_cli($id_cli, $id_soc)
      {
           $datafields = $this->mfGetDataPFXFields($id_soc, ["id_cli" => "1"]);
           $id_field = $datafields[0]["id"];
           $wpdb = $this->getWPDB($id_soc);
           $sql = "SELECT user_value FROM wp_prflxtrflds_user_field_data WHERE user_value=%s AND field_id=$id_field";
           $results = $wpdb->get_results($wpdb->prepare($sql, $id_cli));
-          return count($results) == 0 ? true : false;
+          return count($results) == 0 ? false : true;
      }
      private function getValueProfileExtraFields($field_name, $user_id, $id_soc)
      {
