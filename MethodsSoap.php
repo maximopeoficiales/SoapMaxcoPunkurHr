@@ -78,7 +78,7 @@ class MethodsSoap
                $cliente = $data["cliente"];
                $validateClient = $this->mfValidateClientsFields($cliente);
                if ($validateClient["validate"]) {
-                    $updated = $this->m()->UpdateClientWoo($cliente);
+                    $updated = $this->m()->PostClientWoo($cliente);
                     return $this->mfSendResponse($updated["value"], $updated["message"], $updated["data"]);
                     // return $this->mfSendResponse(1, "Todo Correcto");
                } else {

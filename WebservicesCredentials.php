@@ -2,7 +2,7 @@
 class WebservicesCredentials
 {
 
-    public $HOST_DB = "localhost";
+    public $HOST_DB = "localhost:3307";
 
     public $PRECOR_URL =   "http://tiendaqa.test";
     public $MAXCO_URL = "https://maxco.punkuhr.com/";

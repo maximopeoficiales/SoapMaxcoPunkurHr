@@ -477,13 +477,11 @@ class MethodsWoo
                ];
           }
      }
-     public function UpdateClientWoo($cliente)
+     public function PostClientWoo($cliente)
      {
           // solo dos codigos 0 usa la cabecera si existe un cliente lo actualiza, sino lo crea
           // el primer envio de cliente usara el id_cli como id_dest para indentificarlo
           // cuando envie 1 actualiza la direccion destinatario
-
-
           $cliente["cod_postal"] = $cliente["cod_postal"] ?? "07001";
           $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] ?? "07001";
           $params = array(
@@ -500,7 +498,7 @@ class MethodsWoo
           );
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
-          $id_dest = $cliente["id_dest"];
+          // $id_dest = $cliente["id_dest"];
           if ($this->isMaxco($id_soc) ||  $this->isPrecor($id_soc)) {
                // $cliente["id_soc"] = 999;
                /* creacion */
@@ -512,34 +510,34 @@ class MethodsWoo
                     return $this->UpdateCliente($cliente, false);
                } else if ($cod == 2) {
                     //solo crea destinatarios
-                    if ($id_dest != "" || $cliente["drcdest"] != "") {
-                         $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                         // linea necesario para que pueda crear destinatarios solo con el email
-                         if ($user_id == null) {
-                              $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
-                         }
+                    // if ($id_dest != "" || $cliente["drcdest"] != "") {
+                    //      $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
+                    //      // linea necesario para que pueda crear destinatarios solo con el email
+                    //      if ($user_id == null) {
+                    //           $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+                    //      }
 
-                         $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-                         // para solo la creacion de destinatarios usa el campo dest_cod_postal
-                         $params["postcode"] = $cliente["dest_cod_postal"];
-                         if ($this->createAddressSoap($user_id, $params)) {
-                              return [
-                                   "value" => 1,
-                                   "message" => "El id_dest : $id_dest ha sido creado ",
-                                   "data" => "cd_cli: $cd_cli",
-                              ];
-                         } else {
-                              return [
-                                   "value" => 0,
-                                   "message" => "El id_dest : $id_dest ya existe ",
-                              ];
-                         }
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "El id_dest o drcdest vacio por favor rellenelo",
-                         ];
-                    }
+                    //      $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
+                    //      // para solo la creacion de destinatarios usa el campo dest_cod_postal
+                    //      $params["postcode"] = $cliente["dest_cod_postal"];
+                    //      if ($this->createAddressSoap($user_id, $params)) {
+                    //           return [
+                    //                "value" => 1,
+                    //                "message" => "El id_dest : $id_dest ha sido creado ",
+                    //                "data" => "cd_cli: $cd_cli",
+                    //           ];
+                    //      } else {
+                    //           return [
+                    //                "value" => 0,
+                    //                "message" => "El id_dest : $id_dest ya existe ",
+                    //           ];
+                    //      }
+                    // } else {
+                    //      return [
+                    //           "value" => 0,
+                    //           "message" => "El id_dest o drcdest vacio por favor rellenelo",
+                    //      ];
+                    // }
                } else if ($cod == 3) {
                     // crea cliente y direccion
                     // if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
@@ -604,6 +602,7 @@ class MethodsWoo
           // actualiza el cliente porque existe el email o id_cli
           if ($this->existsEmail($email, $id_soc) || $this->existsId_cli($id_cli, $id_soc)) {
                // obtengo el id con el id_cli o el email
+
                $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
                if ($user_id == null) {
                     $user_id = $this->getUserIDByEmail($email, $id_soc);
@@ -651,9 +650,9 @@ class MethodsWoo
                // crea cliente
                try {
                     // este metodo crea el cliente si no devuelve null sigue con los demas metodos
+                    $cd_cli = 0;
                     $response = (object) $this->getWoocommerce($id_soc)->post('customers', $dataSend); //devuelve un objeto
                     if ($response->id !== null) {
-                         $cd_cli = null;
                          try {
                               $cd_cli = $this->createCdCliSap($response->id, $id_soc);
                          } catch (\Throwable $th) {
@@ -846,7 +845,8 @@ class MethodsWoo
      private function getCdCliWithUserIdSap($user_id, $id_soc)
      {
           $wpdb = $this->getWPDB($id_soc);
-          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id LIMIT 1");
+          $results = $wpdb->get_results("SELECT cd_cli FROM wp_userssap WHERE user_id = $user_id ORDER BY cd_cli DESC LIMIT 1
+          ");
           return $results[0]->cd_cli;
      }
      private function createCdCliSap($user_id, $id_soc)
@@ -930,14 +930,14 @@ class MethodsWoo
           return $data[0]->ID;
      }
 
-     private function existsEmail($email, $id_soc)
+     private function existsEmail($email, $id_soc): bool
      {
           $wpdb = $this->getWPDB($id_soc);
           $results = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM wp_users WHERE user_email= %s LIMIT 1", $email));
           return count($results) == 0 ? false : true;
      }
 
-     private function existsId_cli($id_cli, $id_soc)
+     private function existsId_cli($id_cli, $id_soc): bool
      {
           $datafields = $this->mfGetDataPFXFields($id_soc, ["id_cli" => "1"]);
           $id_field = $datafields[0]["id"];
