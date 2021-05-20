@@ -484,18 +484,6 @@ class MethodsWoo
           // cuando envie 1 actualiza la direccion destinatario
           $cliente["cod_postal"] = $cliente["cod_postal"] ?? "07001";
           $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] ?? "07001";
-          $params = array(
-               "id_dest" => $cliente["id_dest"],
-               "first_name" => $cliente["nomb"],
-               "last_name" => "",
-               "company" => $cliente["nrdoc"],
-               "country" => "PE",
-               "address_1" => $cliente["drcdest"],
-               "address_2" => "",
-               "postcode" => $cliente["cod_postal"],
-               "phone" => $cliente["telf"],
-               "email" => $cliente["email"]
-          );
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           // $id_dest = $cliente["id_dest"];
@@ -504,70 +492,15 @@ class MethodsWoo
                /* creacion */
                if ($cod == 0) {
                     // crea o actualiza datos del cliente
-                    return $this->createUpdateCliente($cliente, true, true);
+                    return $this->createUpdateCliente($cliente);
                } else if ($cod == 1) {
                     // crea destinarios y actualiza si hay algun cambio
-                    return $this->UpdateCliente($cliente, false);
-               } else if ($cod == 2) {
-                    //solo crea destinatarios
-                    // if ($id_dest != "" || $cliente["drcdest"] != "") {
-                    //      $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    //      // linea necesario para que pueda crear destinatarios solo con el email
-                    //      if ($user_id == null) {
-                    //           $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
-                    //      }
-
-                    //      $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-                    //      // para solo la creacion de destinatarios usa el campo dest_cod_postal
-                    //      $params["postcode"] = $cliente["dest_cod_postal"];
-                    //      if ($this->createAddressSoap($user_id, $params)) {
-                    //           return [
-                    //                "value" => 1,
-                    //                "message" => "El id_dest : $id_dest ha sido creado ",
-                    //                "data" => "cd_cli: $cd_cli",
-                    //           ];
-                    //      } else {
-                    //           return [
-                    //                "value" => 0,
-                    //                "message" => "El id_dest : $id_dest ya existe ",
-                    //           ];
-                    //      }
-                    // } else {
-                    //      return [
-                    //           "value" => 0,
-                    //           "message" => "El id_dest o drcdest vacio por favor rellenelo",
-                    //      ];
-                    // }
-               } else if ($cod == 3) {
-                    // crea cliente y direccion
-                    // if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
-                    //      return $this->createCliente($cliente, true);
-                    // } else {
-                    //      return [
-                    //           "value" => 0,
-                    //           "message" => "El id_dest o drcdest o dest_cod_postal  vacio por favor rellenelo",
-                    //      ];
-                    // }
-                    /*crea cliente y crea direccion  */
-                    /* actualiza destinatarios */
-                    // $this->createRecipientAddress($cliente, 1);
-                    // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                    // if ($this->createAddressSoap($user_id, $params, true)) {
-                    //      return [
-                    //           "value" => 2,
-                    //           "message" => "El id_dest : $id_dest ha sido actualizado ",
-                    //      ];
-                    // }
-               } else if ($cod == 4) {
-                    /*actualizar cliente y actualizar direccion  */
-                    // if ($id_dest != "" || $cliente["drcdest"] != "" || $cliente["dest_cod_postal"] != "") {
-                    //      return $this->UpdateCliente($cliente, true);
-                    // } else {
-                    //      return [
-                    //           "value" => 0,
-                    //           "message" => "El id_dest o drcdest o dest_cod_postal vacio por favor rellenelo",
-                    //      ];
-                    // }
+                    return $this->createUpdateAddressCliente($cliente);
+               } else {
+                    return [
+                         "value" => 0,
+                         "message" => "El codigo : $cod no es valido",
+                    ];
                }
           } else {
                return [
@@ -576,7 +509,7 @@ class MethodsWoo
                ];
           }
      }
-     private function createUpdateCliente($cliente, $activeDest = false, $copiarAddress = false)
+     private function createUpdateCliente($cliente)
      {
           // obtengo variables importantes
           $id_soc = $cliente["id_soc"];
@@ -739,96 +672,87 @@ class MethodsWoo
                }
           }
      }
-     private function UpdateCliente($cliente, $activeDest = false)
+     private function createUpdateAddressCliente($cliente)
      {
-          /* actualizacion */
+          /* parametros generales */
           $id_soc = $cliente["id_soc"];
           $id_cli = $cliente["id_cli"];
-          $cond_pago = $cliente["cond_pago"];
-          $descrip_cond_pago = $cliente["descrip_cond_pago"];
-          $categ = $cliente["categ"];
-          $dataSend = [
-               'email' => $cliente["email"],
-               'first_name' => $cliente["nomb"],
-               'billing' => [
-                    'email' => $cliente["email"],
-                    'phone' => $cliente["telfmov"],
-                    'address_1' => $cliente["drcfisc"],
-                    // 'company' => $cliente["nrdoc"],
-                    'postcode' => $cliente["cod_postal"],
-                    'country' => "PE",
-               ],
-          ];
-          try {
-               //cuando tenga un id_cli si es null busca por email
-               $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
-               if ($user_id == null) {
-                    $user_id = $this->getUserIDByEmail($cliente["email"], $id_soc);
+          $email = $cliente["email"];
+          $id_dest = $cliente["id_dest"];
+          $params = array(
+               "id_dest" => $id_dest,
+               "first_name" => $cliente["nomb"],
+               "last_name" => "",
+               "company" => $cliente["nrdoc"],
+               "country" => "PE",
+               "address_1" => $cliente["drcdest"],
+               "address_2" => "",
+               "postcode" => $cliente["dest_cod_postal"],
+               "phone" => $cliente["telfmov"] ?? $cliente["telf"],
+               "email" => $email
+          );
+          // mejorar esta logica si agregan mas direc
+          function getDirecciones($meta_data): array
+          {
+               $direcciones = [];
+               foreach ($meta_data as $meta) {
+                    // este representa cada direccion en el metadata
+                    if ($meta->key == "fabfw_address") {
+                         // la direccion esta en el metavalue
+                         array_push($direcciones, $meta->value);
+                    }
                }
-               if ($user_id != null) {
-                    $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
+               return $direcciones;
+          }
+          function existAddress($direcciones, $id_dest): bool
+          {
 
-                    // actualiza o crea todos los campos pfx
-                    $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
-                    $cd_cli = $this->getCdCliWithUserIdSap($user_id, $id_soc);
-                    // actualizo los nuevos campos
-                    try {
-                         $this->updateMetaValueByKey("cond_pago", $cond_pago, $user_id, $id_soc);
-                         $this->updateMetaValueByKey("descrip_cond_pago", $descrip_cond_pago, $user_id, $id_soc);
-                    } catch (\Throwable $th) {
-                         return [
-                              "value" => 0,
-                              "message" => "No se actualizaron los campos cond_pago y status_desc,Error: $th",
-                         ];
+               $existe = false;
+               foreach ($direcciones as $direccion) {
+                    if ($direccion->id_dest == $id_dest) {
+                         $existe = true;
                     }
-                    // llamado a call user_role($user_id,$categ)
-                    if ($this->isPrecor($id_soc)) {
-                         try {
-                              $wpdb = $this->getWPDB($id_soc);
-                              $sql = "CALL user_role($user_id,%s)";
-                              $wpdb->query($wpdb->prepare($sql, $categ));
-                              $wpdb->flush();
-                         } catch (\Throwable $th) {
-                              return [
-                                   "value" => 0,
-                                   "message" => "Error: $th",
-                              ];
-                         }
+               }
+               return $existe;
+          }
+          try {
+               if ($this->existsEmail($email, $id_soc) || $this->existsId_cli($id_cli, $id_soc)) {
+
+                    //cuando tenga un id_cli si es null busca por email
+                    $user_id = $this->getUserIDForId_cli($id_cli, $id_soc);
+                    if ($user_id == null) {
+                         $user_id = $this->getUserIDByEmail($email, $id_soc);
                     }
-                    if ($activeDest && $id_soc == $this->isPrecor($id_soc)) {
-                         $id_dest = $cliente["id_dest"];
-                         $params = array(
-                              "id_dest" => $cliente["id_dest"],
-                              "first_name" => $cliente["nomb"],
-                              "last_name" => "",
-                              "company" => $cliente["nrdoc"],
-                              "country" => "PE",
-                              "address_1" => $cliente["drcdest"],
-                              "address_2" => "",
-                              "postcode" => $cliente["dest_cod_postal"],
-                              "phone" => $cliente["telfmov"],
-                              "email" => $cliente["email"]
-                         );
-                         // $user_id = $this->getUserIDForId_cli($cliente["id_cli"], $id_soc);
-                         if ($this->createAddressSoap($user_id, $params, true)) {
-                              return [
-                                   "value" => 2,
-                                   "message" => "Cliente con id_cli: $id_cli y id_dest: $id_dest actualizado",
-                                   "data" => "cd_cli: $cd_cli",
-                              ];
+                    if ($user_id != null) {
+                         // si existe el usuario creo o actualizo el cliente
+                         $user = (object) $this->getWoocommerce($id_soc)->get("customers/$user_id");
+                         // verifico si a sido creada direccion
+                         if (existAddress(getDirecciones($user->meta_data), $id_dest)) {
+                              if ($this->createAddressSoap($user_id, $params, true)) {
+                                   return [
+                                        "value" => 2,
+                                        "message" => "Se actualizo la direccion correctamente",
+                                   ];
+                              } else {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error en la actualizacion de direccion",
+                                   ];
+                              }
                          } else {
-                              return [
-                                   "value" => 0,
-                                   "message" => "Se actualizo el cliente, pero  no se creo direccion. El id_dest : $id_dest no existe, por favor creelo",
-                              ];
+                              if ($this->createAddressSoap($user_id, $params)) {
+                                   return [
+                                        "value" => 1,
+                                        "message" => "Se creo la direccion correctamente",
+                                   ];
+                              } else {
+                                   return [
+                                        "value" => 0,
+                                        "message" => "Error en la actualizacion de direccion",
+                                   ];
+                              }
                          }
                     }
-
-                    return [
-                         "value" => 2,
-                         "message" => "Cliente con id_cli: $id_cli actualizado",
-                         "data" => "cd_cli: $cd_cli",
-                    ];
                } else {
                     return [
                          "value" => 0,
@@ -838,7 +762,7 @@ class MethodsWoo
           } catch (\Throwable $th) {
                return [
                     "value" => 0,
-                    "message" => "Error en la actualizacion de client, error: $th",
+                    "message" => "Error en la actualizacion de direcciones, error: $th",
                ];
           }
      }
