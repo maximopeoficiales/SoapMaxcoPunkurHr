@@ -1646,10 +1646,9 @@ class MethodsWoo
                }
 
                // cuando no envia cd_cli busco cd_cli por customer_id del quote
-
-               if ($cd_cli == null) {
+               // if ($cd_cli == null) {
                     $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
-               }
+               // }
                if ($quote->status == "completed") {
                     $tpcotz = 1;
                }
