@@ -18,7 +18,7 @@ class Utilities
         foreach ($pendiente as $v2) {
             if ($v2 == $status) {
                 $statusCode = 1;
-                break;
+                // break;
             }
         }
         // evaludacion de estado simple
@@ -33,6 +33,7 @@ class Utilities
                 $statusCode = 5;
                 break;
         }
+
         foreach ($vencido as $v3) {
             if ($v3 == $status) {
                 $statusCode = 6;
