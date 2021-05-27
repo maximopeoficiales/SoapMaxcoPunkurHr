@@ -545,6 +545,7 @@ class MethodsWoo
                     try {
                          // cuando se actualiza no se puede actualizar el usarname
                          unset($dataSend["username"]);
+                         unset($dataSend["password"]);
                          $this->getWoocommerce($id_soc)->put("customers/$user_id", $dataSend); //devuelve un objeto
                          // actualiza o crea todos los campos pfx
                          $this->updatePFXFieldsClient($user_id,  $cliente, $id_soc);
