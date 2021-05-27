@@ -1697,7 +1697,7 @@ class MethodsWoo
                     $quote->payment_method_title = "";
                }
           }
-          return [new CotizacionStatus($quote->status, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
      private function verifyMaterialSku($sku, $id_soc)
      {
