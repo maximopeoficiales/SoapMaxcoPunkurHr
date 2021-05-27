@@ -1649,7 +1649,7 @@ class MethodsWoo
 
                // cuando no envia cd_cli busco cd_cli por customer_id del quote
                // if ($cd_cli == null) {
-                    $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
+               $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
                // }
                if ($quote->status == "completed") {
                     $tpcotz = 1;
@@ -1693,7 +1693,7 @@ class MethodsWoo
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
                // caso particular cuando es aceptado o aceptado (reacaudacion)
-               if ($statusCode == 4 || $statusCode == 2) {
+               if ($statusCode == 4 || $statusCode == 2 || $statusCode == 3) {
                     $quote->payment_method_title = "";
                }
           }
