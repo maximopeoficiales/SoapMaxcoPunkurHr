@@ -10,7 +10,9 @@ class Utilities
         $paymentMethodTitle = $quote->payment_method_title;
         // $status = $quote->status;
         // data
-        $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", "ywraq-rejected", "ywraq-accepted"];
+        $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", 
+        // "ywraq-rejected",
+         "ywraq-accepted"];
         $vencido = ["ywraq-expired", "cancelled", "failed"];
         $statusCode = 0;
         foreach ($pendiente as $v2) {
