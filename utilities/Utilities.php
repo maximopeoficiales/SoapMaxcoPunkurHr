@@ -19,7 +19,7 @@ class Utilities
         // evaludacion de estado simple
         switch ($status) {
             case 'ywraq-accepted':
-                $statusCode = 25;
+                $statusCode = 2;
                 break;
             case 'ywraq-rejected':
                 $statusCode = 3;
@@ -49,7 +49,7 @@ class Utilities
                 // esto solo pasa cuando es aceptado se guarda en el metadata
                 if ($m->key == "ywraq_raq_status") {
                     if ($m->value == "accepted") {
-                        $statusCode = 26;
+                        $statusCode = 2;
                         break;
                     }
                 }

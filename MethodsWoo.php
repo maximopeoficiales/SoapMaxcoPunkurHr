@@ -1693,7 +1693,7 @@ class MethodsWoo
           if ($quote->payment_method_title == "YITH Request a Quote") {
                $quote->payment_method_title = "Nueva Cotizacion";
                // caso particular cuando es aceptado o aceptado (reacaudacion)
-               if ($statusCode == 4 || $statusCode = 2) {
+               if ($statusCode == 4 || $statusCode == 2) {
                     $quote->payment_method_title = "";
                }
           }
