@@ -1680,7 +1680,6 @@ class MethodsWoo
           $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
           $objectNiubiz = new Niubiz($jsonNiubiz->dataMap->TRACE_NUMBER, $jsonNiubiz->dataMap->BRAND, $jsonNiubiz->dataMap->STATUS, $obs_niubiz);
 
-          $quote->status = str_replace("ywraq-", "", $quote->status);
 
           // if ($quote->payment_method == "fsww") {
           //      $quote->payment_method = "Mi Credito Precor";

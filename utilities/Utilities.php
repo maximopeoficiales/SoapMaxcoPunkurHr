@@ -15,12 +15,7 @@ class Utilities
          "ywraq-accepted"];
         $vencido = ["ywraq-expired", "cancelled", "failed"];
         $statusCode = 0;
-        foreach ($pendiente as $v2) {
-            if ($v2 == $status) {
-                $statusCode = 1;
-                // break;
-            }
-        }
+        
         // evaludacion de estado simple
         switch ($status) {
             case 'ywraq-accepted':
@@ -33,7 +28,12 @@ class Utilities
                 $statusCode = 5;
                 break;
         }
-
+        foreach ($pendiente as $v2) {
+            if ($v2 == $status) {
+                $statusCode = 1;
+                break;
+            }
+        }
         foreach ($vencido as $v3) {
             if ($v3 == $status) {
                 $statusCode = 6;
