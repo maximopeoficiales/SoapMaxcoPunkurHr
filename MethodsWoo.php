@@ -1424,13 +1424,29 @@ class MethodsWoo
                );
                $woo->put("orders/{$order->id}", $data);
           }
+          function deleteMaterialQuote($material, $order, $woo): void
+          {
+               //elimina producto de la cotizacion - evitando descuento
+               $data = array(
+                    'line_items' => array(array(
+                         'id' => intval(getPosBySkuQuote($order, $material->id_mat)),
+                         'product_id' => null
+                    ))
+               );
+               $woo->put("orders/{$order->id}", $data);
+          }
           function addOrUpdateMaterialsQuote($order, $materiales, $woo): void
           {
                // materiales del array
                foreach ($materiales as $material) {
                     if (existsMaterialByQuote($material->id_mat, $order)) {
-                         // actualiza materiales
-                         updateMaterialQuote($material, $order, $woo);
+                         // si la cantidad es = 0 no hay stock de ese material
+                         if ($material->cant == 0) {
+                              deleteMaterialQuote($material, $order, $woo);
+                         } else {
+                              // actualiza materiales
+                              updateMaterialQuote($material, $order, $woo);
+                         }
                     } else {
                          // no existen agrego  material
                          addMaterialQuote($material, $order, $woo);
