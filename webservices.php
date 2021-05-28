@@ -338,6 +338,13 @@ class WebServices
           $cot = $request->det_cot;
           $request = $request->request;
           $m = $this->getMethods();
+          $materiales = [];
+          if (count($cot->ArrayMaterialPost) == 1) {
+               array_push($materiales, $cot->ArrayMaterialPost);
+          } else {
+               $materiales = $cot->ArrayMaterialPost;
+          }
+
           $data = [
                "security" => [
                     "user" => $request->user,
@@ -348,17 +355,18 @@ class WebServices
                     "id_ctwb" => $request->id_ctwb,
                     "id_ped" => $request->id_ped,
                     "id_ped" => $request->id_ped,
-                    "materiales" => $cot->ArrayMaterialPost,
+                    "materiales" => $materiales,
+                    // "det" => $cot,
 
-               //      "pos" => $cot->pos,
-               //      "id_mat" => $cot->id_mat,
-               //      "nomb" => $cot->nomb,
-               //      "cant" => $cot->cant,
-               //      "und" => $cot->und,
-               //      "prec" => $cot->prec,
-               //      "dsct" => $cot->dsct,
-               //      "prctot" => $cot->prctot,
-               //      "cod" => $cot->cod,
+                    //      "pos" => $cot->pos,
+                    //      "id_mat" => $cot->id_mat,
+                    //      "nomb" => $cot->nomb,
+                    //      "cant" => $cot->cant,
+                    //      "und" => $cot->und,
+                    //      "prec" => $cot->prec,
+                    //      "dsct" => $cot->dsct,
+                    //      "prctot" => $cot->prctot,
+                    //      "cod" => $cot->cod,
                ],
           ];
           return $m->PostQuote($data);
