@@ -1083,6 +1083,9 @@ class MethodsWoo
                          $this->mfUpdateFieldsCredito($id_soc, $user_id, $credito, $mntdisp) ? true : new
                               Error();
                          $error = $this->mfUpdateStatusCreditoByUserID($wallet_status, $wallet_comentario, $user_id, $id_soc);
+
+                         $this->crearLog($id_soc, "Se actualizo el credito a $mntdisp de el Usuario: con id_cli: $id_cli y user_id: $user_id");
+
                          if ($error) {
                               return [
                                    "value" => 2,
@@ -1737,5 +1740,14 @@ class MethodsWoo
                "note" => $message,
                "customer_note" => "true"
           ]);
+     }
+
+     private function crearLog($id_soc, $action): void
+     {
+          $fecha_actual = date("Y-m-d H:i:s");
+          $wpdb = $this->getWPDB($id_soc);
+          $sql = "INSERT INTO wp_precor_log (action,date_created) VALUES (%s,%s) ";
+          $wpdb->query($wpdb->prepare($sql, $action, $fecha_actual));
+          $wpdb->flush();
      }
 }
