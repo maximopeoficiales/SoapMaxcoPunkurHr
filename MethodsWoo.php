@@ -1057,6 +1057,7 @@ class MethodsWoo
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
           $mntdisp = $credito["mntdisp"];
+          $mntdisp = str_replace(" ", "", $mntdisp);
           $fvenc = $credito["fvenc"];
           $wallet_status = $credito["status"];
           if ($credito["status"] != null) {
