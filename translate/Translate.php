@@ -22,9 +22,6 @@ class Translate
             case 'processing':
                 $spanish = "procesando";
                 break;
-            case 'processing':
-                $spanish = "procesando";
-                break;
             case 'on-hold':
                 $spanish = "en espera";
                 break;

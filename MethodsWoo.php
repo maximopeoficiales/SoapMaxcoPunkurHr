@@ -645,19 +645,21 @@ class MethodsWoo
                                    "email" => $cliente["email"]
                               );
 
-
-                              if ($this->createAddressSoap($response->id, $params)) {
-                                   return [
-                                        "value" => 1,
-                                        "data" => "cd_cli: $cd_cli",
-                                        "message" => "Registro de Cliente y direccion Exitosa",
-                                   ];
-                              } else {
-                                   return [
-                                        "value" => 0,
-                                        "data" => "cd_cli: " .  $cd_cli,
-                                        "message" => "Se creo cliente pero hubo error en creacion de direccion id_dest: $id_cli registrado",
-                                   ];
+                              // crea direccion destinatorio esto solo pasa en precor con el id_cli
+                              if ($this->isPrecor($id_soc)) {
+                                   if ($this->createAddressSoap($response->id, $params)) {
+                                        return [
+                                             "value" => 1,
+                                             "data" => "cd_cli: $cd_cli",
+                                             "message" => "Registro de Cliente y direccion Exitosa",
+                                        ];
+                                   } else {
+                                        return [
+                                             "value" => 0,
+                                             "data" => "cd_cli: " .  $cd_cli,
+                                             "message" => "Se creo cliente pero hubo error en creacion de direccion id_dest: $id_cli registrado",
+                                        ];
+                                   }
                               }
                          }
                          return [
