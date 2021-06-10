@@ -1537,7 +1537,7 @@ class MethodsWoo
      private function GetFormattedQuotes($orders, $cd_cli, $tpcotz, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
-
+          $tipoCotizacion = $this->isPrecor($id_soc) ? 0 : 1;
           function getCodStatusByDescription(int $tpcotz, string $description): int
           {
                // es cotizacion
@@ -1681,7 +1681,7 @@ class MethodsWoo
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", 0, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tipoCotizacion, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials)
                );
                // }
           }
