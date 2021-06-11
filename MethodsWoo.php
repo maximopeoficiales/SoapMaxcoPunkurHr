@@ -927,6 +927,15 @@ class MethodsWoo
 
      private function getClientsByDate($id_soc, $fecini, $fecfin)
      {
+          // valida si existe el email en el array     
+          function existEmail($email, $arrayClients)
+          {
+               foreach ($arrayClients as $cliente) {
+                    if ($cliente->email == $email) {
+                         return true;
+                    }
+               }
+          }
           //example : 2020-11-20 - 2020-11-21
           $response = [];
           $wpdb = $this->getWPDB($id_soc);
@@ -953,16 +962,22 @@ class MethodsWoo
                     // array_push($datos, [$temp["name"] => $temp["value"]]);
                     $datos[$temp["name"]] = $temp["value"];
                }
-               // todos los datos se guardan en $clientsData
-               array_push($clientsData, $datos);
+               // debe estar escrito tal como esta en crmEntries
+               // filtra los resultados por email
+               if (existEmail($datos["Correo electrónico"], $dataSap)) {
+                    // todos los datos se guardan en $clientsData
+                    array_push($clientsData, $datos);
+               }
           }
+          // para evitar repetidos voy estraer solo los que tiene el email correspondiente
+
           $cont = 0;
           foreach ($dataSap as $key => $obj) {
                $clientData = $clientsData[$cont];
                $clientSap = new Client();
                $clientSap->id_soc = $this->isMaxco($id_soc) ? "EM01" : "PR01";
                $clientSap->cd_cli = $obj->cd_cli;
-               $clientSap->nrdoc = count($dataWPFORM);
+               $clientSap->nrdoc = $clientData["Documento"];
                $clientSap->nomb = $obj->nomb;
                $clientSap->email = $obj->email;
                array_push($response, $clientSap);
