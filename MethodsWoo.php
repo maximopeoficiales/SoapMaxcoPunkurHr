@@ -930,7 +930,7 @@ class MethodsWoo
           //example : 2020-11-20 - 2020-11-21
           $response = [];
           $wpdb = $this->getWPDB($id_soc);
-          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb,s.user_id as user_id FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
+          $sql = "SELECT s.cd_cli,u.user_email as email,s.cod,u.display_name as nomb,s.user_id as user_id, u.user_login as username FROM wp_userssap s INNER JOIN wp_users u ON s.user_id=u.id WHERE s.date_created BETWEEN  %s AND  %s  ORDER BY s.date_created ASC";
           $dataSap = $wpdb->get_results($wpdb->prepare($sql, $fecini, $fecfin));
           $primerClient = "";
           $ORS = "";
@@ -944,86 +944,29 @@ class MethodsWoo
           $sql2 = "SELECT fields FROM wp_wpforms_entries WHERE fields LIKE %s $ORS ORDER BY date ASC";
           $dataWPFORM = $wpdb->get_results($wpdb->prepare($sql2, "%$primerClient->user_email%"));
           $clientsData = [];
-          foreach ($dataWPFORM as $key2 => $form) {
+          // se obtienen los datos en json mysql se serializa y se convierte en array
+          foreach ($dataWPFORM as  $form) {
                $datos = [];
-               $observaciones = "";
-               $arraytemp = maybe_serialize($form->fields);
-               $arraytemp = json_decode($arraytemp, true);
-               for ($i = 0; $i < 30; $i++) {
-                    $temp = $arraytemp[$i];
-                    if ($temp["name"] == "Correo electrónico") {
-                         $datos["email"] = $temp["value"];
-                    }
-                    /* nro documento */
-                    if ($temp["name"] == "RUC") {
-                         $datos["nrdoc"] = $temp["value"];
-                    }
-                    if ($temp["name"] == "Teléfono de contacto") {
-                         $datos["telf"] = $temp["value"];
-                    }
-                    /* city - dstr - codubig */
-                    if ($temp["name"] == "Tu ciudad") {
-                         $city = explode("-", $temp["value"]);
-                         $datos["city"] = $city[0] . " - " . $city[1];
-                         $datos["distr"] = $city[2];
-                         $datos["codubig"] = $city[3];
-                    }
-                    // /* drcdest */
-                    if ($temp["name"] == "Tu dirección") {
-                         $datos["drcfisc"] = $temp["value"];
-                    }
-
-                    /* observaciones */
-                    if ($temp["name"] == "Giro de negocio" || $temp["name"] == "Dinos si eres" || $temp["name"] == "Tu moneda de facturación") {
-                         $observaciones .= $temp["name"] . ": " . $temp["value"] . "|";
-                    }
+               $jsonArray =  (array)json_decode(maybe_serialize($form->fields), true);
+               // recorro el array de datos de cada uno de los resultados
+               foreach ($jsonArray as $key => $temp) {
+                    // array_push($datos, [$temp["name"] => $temp["value"]]);
+                    $datos[$temp["name"]] = $temp["value"];
                }
-               $datos["obs"] = substr($observaciones, 0, -1);
+               // todos los datos se guardan en $clientsData
                array_push($clientsData, $datos);
           }
-          foreach ($dataSap as $key => $dSap) {
-               foreach ($clientsData as $keyo => $client) {
-                    if ($dSap->email == $client["email"]) {
-                         $dSap->nrdoc = $client["nrdoc"];
-                         $dSap->telf = $client["telf"];
-                         $dSap->drcfisc = $client["drcfisc"];
-                         $dSap->city = $client["city"];
-                         $dSap->distr = $client["distr"];
-                         $dSap->codubig = $client["codubig"];
-                         $dSap->obs = $client["obs"];
-                         //obtengo valor del data profile extra fields
-                    }
-               }
-          };
-
+          $cont = 0;
           foreach ($dataSap as $key => $obj) {
-               $array = [];
-               if ($this->isMaxco($id_soc)) {
-                    // cambiar aqui el id soc si es maxco
-                    $array["id_soc"] = "EM01";
-               } else {
-                    $array["id_soc"] = "PR01";
-               }
-               // $array["id_soc"] = ;
-               $array["cd_cli"] = $obj->cd_cli;
-               $array["nrdoc"] = $obj->nrdoc;
-               $array["nomb"] = $obj->nomb;
-               $array["telf"] = $obj->telf;
-               $array["drcfisc"] = $obj->drcfisc;
-               $array["email"] = $obj->email;
-               $array["city"] = $obj->city;
-               $array["distr"] = $obj->distr;
-               $array["codubig"] = $obj->codubig;
-               $array["obs"] = $obj->obs;
-               $array["cod"] = $obj->cod;
-               //profile extra fields               
-               $array["telfmov"] = $this->getValueProfileExtraFields("telfmov", $obj->user_id, $id_soc);
-
-               // META VALUES
-               $array["cond_pago"] = $this->getMetaValueByKey("cond_pago", $obj->user_id, $id_soc);
-               $array["descrip_cond_pago"] = $this->getMetaValueByKey("descrip_cond_pago", $obj->user_id, $id_soc);
-
-               array_push($response, new Client($array));
+               $clientData = $clientsData[$cont];
+               $clientSap = new Client();
+               $clientSap->id_soc = $this->isMaxco($id_soc) ? "EM01" : "PR01";
+               $clientSap->cd_cli = $obj->cd_cli;
+               $clientSap->nrdoc = $clientData["Documento"];
+               $clientSap->nomb = $obj->nomb;
+               $clientSap->email = $obj->email;
+               array_push($response, $clientSap);
+               $cont++;
           }
           return $response;
      }
