@@ -3,16 +3,16 @@ class WebservicesCredentials
 {
     public $HOST_DB = "localhost";
 
-    public $PRECOR_URL = "http://tiendaqaprecor.test/";
-    public $MAXCO_URL = "http://tiendaqamaxco.test/";
+    public $PRECOR_URL = "https://tiendaqa.precor.pe/";
+    public $MAXCO_URL = "https://tiendaqa.maxco.pe/";
 
-    public $DB_PRECOR_USER = "root";
-    public $DB_PRECOR_PASS = "";
-    public $DB_PRECOR_DBNAME = "tiendaqa_precor";
+    public $DB_PRECOR_USER = "clg_wp_3oxdh";
+    public $DB_PRECOR_PASS = "Iz3r_0!Pe4faK2d&";
+    public $DB_PRECOR_DBNAME = "clg_wp_retpq";
 
-    public $DB_MAXCO_USER = "root";
-    public $DB_MAXCO_PASS = "";
-    public $DB_MAXCO_DBNAME = "tiendaqamaxco";
+    public $DB_MAXCO_USER = "clg_wp_kae5v";
+    public $DB_MAXCO_PASS = "TT68X5$5ckV@D*WD";
+    public $DB_MAXCO_DBNAME = "clg_wp_gak7t";
 
     // woocommerce 
 
