@@ -1494,7 +1494,8 @@ class MethodsWoo
      private function GetFormattedQuotes($orders, $cd_cli, $tpcotz, $id_soc)
      {
           $woo = $this->getWoocommerce($id_soc);
-          $tipoCotizacion = $this->isPrecor($id_soc) ? 0 : 1;
+          // se activa si solo en maxco habria ordenes
+          // $tipoCotizacion = $this->isPrecor($id_soc) ? 0 : 1;
           function getCodStatusByDescription(int $tpcotz, string $description): int
           {
                // es cotizacion
@@ -1549,6 +1550,7 @@ class MethodsWoo
           foreach ($orders as $order) {
                $contador = 0;
                $quote = (object) $woo->get("orders/{$order->id_order}");
+               $tipoCotizacion = $this->isQuote($order->id_order,$id_soc) ? 0 : 1;
                // if ($quote->created_via == "ywraq") {
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
@@ -1631,9 +1633,9 @@ class MethodsWoo
                // if ($cd_cli == null) {
                $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
                // }
-               if ($quote->status == "completed") {
-                    $tpcotz = 1;
-               }
+               // if ($quote->status == "completed") {
+               //      $tpcotz = 1;
+               // }
                // fin de busqueda
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
@@ -1678,6 +1680,13 @@ class MethodsWoo
                }
           }
           return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+     }
+
+     private function isQuote($id_order, $id_soc): bool
+     {
+          $wpdb = $this->getWPDB($id_soc);
+          $results = $wpdb->get_results("SELECT * FROM wp_cotizaciones WHERE id_order = $id_order LIMIT 1");
+          return $results[0]->cod == 0 ? true : false;
      }
      private function verifyMaterialSku($sku, $id_soc)
      {
