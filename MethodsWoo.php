@@ -962,7 +962,7 @@ class MethodsWoo
                $clientSap = new Client();
                $clientSap->id_soc = $this->isMaxco($id_soc) ? "EM01" : "PR01";
                $clientSap->cd_cli = $obj->cd_cli;
-               $clientSap->nrdoc = $clientData["Documento"];
+               $clientSap->nrdoc = count($dataWPFORM);
                $clientSap->nomb = $obj->nomb;
                $clientSap->email = $obj->email;
                array_push($response, $clientSap);
