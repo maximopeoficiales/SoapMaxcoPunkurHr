@@ -970,7 +970,6 @@ class MethodsWoo
                }
           }
           // para evitar repetidos voy estraer solo los que tiene el email correspondiente
-
           $cont = 0;
           foreach ($dataSap as $key => $obj) {
                $clientData = $clientsData[$cont];
