@@ -16,8 +16,8 @@ class WebservicesCredentials
 
     // woocommerce 
 
-    public $WOO_PRECOR_CK = "ck_82458af7253f4bbd4bd0941f5487323f31b23cdf";
-    public $WOO_PRECOR_CS = "cs_b0aa70d51f7757485699c97342568b85e9922af2";
+    public $WOO_PRECOR_CK = "ck_6218e823ee30ca5f8c401e29a7577c38ffcf74b0";
+    public $WOO_PRECOR_CS = "cs_d0d59f6ff40b5ef40b54294167bc2db54dfa48af";
 
     public $WOO_MAXCO_CK = "ck_ed40a83456e5f389286708093899ab45384078b7";
     public $WOO_MAXCO_CS = "cs_dcb486eb5c60fa052188bdb6f8eb98b4c3e92739";
