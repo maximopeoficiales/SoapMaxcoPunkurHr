@@ -83,17 +83,17 @@ class MethodsWoo
           if ($this->isPrecor($id_soc) || $this->isMaxco($id_soc)) {
                if ($this->saveTipoCambio($tipo_cambio, $fecha_cambio, $id_soc)) {
                     // se inserto correctamente el registro
-                    if ($this->executeJobUpdateTypeRate($id_soc)) {
+                    // if ($this->executeJobUpdateTypeRate($id_soc)) {
                          return [
                               "value" => 2,
-                              "message" => "Se guardo y se actualizo el tipo de cambio",
+                              "message" => json_encode($this->getTiposCambioMaxcoPrecor($id_soc)),
                          ];
-                    } else {
-                         return [
-                              "value" => 0,
-                              "message" => "Error en la actualizacion de tipo de cambio, pero tipo de cambio fue guardado",
-                         ];
-                    };
+                    // } else {
+                    //      return [
+                    //           "value" => 0,
+                    //           "message" => "Error en la actualizacion de tipo de cambio, pero tipo de cambio fue guardado",
+                    //      ];
+                    // };
                } else {
                     return [
                          "value" => 0,
@@ -115,7 +115,7 @@ class MethodsWoo
           $wpdb->flush();
           return $result;
      }
-     private function getTiposCambioMaxcoPrecor($id_soc)
+     private function getTiposCambioMaxcoPrecor($id_soc) : string
      {
           $fecha_actual = date("Y-m-d");
           $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY id DESC LIMIT 1";
