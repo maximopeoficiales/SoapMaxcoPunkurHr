@@ -10,9 +10,9 @@ class WebservicesCredentials
     public $DB_PRECOR_PASS = "Q.MRIXVwjzFHnq6jeRx60";
     public $DB_PRECOR_DBNAME = "clg_wp1";
 
-    public $DB_MAXCO_USER = "clg_wp_kae5v";
-    public $DB_MAXCO_PASS = "TT68X5$5ckV@D*WD";
-    public $DB_MAXCO_DBNAME = "clg_wp_gak7t";
+    public $DB_MAXCO_USER = "clg_wp_40wyu";
+    public $DB_MAXCO_PASS = "z21*UxbE56ce0^xJ";
+    public $DB_MAXCO_DBNAME = "clg_wp_my9nw";
 
     // woocommerce 
 
