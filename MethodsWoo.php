@@ -121,7 +121,7 @@ class MethodsWoo
           $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY id DESC LIMIT 1";
           $wdpbPrecor = $this->getWPDB($id_soc);
           $resultPrecor = $wdpbPrecor->get_results($sql)[0];
-          return $resultPrecor->tipo_cambio;
+          return $wdpbPrecor->get_results($sql);
      }
      private function updateTypeRateWebservice($urlDomain, $type_rate): bool
      {
