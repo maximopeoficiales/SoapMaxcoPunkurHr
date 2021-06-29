@@ -115,7 +115,7 @@ class MethodsWoo
           $wpdb->flush();
           return $result;
      }
-     private function getTiposCambioMaxcoPrecor($id_soc) : string
+     private function getTiposCambioMaxcoPrecor($id_soc) 
      {
           $fecha_actual = date("Y-m-d");
           $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY id DESC LIMIT 1";
