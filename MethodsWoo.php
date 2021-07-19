@@ -1151,12 +1151,13 @@ class MethodsWoo
      /* funcion que verifica si los fields existen en determinada data */
      private function isCreated($id_field, $dataCreated = [])
      {
+          $existe = false;
           foreach ($dataCreated as $key => $value) {
-               if ($value->field_id == intval($id_field)) {
-                    return true;
+               if (intval($value->field_id) == intval($id_field)) {
+                    $existe = true;
                }
-               return false;
           }
+          return $existe;
      }
 
      private function haveCredits($user_id, $id_soc)
