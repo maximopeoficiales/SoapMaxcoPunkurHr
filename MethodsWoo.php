@@ -1650,11 +1650,23 @@ class MethodsWoo
                $cliente_maxco = new  ClienteMaxco($quote->billing->first_name . $quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
 
                // fin de creacion de objeto maxco
+               // verificacion si es delivery o recogida en tienda
+               $recojoEnTienda = false;
+
+               if ($this->isMaxco($id_soc)) {
+                    foreach ($quote->shipping_lines as $shipping_line) {
+                         if ($shipping_line->method_id == "local_pickup") {
+                              $recojoEnTienda = true;
+                              break;
+                         }
+                    }
+               }
+               $tipoDeDespacho = $recojoEnTienda ? "002-Recojo en Tienda" : "001-Delivery";
 
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tipoCotizacion, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials, $cliente_maxco)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, $tipoDeDespacho, $tipoCotizacion, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials, $cliente_maxco)
                );
           }
           return $arrayQuotes;
