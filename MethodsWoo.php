@@ -11,6 +11,7 @@ require "./responses/cotizacion/Cotizacion.php";
 require "./responses/cotizacion/Material.php";
 require "./responses/cotizacion/CotizacionStatus.php";
 require "./responses/cotizacion/Niubiz.php";
+require "./responses/cotizacion/ClienteMaxco.php";
 require "./translate/Translate.php";
 require "./utilities/Utilities.php";
 
@@ -1551,8 +1552,8 @@ class MethodsWoo
           foreach ($orders as $order) {
                $contador = 0;
                $quote = (object) $woo->get("orders/{$order->id_order}");
-               $tipoCotizacion = $this->isQuote($order->id_order,$id_soc) ? 0 : 1;
-               // if ($quote->created_via == "ywraq") {
+               $tipoCotizacion = $this->isQuote($order->id_order, $id_soc) ? 0 : 1;
+               // agrega materiales
                $arraymaterials = [];
                foreach ($quote->line_items as  $m) {
                     $contador++;
@@ -1560,18 +1561,21 @@ class MethodsWoo
                     $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
                     $und = ($unidad == null) ? "kg" : $unidad;
                     // $m->id
-                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, 0, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
-                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
                     }
                }
+               // fin de agregado de materiales
+
 
                $lat = "";
                $long = "";
                // niubiz llega vacia si no hay data
                $obs_niubiz = "";
+               $direccionFiscal = "";
                foreach ($quote->meta_data as $m) {
                     if ($m->key == "ce_latitud") {
                          $lat = $m->value;
@@ -1581,6 +1585,9 @@ class MethodsWoo
                     }
                     if ($m->key == "_visanetRetorno") {
                          $obs_niubiz = $m->value;
+                    }
+                    if ($m->key == "direccion_fiscal") {
+                         $direccionFiscal = $m->value;
                     }
                }
 
@@ -1630,20 +1637,25 @@ class MethodsWoo
                     }
                }
 
-               // cuando no envia cd_cli busco cd_cli por customer_id del quote
-               // if ($cd_cli == null) {
                $cd_cli = $this->getCdCliWithUserIdSap($quote->customer_id, $id_soc);
-               // }
-               // if ($quote->status == "completed") {
-               //      $tpcotz = 1;
-               // }
-               // fin de busqueda
+
+               // $cd_cli = $quote->customer_id == 0 ? 0 : $cd_cli;
+               // verificacion si es factura o no 
+               $esFactura = false;
+               if (!empty($direccionFiscal)) {
+                    $esFactura = true;
+               }
+
+               // creacion de objeto cliente maxco
+               $cliente_maxco = new  ClienteMaxco($quote->billing->first_name . $quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
+
+               // fin de creacion de objeto maxco
+
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
-                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tipoCotizacion, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials)
+                    new Cotizacion($order->id_order, $cd_cli, $codDest, $objectNiubiz, $quote->billing->address_1, $quote->billing->postcode, $quote->payment_method, $quote->payment_method_title, $lat, $long, "001-Delivery", $tipoCotizacion, $statusCode, Translate::translateStatus($quote, $statusCode), number_format($quote->total, 2, ".", ""), $arraymaterials, $cliente_maxco)
                );
-               // }
           }
           return $arrayQuotes;
      }

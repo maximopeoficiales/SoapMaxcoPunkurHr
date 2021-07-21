@@ -7,6 +7,7 @@ class Cotizacion
      private $direcdest;
      private $codpostal;
      private Niubiz $obs_niubiz;
+     private ClienteMaxco $cliente_maxco;
      private $payment_method;
      private $payment_method_title;
      private $lat;
@@ -18,7 +19,7 @@ class Cotizacion
      private $prctotal;
      private $materials;
 
-     public function __construct($id_ctwb, $cd_cli, $cod_dest, Niubiz $obs_niubiz, $direcdest, $codpostal, $payment_method, $payment_method_title, $lat, $long, $tpodesp, $tpcotz, $cod_status, $status_desc, $prctotal, $materials = [])
+     public function __construct($id_ctwb, $cd_cli, $cod_dest, Niubiz $obs_niubiz, $direcdest, $codpostal, $payment_method, $payment_method_title, $lat, $long, $tpodesp, $tpcotz, $cod_status, $status_desc, $prctotal, $materials = [], ClienteMaxco $cliente_maxco)
      {
           $this->id_ctwb = $id_ctwb;
           $this->cd_cli = $cd_cli;
@@ -36,5 +37,6 @@ class Cotizacion
           $this->status_desc = $status_desc;
           $this->prctotal = $prctotal;
           $this->materials = $materials;
+          $this->cliente_maxco = $cliente_maxco;
      }
 }

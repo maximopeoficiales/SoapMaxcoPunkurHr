@@ -10,7 +10,8 @@ class Material
      private $und;
      private $prec;
      private $prectot;
-     public function __construct($pos, $id_mat, $nomb, $cant, $und, $prec, $prectot)
+     private $dsct;
+     public function __construct($pos, $id_mat, $nomb, $cant, $und, $prec, $dsct, $prectot)
      {
           $this->pos = $pos;
           $this->id_mat = $id_mat;
@@ -18,6 +19,7 @@ class Material
           $this->cant = $cant;
           $this->und = $und;
           $this->prec = $prec;
+          $this->dsct = $dsct;
           $this->prectot = $prectot;
      }
 }
