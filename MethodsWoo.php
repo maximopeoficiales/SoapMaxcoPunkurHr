@@ -1600,7 +1600,7 @@ class MethodsWoo
 
                // obtencion de cod_dest
 
-               $codDest = 0;
+               $codDest = "";
                if ($this->isPrecor($id_soc)) {
                     $user_id = $quote->customer_id;
                     $user = (object) $woo->get("customers/$user_id");
