@@ -1647,22 +1647,44 @@ class MethodsWoo
                }
 
                // creacion de objeto cliente maxco
-               $cliente_maxco = new  ClienteMaxco($quote->billing->first_name ." ".$quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
+               $cliente_maxco = new  ClienteMaxco($quote->billing->first_name . " " . $quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
 
                // fin de creacion de objeto maxco
                // verificacion si es delivery o recogida en tienda
                $recojoEnTienda = false;
-
+               $delivery = false;
+               $deliveryFree = false;
+               $tipoDeDespacho = "";
                if ($this->isMaxco($id_soc)) {
                     foreach ($quote->shipping_lines as $shipping_line) {
+                         // recojo en tienda
                          if ($shipping_line->method_id == "local_pickup") {
                               $recojoEnTienda = true;
-                              break;
+                         }
+                         // delivery gratuito
+                         if ($shipping_line->method_id == "free_shipping") {
+                              $deliveryFree = true;
+                         }
+                         // delivery con costo
+                         if ($shipping_line->method_id == "flat_rate") {
+                              $delivery = true;
                          }
                     }
                }
-               $tipoDeDespacho = $recojoEnTienda ? "002-Recojo en Tienda" : "001-Delivery";
 
+               // validacion de tipo de despacho
+               if ($delivery) {
+                    $tipoDeDespacho = "001-Delivery";
+               }
+               if ($recojoEnTienda) {
+                    $tipoDeDespacho = "002-Recojo en Tienda";
+               }
+               if ($deliveryFree) {
+                    $tipoDeDespacho = "003-Delivery Gratuito";
+               }
+               // fin de validacion
+
+               
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
