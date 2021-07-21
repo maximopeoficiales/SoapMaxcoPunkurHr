@@ -1674,13 +1674,13 @@ class MethodsWoo
 
                // validacion de tipo de despacho
                if ($delivery) {
-                    $tipoDeDespacho = "001-Delivery";
+                    $tipoDeDespacho = "1-Delivery";
                }
                if ($recojoEnTienda) {
-                    $tipoDeDespacho = "002-Recojo en Tienda";
+                    $tipoDeDespacho = "2-Recojo en Tienda";
                }
                if ($deliveryFree) {
-                    $tipoDeDespacho = "003-Delivery Gratuito";
+                    $tipoDeDespacho = "3-Gratuito";
                }
                // fin de validacion
 
