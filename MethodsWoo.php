@@ -1647,7 +1647,7 @@ class MethodsWoo
                }
 
                // creacion de objeto cliente maxco
-               $cliente_maxco = new  ClienteMaxco($quote->billing->first_name . $quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
+               $cliente_maxco = new  ClienteMaxco($quote->billing->first_name ." ".$quote->billing->last_name, $quote->billing->company, $esFactura ? "x" : "", $quote->billing->address_1, $quote->billing->email, null);
 
                // fin de creacion de objeto maxco
                // verificacion si es delivery o recogida en tienda
