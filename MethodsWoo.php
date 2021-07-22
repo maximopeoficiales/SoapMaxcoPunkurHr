@@ -1555,6 +1555,7 @@ class MethodsWoo
                $tipoCotizacion = $this->isQuote($order->id_order, $id_soc) ? 0 : 1;
                // agrega materiales
                $arraymaterials = [];
+               $cantidadTotalDeMateriales = count($quote->line_items);
                foreach ($quote->line_items as  $m) {
                     $contador++;
 
@@ -1565,7 +1566,7 @@ class MethodsWoo
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
-                         array_push($arraymaterials, new Material($contador + 10, 99999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                         array_push($arraymaterials, new Material($cantidadTotalDeMateriales * 10, 99999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
                     }
                }
                // fin de agregado de materiales
