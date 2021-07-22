@@ -1566,7 +1566,7 @@ class MethodsWoo
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
-                         array_push($arraymaterials, new Material($cantidadTotalDeMateriales * 10, 99999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                         array_push($arraymaterials, new Material(($cantidadTotalDeMateriales + 1) * 10, 99999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
                     }
                }
                // fin de agregado de materiales
