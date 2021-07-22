@@ -1565,7 +1565,7 @@ class MethodsWoo
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
-                         array_push($arraymaterials, new Material(0, 99999, "Delivery", 0, "", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                         array_push($arraymaterials, new Material($contador + 10, 99999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
                     }
                }
                // fin de agregado de materiales
@@ -1684,7 +1684,7 @@ class MethodsWoo
                }
                // fin de validacion
 
-               
+
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
                     $arrayQuotes,
