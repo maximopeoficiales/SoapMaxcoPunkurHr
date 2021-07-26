@@ -1553,30 +1553,15 @@ class MethodsWoo
                $contador = 0;
                $quote = (object) $woo->get("orders/{$order->id_order}");
                $tipoCotizacion = $this->isQuote($order->id_order, $id_soc) ? 0 : 1;
-               // agrega materiales
-               $arraymaterials = [];
-               $cantidadTotalDeMateriales = count($quote->line_items);
-               foreach ($quote->line_items as  $m) {
-                    $contador++;
-
-                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
-                    $und = ($unidad == null) ? "kg" : $unidad;
-                    // $m->id
-                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, 0, number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
-               }
-               foreach ($quote->shipping_lines as $delivery) {
-                    if ($delivery->total != "0.00") {
-                         array_push($arraymaterials, new Material(($cantidadTotalDeMateriales + 1) * 10, 999999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
-                    }
-               }
-               // fin de agregado de materiales
 
 
+               // recorrido de metadata
                $lat = "";
                $long = "";
                // niubiz llega vacia si no hay data
                $obs_niubiz = "";
                $direccionFiscal = "";
+               $productosDescuentos = [];
                foreach ($quote->meta_data as $m) {
                     if ($m->key == "ce_latitud") {
                          $lat = $m->value;
@@ -1590,7 +1575,31 @@ class MethodsWoo
                     if ($m->key == "direccion_fiscal") {
                          $direccionFiscal = $m->value;
                     }
+                    if ($m->key == "descuentos_precor") {
+                         $productosDescuentos = maybe_unserialize($m->value);
+                    }
                }
+               // agrega materiales
+               $arraymaterials = [];
+               $cantidadTotalDeMateriales = count($quote->line_items);
+               foreach ($quote->line_items as  $m) {
+                    $contador++;
+                    $productoDescuento = $productosDescuentos[array_search($m->product_id, array_column($productosDescuentos, 'product_id'))];
+
+                    $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
+                    $und = ($unidad == null) ? "kg" : $unidad;
+                    // $m->id
+                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, $productoDescuento["percentage_discount"], number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+               }
+               foreach ($quote->shipping_lines as $delivery) {
+                    if ($delivery->total != "0.00") {
+                         array_push($arraymaterials, new Material(($cantidadTotalDeMateriales + 1) * 10, 999999, "Delivery", 1, "UN", "", 0, number_format(doubleval($delivery->total) + doubleval($delivery->total_tax), 2, ".", "")));
+                    }
+               }
+               // fin de agregado de materiales
+
+
+
 
                // status code
                $statusCode = Utilities::getStatusCode($quote);
