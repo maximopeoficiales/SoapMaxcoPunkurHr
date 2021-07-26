@@ -1656,22 +1656,23 @@ class MethodsWoo
                $delivery = false;
                $deliveryFree = false;
                $tipoDeDespacho = "";
-               if ($this->isMaxco($id_soc)) {
-                    foreach ($quote->shipping_lines as $shipping_line) {
-                         // recojo en tienda
-                         if ($shipping_line->method_id == "local_pickup") {
-                              $recojoEnTienda = true;
-                         }
-                         // delivery gratuito
-                         if ($shipping_line->method_id == "free_shipping") {
-                              $deliveryFree = true;
-                         }
-                         // delivery con costo
-                         if ($shipping_line->method_id == "flat_rate") {
-                              $delivery = true;
-                         }
+               // if ($this->isMaxco($id_soc)) {
+               // este caso tambien aplicaria a precor,pero como en precor solo es delivery
+               foreach ($quote->shipping_lines as $shipping_line) {
+                    // recojo en tienda
+                    if ($shipping_line->method_id == "local_pickup") {
+                         $recojoEnTienda = true;
+                    }
+                    // delivery gratuito
+                    if ($shipping_line->method_id == "free_shipping") {
+                         $deliveryFree = true;
+                    }
+                    // delivery con costo
+                    if ($shipping_line->method_id == "flat_rate") {
+                         $delivery = true;
                     }
                }
+               // }
 
                // validacion de tipo de despacho
                if ($delivery) {
@@ -1685,6 +1686,12 @@ class MethodsWoo
                }
                // fin de validacion
 
+               if ($this->isMaxco($id_soc)) {
+                    // si esta no  logueado y  no es factura no te envio el cd_cli
+                    if ($quote->customer_id == 0 && !$esFactura) {
+                         $cd_cli = "";
+                    }
+               }
 
                // el campo tipo de cotizacion ya no sirve porque siempre sera cotizacion
                array_push(
