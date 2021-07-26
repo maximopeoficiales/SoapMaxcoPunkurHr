@@ -1648,7 +1648,13 @@ class MethodsWoo
                }
 
                // creacion de objeto cliente maxco
-               $cliente_maxco = new  ClienteMaxco($quote->shipping->first_name . " " . $quote->shipping->last_name, $quote->shipping->company, $esFactura ? "x" : "", $direccionFiscal, $quote->billing->email, null);
+               $nombreCompleto = "";
+               if ($esFactura) {
+                    $nombreCompleto = $quote->shipping->first_name . " " . $quote->shipping->last_name;
+               } else {
+                    $nombreCompleto = $quote->billing->first_name . " " . $quote->billing->last_name;
+               }
+               $cliente_maxco = new  ClienteMaxco($nombreCompleto, $quote->shipping->company, $esFactura ? "x" : "", $direccionFiscal, $quote->billing->email, null);
 
                // fin de creacion de objeto maxco
                // verificacion si es delivery o recogida en tienda
