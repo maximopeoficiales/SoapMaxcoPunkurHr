@@ -3,19 +3,21 @@ class Utilities
 {
 
     // evalucion de estado por grupo
-    public static function getStatusCode($quote)
+    public static function getStatusCode($quote, $id_soc)
 
     {
         $status = $quote->status;
         $paymentMethodTitle = $quote->payment_method_title;
         // $status = $quote->status;
         // data
-        $pendiente = ["pending", "ywraq-pending", "processing", "on-hold", 
-        // "ywraq-rejected",
-         "ywraq-accepted"];
+        $pendiente = [
+            "pending", "ywraq-pending", "processing", "on-hold",
+            // "ywraq-rejected",
+            "ywraq-accepted"
+        ];
         $vencido = ["ywraq-expired", "cancelled", "failed"];
         $statusCode = 0;
-        
+
         // evaludacion de estado simple
         switch ($status) {
             case 'ywraq-accepted':
@@ -28,7 +30,7 @@ class Utilities
                 $statusCode = 5;
                 break;
         }
-        
+
         foreach ($pendiente as $v2) {
             if ($v2 == $status) {
                 $statusCode = 1;
@@ -59,10 +61,35 @@ class Utilities
                 if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
                     $statusCode = 4;
                 }
-
+            }
+            // si es maxco no existe aceptado
+            if (self::isMaxco($id_soc)) {
+                if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
+                    $statusCode = 4;
+                }
             }
         }
 
         return $statusCode;
+    }
+
+    private static function isMaxco($id_soc)
+    {
+        if ($id_soc == "EM01") {
+            return true;
+        } else if ($id_soc == "MA01") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static function isPrecor($id_soc)
+    {
+        if ($id_soc == "PR01") {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

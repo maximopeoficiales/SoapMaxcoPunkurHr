@@ -1602,7 +1602,7 @@ class MethodsWoo
 
 
                // status code
-               $statusCode = Utilities::getStatusCode($quote);
+               $statusCode = Utilities::getStatusCode($quote,$id_soc);
 
                // convierto a json el obsniubiz
                $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
@@ -1720,7 +1720,7 @@ class MethodsWoo
      {
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
-          $statusCode = Utilities::getStatusCode($quote);
+          $statusCode = Utilities::getStatusCode($quote,$id_soc);
           // obtencion de objeto niubiz
           $obs_niubiz = null;
           foreach ($quote->meta_data as $m) {
