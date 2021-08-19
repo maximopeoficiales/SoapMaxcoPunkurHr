@@ -1045,6 +1045,8 @@ class MethodsWoo
                               Error();
                          $error = $this->mfUpdateStatusCreditoByUserID($wallet_status, $wallet_comentario, $user_id, $id_soc);
 
+                         $this->banUserCreditos($user_id, $credito["status"], $id_soc);
+
                          $this->crearLog($id_soc, "Se actualizo el credito a $mntdisp de el Usuario: con id_cli: $id_cli y user_id: $user_id");
 
                          if ($error) {
@@ -1602,7 +1604,7 @@ class MethodsWoo
 
 
                // status code
-               $statusCode = Utilities::getStatusCode($quote,$id_soc);
+               $statusCode = Utilities::getStatusCode($quote, $id_soc);
 
                // convierto a json el obsniubiz
                $jsonNiubiz = maybe_unserialize(json_decode($obs_niubiz));
@@ -1720,7 +1722,7 @@ class MethodsWoo
      {
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
-          $statusCode = Utilities::getStatusCode($quote,$id_soc);
+          $statusCode = Utilities::getStatusCode($quote, $id_soc);
           // obtencion de objeto niubiz
           $obs_niubiz = null;
           foreach ($quote->meta_data as $m) {
@@ -1788,5 +1790,17 @@ class MethodsWoo
           $sql = "INSERT INTO wp_precor_log (action,date_created) VALUES (%s,%s) ";
           $wpdb->query($wpdb->prepare($sql, $action, $fecha_actual));
           $wpdb->flush();
+     }
+
+     private function banUserCreditos($user_id, $statusCode, $id_soc)
+     {
+          // asi esta la logica del credito
+          if ($statusCode !== "") {
+               $ban = intval($statusCode) === 1 ? 0 : 1;
+               $wpdb = $this->getWPDB($id_soc);
+               $sql = "CALL update_ban_user($user_id,$ban)";
+               $wpdb->query($sql);
+               $wpdb->flush();
+          }
      }
 }
