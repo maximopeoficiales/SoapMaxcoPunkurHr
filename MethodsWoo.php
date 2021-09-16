@@ -1016,8 +1016,11 @@ class MethodsWoo
           $id_soc = $credito["id_soc"];
           // $cd_cli = $credito["cd_cli"];
           $id_cli = $credito["id_cli"];
+          // quito espacios en blanco
+          $credito["mntdisp"] = trim($credito["mntdisp"]);
           $mntdisp = $credito["mntdisp"];
           $mntdisp = str_replace(" ", "", $mntdisp);
+
           $fvenc = $credito["fvenc"];
           $wallet_status = $credito["status"];
           if ($credito["status"] != null) {
@@ -1047,7 +1050,7 @@ class MethodsWoo
 
                          $this->banUserCreditos($user_id, $credito["status"], $id_soc);
 
-                         $this->crearLog($id_soc, "Se actualizo el credito a $mntdisp de el Usuario: con id_cli: $id_cli y user_id: $user_id");
+                         $this->crearLog($id_soc, "Se actualizo el credito a '$mntdisp' de el Usuario: con id_cli: $id_cli y user_id: $user_id");
 
                          if ($error) {
                               return [
