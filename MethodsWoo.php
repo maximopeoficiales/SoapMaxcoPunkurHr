@@ -171,11 +171,13 @@ class MethodsWoo
                $dataUpdated = [
                     "stock_quantity" => $material["stck"],
                ];
-               if ($material["stck"] == 0) {
-                    $dataUpdated["manage_stock"] = false;
-               } else {
-                    $dataUpdated["manage_stock"] = true;
-               }
+               // if ($material["stck"] == 0) {
+               //      $dataUpdated["manage_stock"] = false;
+               // } else {
+               //      $dataUpdated["manage_stock"] = true;
+               // }
+               // el control de inventario siempre debe estar en true
+               $dataUpdated["manage_stock"] = true;
                $metadata = [];
                $newfields = ["id_soc", "jprod", "undpaq", "und"];
                foreach ($this->mfAddNewFieldsMetadata($material, $newfields) as  $value) {
