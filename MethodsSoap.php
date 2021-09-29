@@ -314,7 +314,7 @@ class MethodsSoap
                // 'cond_pago'                  => '',
                'descrip_cond_pago'                  => 'max:40',
                // se quito validacion  de email porque daba problemas
-               'email'                  => 'max:45',
+               'email'                  => 'max:250',
                'telfmov'                  => 'max:12|required',
                'drcfisc'                  => 'max:200|required',
                'cod_postal'                  => 'numeric',
@@ -322,7 +322,7 @@ class MethodsSoap
                'nombeje'                  => 'max:40',
                'telf_eje'                  => 'max:12',
                // SE QUITO EMAIL PORQUE no SOPORTABA EMAIL COORPORATIVOS
-               'email_eje'                  => 'max:45',
+               'email_eje'                  => 'max:250',
                'id_dest'              => 'numeric|digits_between:1,10',
                'drcdest'              => 'max:250',
                'dest_cod_postal'              => 'numeric',
