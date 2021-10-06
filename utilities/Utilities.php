@@ -58,13 +58,22 @@ class Utilities
             }
             // si el estatus es aceptado y elegia tales metodos de pago es recaudacion
             if ($statusCode == 2) {
-                if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
+                if (
+                    $paymentMethodTitle == "BBVA" ||
+                    $paymentMethodTitle == "BBVA $" ||
+                    $paymentMethodTitle == "BCP" ||
+                    $paymentMethodTitle == "BCP $" || $paymentMethodTitle == "ScotiaBank"
+                ) {
                     $statusCode = 4;
                 }
             }
             // si es maxco no existe aceptado
             if (self::isMaxco($id_soc)) {
-                if ($paymentMethodTitle == "BBVA" || $paymentMethodTitle == "BCP" || $paymentMethodTitle == "ScotiaBank") {
+                if (
+                    $paymentMethodTitle == "BBVA" ||
+                    $paymentMethodTitle == "BBVA $" || $paymentMethodTitle == "BCP" ||
+                    $paymentMethodTitle == "BCP $" || $paymentMethodTitle == "ScotiaBank"
+                ) {
                     $statusCode = 4;
                 }
             }
