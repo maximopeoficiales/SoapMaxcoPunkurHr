@@ -61,7 +61,8 @@ class Utilities
                 if (
                     $paymentMethodTitle == "BBVA" ||
                     $paymentMethodTitle == "BBVA $" ||
-                    $paymentMethodTitle == "BCP" ||
+                    $paymentMethodTitle == "BBVA S/." ||
+                    $paymentMethodTitle == "BCP S/." ||
                     $paymentMethodTitle == "BCP $" || $paymentMethodTitle == "ScotiaBank"
                 ) {
                     $statusCode = 4;
