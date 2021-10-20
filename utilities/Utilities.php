@@ -61,9 +61,12 @@ class Utilities
                 if (
                     $paymentMethodTitle == "BBVA" ||
                     $paymentMethodTitle == "BBVA $" ||
-                    $paymentMethodTitle == "BBVA S/." ||
+                    $paymentMethodTitle == "BCP" ||
+                    $paymentMethodTitle == "BCP $" ||
+                    $paymentMethodTitle == "ScotiaBank" ||
+
                     $paymentMethodTitle == "BCP S/." ||
-                    $paymentMethodTitle == "BCP $" || $paymentMethodTitle == "ScotiaBank"
+                    $paymentMethodTitle == "BBVA S/."
                 ) {
                     $statusCode = 4;
                 }
@@ -73,7 +76,10 @@ class Utilities
                 if (
                     $paymentMethodTitle == "BBVA" ||
                     $paymentMethodTitle == "BBVA $" || $paymentMethodTitle == "BCP" ||
-                    $paymentMethodTitle == "BCP $" || $paymentMethodTitle == "ScotiaBank"
+                    $paymentMethodTitle == "BCP $" ||
+                    $paymentMethodTitle == "ScotiaBank" ||
+                    $paymentMethodTitle == "BCP S/." ||
+                    $paymentMethodTitle == "BBVA S/."
                 ) {
                     $statusCode = 4;
                 }
