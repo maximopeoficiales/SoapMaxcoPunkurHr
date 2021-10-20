@@ -84,6 +84,10 @@ class Utilities
                     $statusCode = 4;
                 }
             }
+
+            if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
+                $statusCode = 5;
+            }
         }
 
         return $statusCode;
