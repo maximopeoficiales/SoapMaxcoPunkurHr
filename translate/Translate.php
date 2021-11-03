@@ -78,6 +78,10 @@ class Translate
                     }
                 }
             }
+        } else if ($statusCode == 5) {
+
+            // correcion para correcto funcionamiento del webservices
+            $spanish = "completado";
         }
         return $spanish;
     }
