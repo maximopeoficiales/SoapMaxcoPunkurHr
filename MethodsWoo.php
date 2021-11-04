@@ -1596,7 +1596,7 @@ class MethodsWoo
                     $unidad = $this->GetMetaValuePostByMetaKey("und", $m->product_id, $id_soc);
                     $und = ($unidad == null) ? "kg" : $unidad;
                     // $m->id
-                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, $productoDescuento["percentage_discount"], number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
+                    array_push($arraymaterials, new Material($contador * 10, $m->sku, $m->name, $m->quantity, $und, $m->price, round($productoDescuento["percentage_discount"]), number_format(doubleval($m->total) + doubleval($m->total_tax), 2, ".", "")));
                }
                foreach ($quote->shipping_lines as $delivery) {
                     if ($delivery->total != "0.00") {
