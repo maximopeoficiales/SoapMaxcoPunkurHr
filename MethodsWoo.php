@@ -119,7 +119,7 @@ class MethodsWoo
      private function getTiposCambioMaxcoPrecor($id_soc): string
      {
           $fecha_actual = date("Y-m-d");
-          $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY created_at DESC LIMIT 1";
+          $sql = "SELECT * FROM wp_tipo_cambio WHERE DATE_FORMAT(created_at,'%Y-%m-%d') = '$fecha_actual' ORDER BY id DESC LIMIT 1";
           $wdpbPrecor = $this->getWPDB($id_soc);
           $resultPrecor = $wdpbPrecor->get_results($sql)[0];
           return $resultPrecor->tipo_cambio;
