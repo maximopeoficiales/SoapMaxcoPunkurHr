@@ -114,6 +114,16 @@ class Utilities
             // }
         }
 
+        //validacion especial cuando no esta en pendiente y es tarjeta de credito y esta en estado completo
+        if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
+            // nuevos codigo de estado cuando es tarjeta de credito
+            if ($status == "completed") {
+                $statusCode = 8;
+            } else {
+                $statusCode = 9;
+            }
+        }
+
         return $statusCode;
     }
 
