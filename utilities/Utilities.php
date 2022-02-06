@@ -85,8 +85,32 @@ class Utilities
                 }
             }
 
+
+
+            // solo con tarjeta de credito
             if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
                 $statusCode = 5;
+            }
+
+            // nuevas validaciones de estatus code 06/02/22
+            if (self::isPrecor($id_soc)) {
+                if ($paymentMethodTitle == "Mi crédito PRECOR") {
+                    $statusCode = 5;
+                }
+
+                // solo con tarjeta de credito
+                if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
+                    // nuevos codigo de estado cuando es tarjeta de credito
+                    if ($status == "completed") {
+                        $statusCode = 8;
+                    }
+                    if ($status == "processing") {
+                        $statusCode = 7;
+                    }
+                    if ($status == "failed" || $status == "refunded") {
+                        $statusCode = 6;
+                    }
+                }
             }
         }
 
