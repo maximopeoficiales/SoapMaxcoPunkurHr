@@ -71,54 +71,37 @@ class Utilities
                     $statusCode = 4;
                 }
             }
-            // si es maxco no existe aceptado
-            if (self::isMaxco($id_soc)) {
-                if (
-                    $paymentMethodTitle == "BBVA" ||
-                    $paymentMethodTitle == "BBVA $" || $paymentMethodTitle == "BCP" ||
-                    $paymentMethodTitle == "BCP $" ||
-                    $paymentMethodTitle == "ScotiaBank" ||
-                    $paymentMethodTitle == "BCP S/." ||
-                    $paymentMethodTitle == "BBVA S/."
-                ) {
-                    $statusCode = 4;
-                }
-            }
-
-
-
-            // // solo con tarjeta de credito
-            // if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
-            //     $statusCode = 5;
-            // }
-
-            // nuevas validaciones de estatus code 06/02/22
-            // if (self::isPrecor($id_soc)) {
-            if ($paymentMethodTitle == "Mi crédito PRECOR") {
-                $statusCode = 5;
-            }
-
-            // solo con tarjeta de credito
-            if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
-                // nuevos codigo de estado cuando es tarjeta de credito
-                if ($status == "failed" || $status == "refunded" || $status == "rejected") {
-                    $statusCode = 6;
-                } else if ($status == "processing") {
-                    $statusCode = 7;
-                } else if ($status == "completed") {
-                    $statusCode = 8;
-                } else {
-                    $statusCode = 9;
-                }
-            }
-            // }
         }
 
-        //validacion especial cuando no esta en pendiente y es tarjeta de credito y esta en estado completo
+        // si es maxco no existe aceptado
+        if (self::isMaxco($id_soc)) {
+            if (
+                $paymentMethodTitle == "BBVA" ||
+                $paymentMethodTitle == "BBVA $" || $paymentMethodTitle == "BCP" ||
+                $paymentMethodTitle == "BCP $" ||
+                $paymentMethodTitle == "ScotiaBank" ||
+                $paymentMethodTitle == "BCP S/." ||
+                $paymentMethodTitle == "BBVA S/."
+            ) {
+                $statusCode = 4;
+            }
+        }
+        
+        if ($paymentMethodTitle == "Mi crédito PRECOR") {
+            $statusCode = 5;
+        }
+        
+        // cuando es tarjeta de credito
         if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
             // nuevos codigo de estado cuando es tarjeta de credito
-            if ($status == "completed") {
+            if ($status == "failed" || $status == "refunded" || $status == "rejected") {
                 $statusCode = 8;
+            } else if ($status == "pending") {
+                $statusCode = 7;
+            } else if ($status == "processing") {
+                $statusCode = 7;
+            } else if ($status == "completed") {
+                $statusCode = 6;
             } else {
                 $statusCode = 9;
             }
