@@ -99,7 +99,8 @@ class Utilities
             } else if ($status == "pending") {
                 $statusCode = 7;
             } else if ($status == "processing") {
-                $statusCode = 7;
+                // $statusCode = 7;
+                $statusCode = 8;
             } else if ($status == "completed") {
                 $statusCode = 8;
             } else {
