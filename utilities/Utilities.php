@@ -95,13 +95,13 @@ class Utilities
         if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
             // nuevos codigo de estado cuando es tarjeta de credito
             if ($status == "failed" || $status == "refunded" || $status == "rejected") {
-                $statusCode = 8;
+                $statusCode = 6;
             } else if ($status == "pending") {
                 $statusCode = 7;
             } else if ($status == "processing") {
                 $statusCode = 7;
             } else if ($status == "completed") {
-                $statusCode = 6;
+                $statusCode = 8;
             } else {
                 $statusCode = 9;
             }
