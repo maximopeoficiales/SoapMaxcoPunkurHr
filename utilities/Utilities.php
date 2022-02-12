@@ -17,6 +17,7 @@ class Utilities
         ];
         $vencido = ["ywraq-expired", "cancelled", "failed"];
         $statusCode = 0;
+        $transactionId = null;
 
         // evaludacion de estado simple
         switch ($status) {
@@ -40,6 +41,13 @@ class Utilities
         foreach ($vencido as $v3) {
             if ($v3 == $status) {
                 $statusCode = 6;
+                break;
+            }
+        }
+        foreach ($quote->meta_data as $m) {
+            // esto solo pasa cuando es aceptado se guarda en el metadata
+            if ($m->key == "Transaction ID") {
+                $transactionId = intval($m->value);
                 break;
             }
         }
@@ -86,17 +94,18 @@ class Utilities
                 $statusCode = 4;
             }
         }
-        
+
         if ($paymentMethodTitle == "Mi crédito PRECOR") {
             $statusCode = 5;
         }
-        
+
         // cuando es tarjeta de credito
         if ($paymentMethodTitle == "Pago con tarjeta de crédito") {
             // nuevos codigo de estado cuando es tarjeta de credito
             if ($status == "failed" || $status == "refunded" || $status == "rejected") {
                 $statusCode = 6;
-            } else if ($status == "pending") {
+            } else
+            if ($status == "pending") {
                 $statusCode = 7;
             } else if ($status == "processing") {
                 // $statusCode = 7;
@@ -106,6 +115,10 @@ class Utilities
             } else {
                 $statusCode = 9;
             }
+            // // cuando se pago con tarjeta de credito pero no tiene transaction id significa que fue fallida  la transaccion
+            // if ($status == "pending" && $transactionId === null) {
+            //     $statusCode = 6;
+            // }
         }
 
         return $statusCode;

@@ -12,6 +12,16 @@ class Translate
 
         $status = str_replace("ywraq-", "", $quote->status);
         $spanish = "";
+        // $transactionId = null;
+
+        // foreach ($quote->meta_data as $m) {
+        //     // esto solo pasa cuando es aceptado se guarda en el metadata
+        //     if ($m->key == "Transaction ID") {
+        //         $transactionId = intval($m->value);
+        //         break;
+        //     }
+        // }
+
         switch ($status) {
             case 'completed':
                 $spanish = "completado";
@@ -86,7 +96,12 @@ class Translate
             $spanish = "pago procesando";
         } else if ($statusCode == 8) {
             $spanish = "pago procesado";
+        } else if ($statusCode == 6) {
+            $spanish = "pago rechazado";
         }
+
+
+
         return $spanish;
     }
 }
