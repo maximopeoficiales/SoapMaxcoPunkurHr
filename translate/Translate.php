@@ -82,6 +82,10 @@ class Translate
 
             // correcion para correcto funcionamiento del webservices
             $spanish = "completado";
+        } else if ($statusCode == 7) {
+            $spanish = "pago procesando";
+        } else if ($statusCode == 8) {
+            $spanish = "pago procesado";
         }
         return $spanish;
     }
