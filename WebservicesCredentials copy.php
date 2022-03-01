@@ -23,6 +23,7 @@ class WebservicesCredentials
     public $WOO_MAXCO_CS = "cs_dcb486eb5c60fa052188bdb6f8eb98b4c3e92739";
 
     // IZIPAY
+    public $IZI_PAY_URL = "https://api.micuentaweb.pe";
     public $IZI_PAY_USERNAME = "12158862";
     public $IZI_PAY_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
 
