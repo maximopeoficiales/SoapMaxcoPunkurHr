@@ -76,6 +76,7 @@ class MethodsWoo
      // integracion IziPay
      public function getUiidTransactionByIdOrder($id_soc, $id_order): string
      {
+          // falta recorrer los registros buscando el que tenga mas de una transaccion 
           $sql = "SELECT * FROM wp_comments WHERE comment_post_ID = $id_order";
           $wdpbPrecor = $this->getWPDB($id_soc);
           $resultPrecor = $wdpbPrecor->get_results($sql)[0];
@@ -1768,6 +1769,7 @@ class MethodsWoo
                     $quote->payment_method_title = "";
                }
           }
+          // $uuid = $this->getUiidTransactionByIdOrder($id_order, $id_soc);
           return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
 
