@@ -73,6 +73,18 @@ class MethodsWoo
           $woo = new WoocommerceClient();
           return $woo->getWoocommerce($id_soc);
      }
+     // integracion IziPay
+     public function getUiidTransactionByIdOrder($id_soc, $id_order): string
+     {
+          $sql = "SELECT * FROM wp_comments WHERE comment_post_ID = $id_order";
+          $wdpbPrecor = $this->getWPDB($id_soc);
+          $resultPrecor = $wdpbPrecor->get_results($sql)[0];
+          $comment = $resultPrecor->comment_content;
+          $data = explode(".", $comment);
+          $uuid = str_replace("UUID de transacción: ", "", $data[1]);
+          return  $uuid;
+     }
+
 
      // tipo de cambio
      public function updateTypeRate($data_currency)
