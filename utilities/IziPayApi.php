@@ -1,15 +1,18 @@
 <?php
-require "../WebservicesCredentials.php";
 class IziPayApi
 {
     public $authentication;
     public $urlIziPay;
 
-    public function __construct()
+    public function __construct($iziPayUrl, $username, $password)
     {
-        $instance = new WebservicesCredentials();
-        $this->authentication = $instance->getHeaderBasicIziPay();
-        $this->urlIziPay = $instance->IZI_PAY_URL;
+        $this->urlIziPay = $iziPayUrl;
+        $this->authentication = $this->getHeaderBasicIziPay($username, $password);
+    }
+
+    function getHeaderBasicIziPay(string $username, string $password): string
+    {
+        return "Basic " . base64_encode($username . ':' . $password);
     }
 
     public function isValidTransactionByUuid($uuid): bool
@@ -57,3 +60,11 @@ class IziPayApi
         }
     }
 }
+// // IZIPAY
+// $IZI_PAY_URL = "https://api.micuentaweb.pe";
+// $IZI_PAY_USERNAME = "12158862";
+// $IZI_PAY_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
+// $uuid = "3a915bf6982847ce84c1248abaa07362";
+// $urlIziPay = new IziPayApi($IZI_PAY_URL, $IZI_PAY_USERNAME, $IZI_PAY_PASSWORD);
+// $result = $urlIziPay->isValidTransactionByUuid($uuid);
+// print_r($result ? "valid" : "invalid");

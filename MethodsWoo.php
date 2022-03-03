@@ -14,17 +14,19 @@ require "./responses/cotizacion/Niubiz.php";
 require "./responses/cotizacion/ClienteMaxco.php";
 require "./translate/Translate.php";
 require "./utilities/Utilities.php";
+require "./utilities/IziPayApi.php";
 
-// require "./webservicesCredentials.php";
 class MethodsWoo
 {
      /* constantes */
      private $PRECOR_URL;
      private $MAXCO_URL;
+     private $iziPay;
      public function __construct()
      {
           $this->PRECOR_URL = $this->getCredentials()->PRECOR_URL;
           $this->MAXCO_URL = $this->getCredentials()->MAXCO_URL;
+          $this->iziPay = new IziPayApi($this->getCredentials()->IZI_PAY_URL, $this->getCredentials()->IZI_PAY_USERNAME, $this->getCredentials()->IZI_PAY_PASSWORD);
      }
 
      private function getCredentials()
@@ -76,14 +78,13 @@ class MethodsWoo
      // integracion IziPay
      public function getUiidTransactionByIdOrder($id_soc, $id_order): string
      {
-          // falta recorrer los registros buscando el que tenga mas de una transaccion 
-          $sql = "SELECT * FROM wp_comments WHERE comment_post_ID = $id_order";
+          $sql = "SELECT * FROM wp_comments wc WHERE wc.comment_post_ID =  $id_order AND wc.comment_content LIKE  '%UUID de transacción%' LIMIT 1";
           $wdpbPrecor = $this->getWPDB($id_soc);
           $resultPrecor = $wdpbPrecor->get_results($sql)[0];
           $comment = $resultPrecor->comment_content;
           $data = explode(".", $comment);
           $uuid = str_replace("UUID de transacción: ", "", $data[1]);
-          return  $uuid;
+          return  str_replace(" ", "", $uuid);
      }
 
 
@@ -1769,8 +1770,13 @@ class MethodsWoo
                     $quote->payment_method_title = "";
                }
           }
-          // $uuid = $this->getUiidTransactionByIdOrder($id_order, $id_soc);
-          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+          $uuid = $this->getUiidTransactionByIdOrder($id_soc, $id_order);
+          $isValidTransaction = $this->iziPay->isValidTransactionByUuid($uuid);
+
+          // return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+
+          return [new CotizacionStatus($statusCode, $isValidTransaction, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+          // return [new CotizacionStatus($statusCode, $uuid, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
 
      private function isQuote($id_order, $id_soc): bool

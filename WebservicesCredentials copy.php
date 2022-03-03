@@ -27,8 +27,5 @@ class WebservicesCredentials
     public $IZI_PAY_USERNAME = "12158862";
     public $IZI_PAY_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
 
-    function getHeaderBasicIziPay(): string
-    {
-        return "Basic " . base64_encode($this->IZI_PAY_USERNAME . ':' . $this->IZI_PAY_PASSWORD);
-    }
+    
 }
