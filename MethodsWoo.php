@@ -84,7 +84,7 @@ class MethodsWoo
           $comment = $resultPrecor->comment_content;
           $data = explode(".", $comment);
           $uuid = str_replace("UUID de transacción: ", "", $data[1]);
-          return  str_replace(" ", "", $uuid);
+          return  trim($uuid);
      }
 
 
@@ -1741,6 +1741,24 @@ class MethodsWoo
      {
           $woo = $this->getWoocommerce($id_soc);
           $quote = (object) $woo->get("orders/$id_order");
+
+          // logica para actualizacion de estado segun validacion de transaccion
+          if ($quote->status == "processing") {
+               $uuid = $this->getUiidTransactionByIdOrder($id_soc, $id_order);
+               if ($uuid != null) {
+                    $isValidTransaction = $this->iziPay->isValidTransactionByUuid($uuid);
+                    if ($isValidTransaction) {
+                         // actualizo la orden a completada
+                         $this->getWoocommerce($id_soc)->put("orders/$id_order", [
+                              "status" => "completed"
+                         ]);
+                         
+                         $quote = (object) $woo->get("orders/$id_order");
+                    }
+               }
+          }
+
+
           $statusCode = Utilities::getStatusCode($quote, $id_soc);
           // obtencion de objeto niubiz
           $obs_niubiz = null;
@@ -1770,13 +1788,12 @@ class MethodsWoo
                     $quote->payment_method_title = "";
                }
           }
-          $uuid = $this->getUiidTransactionByIdOrder($id_soc, $id_order);
-          $isValidTransaction = $this->iziPay->isValidTransactionByUuid($uuid);
 
-          // return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+          return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
 
-          return [new CotizacionStatus($statusCode, $isValidTransaction, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
-          // return [new CotizacionStatus($statusCode, $uuid, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+          // return [new CotizacionStatus($statusCode, $isValidTransaction, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
+
+          // return [new CotizacionStatus($statusCode, strlen($uuid), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
 
      private function isQuote($id_order, $id_soc): bool

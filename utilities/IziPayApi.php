@@ -45,26 +45,21 @@ class IziPayApi
             $response = json_decode($response, true);
             if ($response["status"] == "SUCCESS") {
                 $transactionStatus = $response["answer"]["transactionDetails"]["cardDetails"]["authorizationResponse"]["authorizationResult"];
-                if (intval($transactionStatus) == 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
+                return ($transactionStatus == "0");
             }
-            return $response;
+
+            return false;
         } catch (\Throwable $th) {
-            echo $th;
             return false;
         }
     }
 }
-// // IZIPAY
+// IZIPAY
+
 // $IZI_PAY_URL = "https://api.micuentaweb.pe";
 // $IZI_PAY_USERNAME = "12158862";
 // $IZI_PAY_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
 // $uuid = "3a915bf6982847ce84c1248abaa07362";
 // $urlIziPay = new IziPayApi($IZI_PAY_URL, $IZI_PAY_USERNAME, $IZI_PAY_PASSWORD);
 // $result = $urlIziPay->isValidTransactionByUuid($uuid);
-// print_r($result ? "valid" : "invalid");
+// print_r($result ? "valido" : "invalido");
