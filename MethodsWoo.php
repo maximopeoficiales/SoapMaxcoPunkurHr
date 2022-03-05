@@ -24,9 +24,10 @@ class MethodsWoo
      private $iziPay;
      public function __construct()
      {
-          $this->PRECOR_URL = $this->getCredentials()->PRECOR_URL;
-          $this->MAXCO_URL = $this->getCredentials()->MAXCO_URL;
-          $this->iziPay = new IziPayApi($this->getCredentials()->IZI_PAY_URL, $this->getCredentials()->IZI_PAY_USERNAME, $this->getCredentials()->IZI_PAY_PASSWORD);
+          $credentials = new WebservicesCredentials();
+          $this->PRECOR_URL = $credentials->PRECOR_URL;
+          $this->MAXCO_URL = $credentials->MAXCO_URL;
+          $this->iziPay = new IziPayApi($credentials->IZI_PAY_URL, $credentials->IZI_PAY_PRECOR_USERNAME, $credentials->IZI_PAY_PRECOR_PASSWORD, $credentials->IZI_PAY_MAXCO_USERNAME, $credentials->IZI_PAY_MAXCO_PASSWORD);
      }
 
      private function getCredentials()
@@ -1746,13 +1747,14 @@ class MethodsWoo
           if ($quote->status == "processing") {
                $uuid = $this->getUiidTransactionByIdOrder($id_soc, $id_order);
                if ($uuid != null) {
-                    $isValidTransaction = $this->iziPay->isValidTransactionByUuid($uuid);
+                    // valida por id_soc la transacción
+                    $isValidTransaction = $this->iziPay->isValidTransactionByUuid($uuid, $id_soc);
                     if ($isValidTransaction) {
                          // actualizo la orden a completada
                          $this->getWoocommerce($id_soc)->put("orders/$id_order", [
                               "status" => "completed"
                          ]);
-                         
+
                          $quote = (object) $woo->get("orders/$id_order");
                     }
                }

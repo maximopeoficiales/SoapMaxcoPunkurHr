@@ -1,13 +1,15 @@
 <?php
 class IziPayApi
 {
-    public $authentication;
+    public $authenticationPrecor;
+    public $authenticationMaxco;
     public $urlIziPay;
 
-    public function __construct($iziPayUrl, $username, $password)
+    public function __construct($iziPayUrl, $usernamePrecor, $passwordPrecor, $usernameMaxco, $passwordMaxco)
     {
         $this->urlIziPay = $iziPayUrl;
-        $this->authentication = $this->getHeaderBasicIziPay($username, $password);
+        $this->authenticationPrecor = $this->getHeaderBasicIziPay($usernamePrecor, $passwordPrecor);
+        $this->authenticationMaxco = $this->getHeaderBasicIziPay($usernameMaxco, $passwordMaxco);
     }
 
     function getHeaderBasicIziPay(string $username, string $password): string
@@ -15,7 +17,7 @@ class IziPayApi
         return "Basic " . base64_encode($username . ':' . $password);
     }
 
-    public function isValidTransactionByUuid($uuid): bool
+    public function isValidTransactionByUuid($uuid, $id_soc): bool
     {
         try {
 
@@ -34,7 +36,7 @@ class IziPayApi
                 "uuid": "' . $uuid . '"
                 }',
                 CURLOPT_HTTPHEADER => array(
-                    "Authorization: $this->authentication",
+                    "Authorization: " . self::isMaxco($id_soc) ? $this->authenticationMaxco : $this->authenticationPrecor,
                     'Content-Type: application/json'
                 ),
             ));
@@ -50,6 +52,26 @@ class IziPayApi
 
             return false;
         } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
+    private static function isMaxco($id_soc)
+    {
+        if ($id_soc == "EM01") {
+            return true;
+        } else if ($id_soc == "MA01") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static function isPrecor($id_soc)
+    {
+        if ($id_soc == "PR01") {
+            return true;
+        } else {
             return false;
         }
     }
