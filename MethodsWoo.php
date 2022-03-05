@@ -1794,7 +1794,6 @@ class MethodsWoo
           return [new CotizacionStatus($statusCode, Translate::translateStatus($quote, $statusCode), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
 
           // return [new CotizacionStatus($statusCode, $isValidTransaction, ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
-
           // return [new CotizacionStatus($statusCode, strlen($uuid), ($quote->payment_method_title == "") ? "" : $quote->payment_method_title, $objectNiubiz)];
      }
 

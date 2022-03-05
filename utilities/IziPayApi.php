@@ -20,7 +20,7 @@ class IziPayApi
     public function isValidTransactionByUuid($uuid, $id_soc): bool
     {
         try {
-
+            $basicAuthentication = $this->isMaxco($id_soc) ? $this->authenticationMaxco : $this->authenticationPrecor;
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
@@ -36,7 +36,7 @@ class IziPayApi
                 "uuid": "' . $uuid . '"
                 }',
                 CURLOPT_HTTPHEADER => array(
-                    "Authorization: " . self::isMaxco($id_soc) ? $this->authenticationMaxco : $this->authenticationPrecor,
+                    "Authorization: $basicAuthentication",
                     'Content-Type: application/json'
                 ),
             ));
@@ -56,20 +56,11 @@ class IziPayApi
         }
     }
 
-    private static function isMaxco($id_soc)
+    public function isMaxco($id_soc)
     {
         if ($id_soc == "EM01") {
             return true;
         } else if ($id_soc == "MA01") {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private static function isPrecor($id_soc)
-    {
-        if ($id_soc == "PR01") {
             return true;
         } else {
             return false;
