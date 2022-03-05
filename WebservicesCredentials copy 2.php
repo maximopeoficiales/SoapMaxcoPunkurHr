@@ -24,8 +24,13 @@ class WebservicesCredentials
 
     // IZIPAY
     public $IZI_PAY_URL = "https://api.micuentaweb.pe";
-    public $IZI_PAY_USERNAME = "12158862";
-    public $IZI_PAY_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
+    
+    public $IZI_PAY_PRECOR_USERNAME = "12158862";
+    public $IZI_PAY_PRECOR_PASSWORD = "testpassword_o7ct19x6LOUuMNuRsLT8AlzNHbu88p4jHWy7hhsSPRypn";
+    
+    public $IZI_PAY_MAXCO_USERNAME = "80935136";
+    public $IZI_PAY_MAXCO_PASSWORD = "testpassword_Wap0g9gKk64z9FYkgK10xRMseb06u5sk9hQYqS5uds4yp";
+
 
     
 }
