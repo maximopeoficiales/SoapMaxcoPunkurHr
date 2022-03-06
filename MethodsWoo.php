@@ -79,7 +79,7 @@ class MethodsWoo
      // integracion IziPay
      public function getUiidTransactionByIdOrder($id_soc, $id_order): string
      {
-          $sql = "SELECT * FROM wp_comments wc WHERE wc.comment_post_ID =  $id_order AND wc.comment_content LIKE  '%UUID de transacción%' LIMIT 1";
+          $sql = "SELECT * FROM wp_comments wc WHERE wc.comment_post_ID =  $id_order AND wc.comment_content LIKE  '%UUID de transacción%' ORDER BY comment_ID ASC LIMIT 1";
           $wdpbPrecor = $this->getWPDB($id_soc);
           $resultPrecor = $wdpbPrecor->get_results($sql)[0];
           $comment = $resultPrecor->comment_content;
@@ -1756,6 +1756,16 @@ class MethodsWoo
                          ]);
 
                          $quote = (object) $woo->get("orders/$id_order");
+                    } else {
+                         // si la transaccion no es valida y es precor
+                         if ($this->isPrecor($id_soc)) {
+                              // actualizo la orden a completada
+                              $this->getWoocommerce($id_soc)->put("orders/$id_order", [
+                                   "status" => "pending"
+                              ]);
+
+                              $quote = (object) $woo->get("orders/$id_order");
+                         }
                     }
                }
           }
