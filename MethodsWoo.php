@@ -543,10 +543,20 @@ class MethodsWoo
                'username' => $email,
                'password' => "123456789",
                'billing' => [
+                    'first_name' => $cliente["nomb"],
                     "address_1" => $cliente["drcfisc"] ?? "",
                     'email' => $email,
                     'phone' => $cliente["telfmov"] ?? "",
                     'postcode' => $cliente["cod_postal"],
+                    "country" => "PE"
+               ],
+               'shipping' => [
+                    'first_name' => $cliente["nomb"],
+                    "address_1" => $cliente["drcfisc"] ?? "",
+                    'email' => $email,
+                    'phone' => $cliente["telfmov"] ?? "",
+                    'postcode' => $cliente["cod_postal"],
+                    "country" => "PE"
                ],
           ];
 
