@@ -500,8 +500,8 @@ class MethodsWoo
           // solo dos codigos 0 usa la cabecera si existe un cliente lo actualiza, sino lo crea
           // el primer envio de cliente usara el id_cli como id_dest para indentificarlo
           // cuando envie 1 actualiza la direccion destinatario
-          $cliente["cod_postal"] = $cliente["cod_postal"] ?? "07001";
-          $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] ?? "07001";
+          $cliente["cod_postal"] = $cliente["cod_postal"] ?? "15026";
+          $cliente["dest_cod_postal"] = $cliente["dest_cod_postal"] ?? "15026";
           $id_soc = $cliente["id_soc"];
           $cod = $cliente["cod"];
           // $id_dest = $cliente["id_dest"];
